@@ -242,8 +242,9 @@ class ArchiveParse:
     def __init__(self, City, TDate):
 
         self.Session = Session()
-        self.Session.head('https://www.wetterturnier.de/archiv/')
-        #self.Session.head('http://160.45.76.35/archive/')
+        #self.Session.head('https://wetterturnier.de/archiv/')
+        self.Session.head('https://wetterturnier.de/wertungen/wochenendwertungen/')
+	#self.Session.head('http://160.45.76.35/archive/')
 
         self.CityShort = cfg.id_zu_kuerzel[City]
 
@@ -252,7 +253,7 @@ class ArchiveParse:
         # genutzt
         """self.DayIndex = CalcDay(asTDate)"""
 
-        self.WebAdress = 'https://www.wetterturnier.de/archiv/'\
+        self.WebAdress = 'https://wetterturnier.de/wertungen/wochenendwertungen/'\
                                       '?wetterturnier_city={}'\
                                       '&tdate={}'.format(self.CityShort,
                                                          TDate)
@@ -262,6 +263,8 @@ class ArchiveParse:
 
         # Seitenquelltext auslesen
         self.HtmlSrc = self.WebPage.text
+
+        print(self.HtmlSrc)
 
         """self.Date = GetDate(self.HtmlSrc)"""
 
@@ -346,7 +349,7 @@ class ArchiveParse:
 
             # 'Angefragte Adresse' der POST Methode (in 'Kopfzeilen')
             # ACHTUNG http != https -> pruefen!
-            url='https://www.wetterturnier.de/wp-admin/admin-ajax.php',
+            url='https://wetterturnier.de/wp-admin/admin-ajax.php',
 
             # Anfrage-Parameter (in 'Parameter')
             data={
@@ -359,9 +362,9 @@ class ArchiveParse:
 
             # Anfragekopfzeilen in 'Kopfzeilen' (nicht alle werden benoetigt)
             headers={
-                'Host': 'www.wetterturnier.de',
+                'Host': 'wetterturnier.de',
                 'Accept': 'application/json, text/javascript, */*; q=0.01',
-                'Referer': 'http://www.wetterturnier.de/archiv/?tdate={}'\
+                'Referer': 'https://wetterturnier.de/wertungen/wochenendwertungen/?tdate={}'\
                            .format(tDate)
             }
         )

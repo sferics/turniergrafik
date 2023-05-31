@@ -38,16 +38,16 @@ url_template \
 
 ## Elemente
 # Variablenreihenfolge(!) in den Archiv-Dateien zu Kontrollzwecken
-elemente_archiv    = ["N", "Sd", "dd", "ff", "fx", "Wv", "Wn", "PPP", "TTm",
-                      "TTn", "TTd", "RR"]
+#elemente_archiv    = ["N", "Sd", "dd", "ff", "fx", "Wv", "Wn", "PPP", "TTm","TTn", "TTd", "RR"]
+elemente_archiv    = ["Sd1","Sd24","dd12","ff12","fx24","PPP12","Tmin","T12","Tmax","RR1","RR24"]
 
 # dazugehörige Einheiten
-elemente_einheiten = ["", "%", "grad", "kn", "kn", "", "", "hPa", "°C", "°C",
-                      "°C", "mm"]
+#elemente_einheiten = ["", "%", "grad", "kn", "kn", "", "", "hPa", "°C", "°C","°C", "mm"]
+elemente_einheiten = ["min","%","grad","m/s","m/s","hPa","°C","°C","°C","°C","mm","mm"]
 
 # dazugehörigen, maximale Punktzahlen
-elemente_max_punkte = [6.0, 5.0, 9.0, 6.0, 4.0, 10.0, 10.0, 10.0, 10.0, 10.0,
-                       10.0, 10.0]
+#elemente_max_punkte = [6.0, 5.0, 9.0, 6.0, 4.0, 10.0, 10.0, 10.0, 10.0, 10.0,10.0, 10.0]
+elemente_max_punkte = [8, 8, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8]
 
 ## Termin
 # Freitagsdaten, die zusätzlich zu den Wochenenden, zu denen keine Archivdaten
@@ -133,7 +133,7 @@ punkteersetzung = {"MOS-T" : "DWD-MOS-Mix"}
 # beim Endtermin der letzte Freitag vor dem angegebenen Datum.
 # Wenn Endtermin den Wert "" hat, wird der aktuellste, verfügbare Termin
 # genommen
-starttermin = "01.01.2012"
+starttermin = "01.01.2023"
 #starttermin = "22.06.2001"
 #starttermin = "22.06.2014"
 #starttermin = "22.10.2016"
@@ -143,7 +143,7 @@ starttermin = "01.01.2012"
 #starttermin   = "19.6.2017"
 #endtermin   = "17.05.2019"
 #endtermin   = "04.06.2021" #TODO immer nur 20. August? Endtag inklusive
-endtermin    = "02.07.2021"
+endtermin    = "31.03.2023"
 #TODO Auto/"" Wert ist nicht korrekt?
 
 ## Auswertungstage (Auswertungszeitraum wäre irreführend, denn das ist es
@@ -169,7 +169,7 @@ auswertungstage = ["Sa", "So"]
 #auswertungsteilnehmer = mos_teilnehmer
 #auswertungsteilnehmer = ["MSwr-EZ-MOS","MSwr-GFS-MOS","MSwr-MOS-Mix"]
 #auswertungsteilnehmer = ["DWD-MOS-Mix","MSwr-MOS-Mix","Ms.Os"]
-auswertungsteilnehmer = ["MSwr-EZ-MOS","MSwr-GFS-MOS","MSwr-MOS-Mix","Ms.Os","DWD-MOS-Mix","DWD-EZ-MOS","DWD-ICON-MOS","MOS-Mix"]
+auswertungsteilnehmer = ["MSwr-EZ-MOS","MSwr-GFS-MOS","MSwr-MOS-Mix","DWD-MOS-Mix","DWD-EZ-MOS","DWD-ICON-MOS","MOS-Mix"]
 #auswertungsteilnehmer = ["MSwr-MOS-Mix"]
 #auswertungsteilnehmer = ["MSwr-EZ-MOS","MSwr-GFS-MOS","MSwr-MOS-Mix","DWD-MOS-Mix","DWD-EZ-MOS","DWD-ICON-MOS"]
 
