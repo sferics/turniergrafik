@@ -1,6 +1,9 @@
 #file types
 *.bak,*.png,*.xz,*.txt,*.npz
 
+#files
+get-pip.py
+
 #directories
 archiv
 __pycache__
