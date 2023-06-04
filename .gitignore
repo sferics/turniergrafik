@@ -1,0 +1,6 @@
+#file types
+*.bak,*.png,*.xz,*.txt,*.npz
+
+#directories
+archiv
+__pycache__
