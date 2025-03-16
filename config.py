@@ -142,9 +142,8 @@ punkteersetzung = {"MOS-Mix" : "GRP_MOS"}
 # beim Endtermin der letzte Freitag vor dem angegebenen Datum.
 # Wenn Endtermin den Wert "" hat, wird der aktuellste, verfügbare Termin
 # genommen
-starttermin = "01.01.2018"
 #starttermin = "22.06.2001"
-#starttermin = "22.06.2014"
+starttermin = "01.07.2005"
 #starttermin = "22.10.2016"
 #starttermin = "10.12.2008"
 #starttermin = "15.11.2008"
