@@ -400,11 +400,17 @@ if __name__ == "__main__":
         UserValueLists[p] = []
 
     #TODO Archiv-Ordner checken und erstellen hierher verschieben
+    
+    # Datenbankverbindung herstellen
+    db = db_read.db()
 
     # Freitags-Indizes durchgehen (+1/+2: Iteration ab 1, inklusive Ende)
     for i in range(begin+1, end+1, 7):
         
         print( index_2_date( i-1 ) )
+        if i >= 19363:
+            #TODO funktioniert nur, wenn alle Element gewaehlt wurden. Was tun bei spezifischen Elementen?
+            cfg.auswertungselemente = cfg.auswertungselemente_alt
 
         FileName = "{}/{}_{}.npz".format(cfg.archive_dir_name, 1, i)
         
@@ -412,7 +418,7 @@ if __name__ == "__main__":
         if not os.path.isfile(FileName) or os.path.getsize(FileName) == 22:
             # Erstellen und einlesen
             #ajax_print.ArchiveParse(1, i)
-            db_read.ArchiveParse(1, i)
+            db_read.ArchiveParse(db, 1, i)
 
         #Dateigroesse prüfen (Ist Turniertag)?
         if os.path.getsize(FileName) == 22:
@@ -436,7 +442,7 @@ if __name__ == "__main__":
 
                 # Erstellen und einlesen
                 #ajax_print.ArchiveParse(city_id, i)
-                db_read.ArchiveParse(city_id, i)
+                db_read.ArchiveParse(db, city_id, i)
                     #TODO Dateipfad als Eingabe
                     #TODO Datei hier schreiben
 
@@ -494,7 +500,7 @@ if __name__ == "__main__":
                                 for p in Path(cfg.archive_dir_name).glob("?_"+i+".nz"):
                                     p.unlink()
                                 break
-
+                    
                     try:
                         # Tagesmittel des Spielers an die jeweilige Liste anfuegen
                         #print(Player, "Tagesmittel")
@@ -506,7 +512,7 @@ if __name__ == "__main__":
                                             max_points_elements,
                                             eval_el_indexes) )
                         UserValueLists[Player].append( i-1 )
-
+                        
                     # der Spieler wurde fuer den Tag nicht gefunden
                     except NameError:
                         #continue

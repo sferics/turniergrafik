@@ -5,6 +5,13 @@
 ########## Grundlegende Konfiguration (i.d.R. so lassen) #####################
 ##############################################################################
 
+# database credentials
+username    = "readonly"
+password    = "WPWTr34donly"
+host        = "wetterturnier.de"
+database    = "wpwt"
+port        = 3306
+
 ## Städte
 # Alle Städte, die es beim Wetterturnier gibt:
 stadtnamen = ["Berlin", "Wien", "Zürich", "Innsbruck", "Leipzig"]
@@ -38,17 +45,17 @@ url_template \
 
 ## Elemente
 # Variablenreihenfolge(!) in den Archiv-Dateien zu Kontrollzwecken
-#elemente_archiv    = ["N", "Sd", "dd", "ff", "fx", "Wv", "Wn", "PPP", "TTm","TTn", "TTd", "RR"]
-elemente_archiv    = ["Sd1","Sd24","dd12","ff12","fx24","PPP12","Tmin","T12","Tmax","Td12","RR1","RR24"]
+elemente_archiv_alt     = ["N", "Sd", "dd", "ff", "fx", "Wv", "Wn", "PPP", "TTm","TTn", "TTd", "RR"]
+elemente_archiv         = ["Sd1","Sd24","dd12","ff12","fx24","PPP12","Tmin","T12","Tmax","Td12","RR1","RR24"]
 
 # dazugehörige Einheiten
-#elemente_einheiten = ["", "%", "grad", "kn", "kn", "", "", "hPa", "°C", "°C","°C", "mm"]
-elemente_einheiten = ["min","%","grad","m/s","m/s","hPa","°C","°C","°C","°C","mm","mm"]
+elemente_alt_einheiten  = ["", "%", "grad", "kn", "kn", "", "", "hPa", "°C", "°C","°C", "mm"]
+elemente_einheiten      = ["min","%","grad","m/s","m/s","hPa","°C","°C","°C","°C","mm","mm"]
 
 # dazugehörigen, maximale Punktzahlen
-#elemente_max_punkte = [6.0, 5.0, 9.0, 6.0, 4.0, 10.0, 10.0, 10.0, 10.0, 10.0,10.0, 10.0]
+elemente_alt_max_punkte     = [6.0, 5.0, 9.0, 6.0, 4.0, 10.0, 10.0, 10.0, 10.0, 10.0,10.0, 10.0]
 #elemente_max_punkte = [8, 8, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8]
-elemente_max_punkte = [9, 9, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9]
+elemente_max_punkte         = [9, 9, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9]
 
 ## Termin
 # Freitagsdaten, die zusätzlich zu den Wochenenden, zu denen keine Archivdaten
@@ -119,7 +126,7 @@ mos_teilnehmer = list(mos_namen_starttermine.keys())
 # zwischenzeitliche Ausfälle von MOS-Systemen sollen teilweise durch andere
 # MOS ersetzt werden. Wird hier keine Konfiguration gefunden, werden fehlende
 # Einträge durch den Mittelwert der anderen MOS ersetzt.
-punkteersetzung = {"MOS-T" : "DWD-MOS-Mix"}
+punkteersetzung = {"MOS-Mix" : "GRP_MOS"}
 
 
 ##############################################################################
@@ -135,7 +142,7 @@ punkteersetzung = {"MOS-T" : "DWD-MOS-Mix"}
 # beim Endtermin der letzte Freitag vor dem angegebenen Datum.
 # Wenn Endtermin den Wert "" hat, wird der aktuellste, verfügbare Termin
 # genommen
-starttermin = "01.01.2022"
+starttermin = "01.01.2018"
 #starttermin = "22.06.2001"
 #starttermin = "22.06.2014"
 #starttermin = "22.10.2016"
@@ -145,7 +152,7 @@ starttermin = "01.01.2022"
 #starttermin   = "19.6.2017"
 #endtermin   = "17.05.2019"
 #endtermin   = "04.06.2021" #TODO immer nur 20. August? Endtag inklusive
-endtermin    = "24.09.2024"
+endtermin    = "10.03.2025"
 #TODO Auto/"" Wert ist nicht korrekt?
 
 ## Auswertungstage (Auswertungszeitraum wäre irreführend, denn das ist es
@@ -171,7 +178,7 @@ auswertungstage = ["Sa", "So"]
 #auswertungsteilnehmer = mos_teilnehmer
 #auswertungsteilnehmer = ["MSwr-EZ-MOS","MSwr-GFS-MOS","MSwr-MOS-Mix"]
 #auswertungsteilnehmer = ["DWD-MOS-Mix","MSwr-MOS-Mix","Ms.Os"]
-auswertungsteilnehmer = ["MSwr-MOS-Mix","DWD-MOS-Mix","DWD-EZ-MOS","DWD-ICON-MOS","MOS-Mix"]
+auswertungsteilnehmer = ["MSwr-MOS-Mix","MSwr-EZ-MOS","MSwr-GFS-MOS","DWD-MOS-Mix","DWD-EZ-MOS","DWD-ICON-MOS","GRP_MOS"]
 #auswertungsteilnehmer = ["MSwr-MOS-Mix"]
 #auswertungsteilnehmer = ["MSwr-EZ-MOS","MSwr-GFS-MOS","MSwr-MOS-Mix","DWD-MOS-Mix","DWD-EZ-MOS","DWD-ICON-MOS"]
 
@@ -185,7 +192,8 @@ auswertungsteilnehmer_multi = ["Grisuji-GFS-L1-MOS","Grisuji-GFS-L2-MOS","MSwr-G
 
 ## Elemente für die Auswertung
 # mögliche Werte:
-auswertungselemente = elemente_archiv     # damit alle verwendet werden
+auswertungselemente     = elemente_archiv     # damit alle verwendet werden
+auswertungselemente_alt = elemente_archiv_alt
 #auswertungselemente = [e for e in elemente_archiv if e not in ("Wv", "Wn")]
 # auswertungselemente = ["N", "Sd"]       #  um bestimmte zu verwenden
 #auswertungselemente = ["Wv", "Wn"]
@@ -249,7 +257,7 @@ punkteersetzung_menschen = True # True oder False
 punkteersetzung_menschen_mindestprozentzahl = 50
 
 # Welcher Spieler soll zur Ersetzung verwendet werden?
-punkteersetzung_menschen_ersatzspieler = "MSwr-GFS-MOS"
+punkteersetzung_menschen_ersatzspieler = "GRP_MOS"
 
 #----------------------------------------------------------------------------#
 
