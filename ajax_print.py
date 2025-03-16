@@ -46,7 +46,7 @@ def GetDate(HtmlSrc):
     DateLine = re.compile(\
        "               Aktuelles Turnier: <b>.*?, (?P<Date>\d+.\d+.\d+)<\/b>")
     matches = DateLine.findall(HtmlSrc)
-    print(matches)
+    #print(matches)
 
     return matches[0]
 
@@ -108,7 +108,9 @@ def FindUserIDs(HtmlSrc):
 
     # Duplikate entfernen und sortieren
     UserIDs = list(set(UserIDs))
-
+    
+    #print(UserIDs)
+    
     return UserIDs
 
 
@@ -229,7 +231,7 @@ def ReadHTMLTablePoints(ResponseHTML):
                                     #TODO genau spezifizieren, wekcher Tag, 
                                     #TODO Spieler etc. den Fehler aufweist
             else:
-                raise ValueError("Die Elementelist oder ihre Reihenfolge "\
+                raise ValueError("Die Elementeliste oder ihre Reihenfolge "\
                                  "hat sich geaendert")
 
     return Name, np.array(Points)
@@ -257,19 +259,27 @@ class ArchiveParse:
                                       '?wetterturnier_city={}'\
                                       '&tdate={}'.format(self.CityShort,
                                                          TDate)
-        #DEBUG# print(self.WebAdress)
+        
+        self.ArchiveAdress = 'https://wetterturnier.de/archiv/?wetterturnier_city={}'\
+                                      '&tdate={}'.format(self.CityShort,
+                                                         TDate)
+
+        #DEBUG# 
+        #print(self.ArchiveAdress)
 
         self.WebPage = self.Session.get(self.WebAdress, stream=False)
+        self.ArchivePage = self.Session.get(self.ArchiveAdress, stream=False)
 
         # Seitenquelltext auslesen
         self.HtmlSrc = self.WebPage.text
+        self.HtmlSrcArchive = self.ArchivePage.text
 
-        print(self.HtmlSrc)
+        #print(self.HtmlSrc)
 
         """self.Date = GetDate(self.HtmlSrc)"""
 
         # UserIDs aus der HTML suchen #FIXME jedes mal? Cache? Vergleichen?
-        self.UserIDs = FindUserIDs(self.HtmlSrc)
+        self.UserIDs = FindUserIDs(self.HtmlSrcArchive)
 
         # Spieler-spezifische Tabellen (UserID ist key) #TODO jedes Mal lesen?
         self.UserTables = {}
@@ -284,7 +294,6 @@ class ArchiveParse:
         for thread in threads:
             thread.join()
 
-        """
         for UserID in self.UserIDs:
 
             # Daten beim Server anfragen
@@ -297,14 +306,15 @@ class ArchiveParse:
             try:
                 Name, Points = ReadHTMLTablePoints(ResponseHTML)
 
-            except ValueError:
+            except ValueError as e:
+                print(e)
                 continue
 
             # Eintragen in ein Dictionary {Spieler:[Punkte],..}
-            UserTables[Name] = Points
-        """
+            self.UserTables[Name] = Points
 
-        #DEBUG# print(UserTables)
+        #DEBUG#
+        #print(self.UserTables)
 
         # Name der Outputdatei
         self.OutFileName = "{}_{}".format(City, TDate)
@@ -364,8 +374,8 @@ class ArchiveParse:
             headers={
                 'Host': 'wetterturnier.de',
                 'Accept': 'application/json, text/javascript, */*; q=0.01',
-                'Referer': 'https://wetterturnier.de/wertungen/wochenendwertungen/?tdate={}'\
-                           .format(tDate)
+                'Referer': 'https://wetterturnier.de/wertungen/wochenendwertungen/?tdate={}?cityID={}'\
+                           .format(tDate, cityID)
             }
         )
 
@@ -401,8 +411,8 @@ class ArchiveParse:
             # Eintragen in ein Dictionary {Spieler:[Punkte],..}
             self.UserTables[Name] = Points
 
-        except ValueError:
-            pass
+        except ValueError as e:
+            print(e)
 
 
 

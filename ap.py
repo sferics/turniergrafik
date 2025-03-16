@@ -177,10 +177,14 @@ def short_term_mean(points, dates, mean_weaks, max_nan_ratio, cities=5):
             mean = np.nan
 
         # i*7, da in Wochen gezaehlt wurde und Tage gesucht sind
-        #date = end_date - i*7
+        date = max(dates) - i*7
 
         # Datum fuer Mittelungszeitraum aus Liste ausschneiden
-        date = dates[- (cities*i)]
+        print(dates)
+        print(len(dates))
+        print(cities, i)
+        print(cities*i)
+        #date = dates[- (cities*i)]
 
         mean_date_list.append((date, mean))
 
@@ -397,13 +401,13 @@ if __name__ == "__main__":
 
     # Freitags-Indizes durchgehen (+1/+2: Iteration ab 1, inklusive Ende)
     for i in range(begin+1, end+1, 7):
-
+        
         print( index_2_date( i-1 ) )
 
         FileName = "{}/{}_{}.npz".format(cfg.archive_dir_name, 1, i)
         
         # erstelle die Datei, wenn die sie noch nicht angelegt wurde
-        if not os.path.isfile(FileName):
+        if not os.path.isfile(FileName) or os.path.getsize(FileName) == 22:
             # Erstellen und einlesen
             ajax_print.ArchiveParse(1, i)
         
@@ -436,7 +440,7 @@ if __name__ == "__main__":
             npzfile = np.load(FileName)
             
             missing = 0
-
+            
             for Player in cfg.auswertungsteilnehmer:
 
                 # Starttermin des Spielers auslesen
@@ -464,8 +468,8 @@ if __name__ == "__main__":
                         try:
                             
                             alternative_name = cfg.teilnehmerumbenennung[Player]
-                            print("%s nicht gefunden! Alternativer Name: %s"
-                                  % (Player, alternative_name) )
+                            #print("%s nicht gefunden! Alternativer Name: %s"
+                            #      % (Player, alternative_name) )
                             # Punkte des Spielers aus Datei einlesen
                             player_point_list = npzfile[alternative_name]
 
@@ -481,7 +485,12 @@ if __name__ == "__main__":
                             except KeyError:
                                 missing += 1
                                 player_point_list = [np.nan] * 24
-                                sys.exit("%s nicht gefunden - kein Ersatz!" % Player)
+                                #sys.exit("%s nicht gefunden - kein Ersatz!" % Player)
+                                # delete all files of this tdate
+                                from pathlib import Path
+                                for p in Path(cfg.archive_dir_name).glob("?_"+i+".nz"):
+                                    p.unlink()
+                                break
 
                     try:
                         # Tagesmittel des Spielers an die jeweilige Liste anfuegen
