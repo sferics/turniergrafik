@@ -215,8 +215,10 @@ def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
     # geht in Schritten mit der definierten Zeitspannengroesse durch die Tage
 
     if mean_time_span == "a":
-        pass
-        #TODO count weeks in year    
+        
+        # calculate the average number of weeks in all years from number of dates and cities
+        # and set it as mean_time_span. This is done to get the same number of weeks for all years
+        mean_time_span = int( len(dates) / cities / 52 ) #FIXME
 
     for i in range(0, len(points)+1, mean_time_span ):
         
@@ -231,11 +233,11 @@ def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
         # gib Nan als Summe aus, wenn ein bestimmter Prozentsatz
         # (cfg.anteil_datenverfuegbarkeit) an NaNs ueberschritten wurde
         if (np.isnan(points_span).sum() / mean_time_span) < max_nan_ratio:
-
             # bilde mittelwert (arithmetisch) ohne NaNs
             mean = np.nanmean(points_span)
 
         else:
+            # wenn der Prozentsatz an NaNs ueberschritten wurde, gib Nan aus
             mean = np.nan
 
         # 7*x, da in Wochen gezaehlt wurde und Tage gesucht sind
@@ -243,7 +245,7 @@ def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
         
         # Datum fuer Mittelungszeitraum aus Liste ausschneiden
         print(mean_time_span)
-        end_date = dates[ cities * ii * mean_time_span ]
+        end_date = dates[ cities * (ii+1) * mean_time_span ]
         print( "end_date", end_date )
         ii += 1
 
@@ -468,15 +470,13 @@ if __name__ == "__main__":
 
                     # versuche den Spieler fuer den Tag auszulesen
                     try:
-
                         # Punkte des Spielers aus Datei einlesen
                         player_point_list = npzfile[Player]
-
+                        
                     # der Spieler wurde fuer den Tag nicht gefunden
                     except KeyError:
                         # alternativen Namen probieren
-                        try:
-                            
+                        try: 
                             alternative_name = cfg.teilnehmerumbenennung[Player]
                             #print("%s nicht gefunden! Alternativer Name: %s"
                             #      % (Player, alternative_name) )
@@ -485,22 +485,43 @@ if __name__ == "__main__":
 
                         # eine leere Liste vom naechsten try mit 'NameError'
                         # abgefangen
-                        except KeyError:
+                        except (KeyError, ValueError):
                             #Ersatzspieler
                             try:
                                 ersatz_name = cfg.punkteersetzung_menschen_ersatzspieler
                                 player_point_list = npzfile[ersatz_name]
                             
-                            except KeyError:
+                            except (KeyError, ValueError):
                                 missing += 1
                                 player_point_list = [np.nan] * 24
                                 #sys.exit("%s nicht gefunden - kein Ersatz!" % Player)
+                                
+                                # add NaN to list
+                                UserValueLists[Player].append( np.nan )
+                                UserValueLists[Player].append( i-1 )
+
                                 # delete all files of this tdate
                                 from pathlib import Path
-                                for p in Path(cfg.archive_dir_name).glob("?_"+i+".nz"):
+                                for p in Path(cfg.archive_dir_name).glob(f"?_{i}.nz"):
                                     p.unlink()
-                                break
-                    
+                                continue
+                    except Exception as e:
+                        print(e)
+                        import traceback
+                        traceback.print_exc()
+                        print(FileName)
+                        missing += 1
+                        player_point_list = [np.nan] * 24
+                        #sys.exit("%s nicht gefunden - kein Ersatz!" % Player)
+                        # add NaN to list
+                        UserValueLists[Player].append( np.nan )
+                        UserValueLists[Player].append( i-1 )
+
+                        # delete all files of this tdate
+                        from pathlib import Path
+                        for p in Path(cfg.archive_dir_name).glob("?_{i}.nz"):
+                            p.unlink()
+                        continue
                     try:
                         # Tagesmittel des Spielers an die jeweilige Liste anfuegen
                         #print(Player, "Tagesmittel")

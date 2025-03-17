@@ -90,11 +90,9 @@ teilnehmerumbenennung = {"MM-UKMO-MOS": "Eugenia",
                          "DWD-MOS-Mix": "DWD-MOSMixEZGME",#{"DWD-MOSMix(EZ+GME)","DWD-MOSMixEZGME"}
                          "MSwr-GFS-MOS": "MeteoService-GFS-MOS",
                          "MSwr-MOS-Mix": "MSwr-MOSMixGFSHIR", #{"MSwr-MOSMix(GFS+HIR)","MSwr-MOSMixGFSHIR"},
-                         "MOS-Mix" : "GRP_MOS"                      
+                         "MOS-Mix" : "GRP_MOS"
 }
-"""
-teilnehmerumbenennung = { "MOS-Mix" : "GRP_MOS" }
-"""
+
 # laut Papierliste => "MOS-T" : "DWD-MOS-T" – das stimmt gar nicht oder?
 
 ## Teilnehmerstartzeitpunkte
@@ -143,15 +141,17 @@ punkteersetzung = {"MOS-Mix" : "GRP_MOS"}
 # Wenn Endtermin den Wert "" hat, wird der aktuellste, verfügbare Termin
 # genommen
 #starttermin = "22.06.2001"
-starttermin = "01.07.2005"
+#starttermin = "01.07.2005"
 #starttermin = "22.10.2016"
 #starttermin = "10.12.2008"
 #starttermin = "15.11.2008"
+starttermin  = "19.06.2015"
+#starttermin  = "01.09.2016"
 #starttermin = "19.9.2016"
 #starttermin   = "19.6.2017"
 #endtermin   = "17.05.2019"
-#endtermin   = "04.06.2021" #TODO immer nur 20. August? Endtag inklusive
-endtermin    = "10.03.2025"
+#starttermin   = "04.06.2021" #TODO immer nur 20. August? Endtag inklusive
+endtermin    = "15.03.2025"
 #TODO Auto/"" Wert ist nicht korrekt?
 
 ## Auswertungstage (Auswertungszeitraum wäre irreführend, denn das ist es
@@ -177,7 +177,7 @@ auswertungstage = ["Sa", "So"]
 #auswertungsteilnehmer = mos_teilnehmer
 #auswertungsteilnehmer = ["MSwr-EZ-MOS","MSwr-GFS-MOS","MSwr-MOS-Mix"]
 #auswertungsteilnehmer = ["DWD-MOS-Mix","MSwr-MOS-Mix","Ms.Os"]
-auswertungsteilnehmer = ["MSwr-MOS-Mix","MSwr-EZ-MOS","MSwr-GFS-MOS","DWD-MOS-Mix","DWD-EZ-MOS","DWD-ICON-MOS","GRP_MOS"]
+auswertungsteilnehmer = ["MSwr-MOS-Mix","MSwr-EZ-MOS","MSwr-GFS-MOS","DWD-MOS-Mix","DWD-EZ-MOS","DWD-ICON-MOS","MOS-Mix"]
 #auswertungsteilnehmer = ["MSwr-MOS-Mix"]
 #auswertungsteilnehmer = ["MSwr-EZ-MOS","MSwr-GFS-MOS","MSwr-MOS-Mix","DWD-MOS-Mix","DWD-EZ-MOS","DWD-ICON-MOS"]
 
@@ -237,7 +237,7 @@ mittelungszeitspannen = [50, 20, 10, 5, 2, 1]
 # Wenn beispielsweise über 4 Wochen gemittelt werden soll, wie viele Daten
 # müssen für diesen Zeitraum mindestens vorhanden sein, sodass die Daten
 # gemittelt angezeigt werden sollen? (dimensionslos: [0-1])
-anteil_datenverfuegbarkeit = 0.4
+anteil_datenverfuegbarkeit = 0.2
 
 # Wie viel Prozent der Daten müssen für die Kurzfristgrafik (also die rechte
 # Teilgrafik) vorhanden sein? (dimensionslos: [0-1])
@@ -255,8 +255,8 @@ punkteersetzung_menschen = True # True oder False
 # mitgetippt haben, damit die Punkte ersetzt werden?
 punkteersetzung_menschen_mindestprozentzahl = 50
 
-# Welcher Spieler soll zur Ersetzung verwendet werden?
-punkteersetzung_menschen_ersatzspieler = "GRP_MOS"
+# Welche Spieler sollen zur Ersetzung verwendet werden?
+punkteersetzung_menschen_ersatzspieler = ["GRP_MOS", "MOS-Mix"]
 
 #----------------------------------------------------------------------------#
 
@@ -287,7 +287,7 @@ beschriftungen = {"en" : {"titel": "MOS AUTOMATS COMPARISON",
 ## Anzahl der Spalten in der Legende der Grafik
 # Je nach Anzahl der Auswertungsteilnehmer möchte man mit der Spaltenanzahl
 # herumspielen. 5 scheint ein guter Mittelweg zu sein.
-grafik_spaltenanzahl = 5
+grafik_spaltenanzahl = 4
 
 
 ## Hervorzuhebende Teilnehmer

@@ -104,7 +104,10 @@ class db:
         # Cursor-Objekt erstellen
         self.cur = self.con.cursor()
         
-        self.user_ids  = self.get_user_ids(cfg.auswertungsteilnehmer + [cfg.punkteersetzung_menschen_ersatzspieler])
+        users = set(cfg.auswertungsteilnehmer) | set(cfg.punkteersetzung_menschen_ersatzspieler) | set(cfg.teilnehmerumbenennung.values())
+
+        self.user_ids  = self.get_user_ids(users)
+         
         # Usernamen und User-IDs vertauschen https://stackoverflow.com/questions/483666/reverse-invert-a-dictionary-mapping
         self.user_names = dict((v, k) for k, v in self.user_ids.items())
 
@@ -124,7 +127,10 @@ class db:
         for username in usernames:
             sql = f"SELECT id FROM `wp_users` WHERE user_login = '{username}' OR display_name = '{username}'"
             self.cur.execute(sql)
-            user_ids[username] = self.cur.fetchone()[0]
+            try:
+                user_ids[username] = self.cur.fetchone()[0]
+            except:
+                continue
         return user_ids
 
 

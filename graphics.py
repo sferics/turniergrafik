@@ -146,6 +146,7 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
     locale.setlocale(locale.LC_ALL, 'en_US.utf8')
 
     fig = plt.figure(figsize=(11.69,8.27))
+    
     gs = matplotlib.gridspec.GridSpec(1, 2, width_ratios=[7, 4])
     gs.update(wspace=0.12)
 
@@ -241,19 +242,20 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
 
             ascii_datei_spielernamen_punkteverlust[plotname][label_name] \
                 = punkteverluste_plot
+            
 
             # Spezialfall, dass im linken Plot genug Daten für den neuesten
             # Zeitpunkt vorhanden sind, aber nicht für ältere Zeitpunkte
             # in dem Fall soll beim linken Plot beim aktuellsten Zeitpunkt ein
             # waagerechter Strich angezeigt werden, um die Performance zu dem
-            #Zeitpunkt anzuzeigen normalerweise würde diese Daten nicht
+            # Zeitpunkt anzuzeigen normalerweise würde diese Daten nicht
             # angezeigt werden, da für einen Strich logischerweise die Daten
             # zu zwei Zeitpunkten notwendig wären
             if plotname == "linker_plot" and \
                     punkteverluste_plot.count(np.nan) \
                     == len(punkteverluste_plot) - 1:
 
-                # Warum zwei mal der Plot Befehl?
+                # Warum zweimal der Plot Befehl?
                 # Der erste sorgt dafür, dass in der Legende der Strich für
                 # das Modell angezeigt wird und nicht der Marker, der zweite
                 # plottet den Marker (nicht sehr schön, aber funktioniert
@@ -295,7 +297,25 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
         multialignment='center',
         fontsize = 'large',
         fontweight='bold')
+    
+    # set yscale to asinh function
+    #plots["linker_plot"].set_yscale('asinh')
+    #plots["rechter_plot"].set_yscale('asinh')
+    
+    power = lambda x, y=10e10 : x**y
 
+    def inverse_power(x, y=10e10):
+        res = []
+        for i in x:
+            if i < 0:
+                res.append(-(-i)**(1/y))
+            else:
+                res.append(i**(1/y))
+        return np.array(res)
+
+    plots["linker_plot"].set_yscale('function', functions=(inverse_power, power))
+    #plots["rechter_plot"].set_yscale('function', functions=(inverse_power_6, power_6))
+    
     plots["rechter_plot"].set_xlim(1/7, x_ende_zeitstempel["rechter_plot"])
 
     plots["rechter_plot"].yaxis.set_label_position("right")
@@ -305,7 +325,7 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
         fontsize = 'large',
         fontweight='bold')
 
-    
+    """
     if abs(ymax["linker_plot"] - ymax["rechter_plot"])\
            + abs(ymin["linker_plot"] - ymin["rechter_plot"])\
            < skalenfaktor * (ymax["linker_plot"] - ymin["linker_plot"]):
@@ -317,7 +337,7 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
         plots["rechter_plot"].set_ylim(
             min(ymin["linker_plot"],ymin["rechter_plot"]),
             max(ymax["linker_plot"],ymax["rechter_plot"]))
-    
+    """
 
     for plotname, plot in plots.items():
         plot.set_xticks(x[plotname])
@@ -374,19 +394,23 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
         staedte_plot += stadtname(stadt)+", "
 
     elemente_plot = ""
-    for element in auswertungselemente:
-        elemente_plot += element+", "
+    
+    if len(auswertungselemente) == len(cfg.elemente_archiv):
+        elemente_plot = "all"
+    else:
+        for element in auswertungselemente:
+            elemente_plot += element+", "
 
     if sprache == "en":
         plt.figtext(.01,.01,
                     "Averaged over – Days: {} – Cities: {} – Elements: {}"\
                     .format(auswertungstage_plot[:-2], staedte_plot[:-2],
-                    elemente_plot[:-2]), fontsize=11)
+                    elemente_plot), fontsize=11)
     else:
         plt.figtext(.01,.01,
                     "Gemittelt über – Tage: {} – Städte: {} – Elemente: {}"\
                     .format(auswertungstage_plot[:-2], staedte_plot[:-2],
-                    elemente_plot[:-2]), fontsize=11)
+                    elemente_plot), fontsize=11)
 
     ### Speichervorgang ###
     dateiname_plot = gibDateinamen(cfg=cfg)
