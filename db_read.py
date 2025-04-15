@@ -238,8 +238,8 @@ if __name__ == "__main__":
     #Test = ArchiveParse(1, 17998)
     
     #------------------------------------------------------------------------#
-    #print ("Benoetigte Laufzeit fuer ajax_print: {0} Sekunden"\
-    #       .format(time.time() - startTime))
+    print ("Benoetigte Laufzeit fuer db_read: {0} Sekunden"\
+           .format(time.time() - startTime))
     #------------------------------------------------------------------------#
 
     npzfile = np.load(Test.OutFilePath + ".npz")
