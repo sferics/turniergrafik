@@ -172,14 +172,7 @@ auswertungstage = ["Sa", "So"]
 # in der Einstellung "linieneigenschaften" unten in der config, müssen manuell hinzugefügte Teilnehmer
 # auch Farben und Linieneigenschaften zugewiesen bekommen
 
-#auswertungsteilnehmer = ["Georg", "Moses", "Petrus"]
-#auswertungsteilnehmer = ["Schneegewitter", "Pfingstochse", "Moses", "Petrus"]
-#auswertungsteilnehmer = mos_teilnehmer
-#auswertungsteilnehmer = ["MSwr-EZ-MOS","MSwr-GFS-MOS","MSwr-MOS-Mix"]
-#auswertungsteilnehmer = ["DWD-MOS-Mix","MSwr-MOS-Mix","Ms.Os"]
 auswertungsteilnehmer = ["MSwr-MOS-Mix","MSwr-EZ-MOS","MSwr-GFS-MOS","DWD-MOS-Mix","DWD-EZ-MOS","DWD-ICON-MOS","MOS-Mix"]
-#auswertungsteilnehmer = ["MSwr-MOS-Mix"]
-#auswertungsteilnehmer = ["MSwr-EZ-MOS","MSwr-GFS-MOS","MSwr-MOS-Mix","DWD-MOS-Mix","DWD-EZ-MOS","DWD-ICON-MOS"]
 
 # fuer mehrere Grafiken mit unterschiedlichen Teilnehmern
 auswertungsteilnehmer_multi = ["Grisuji-GFS-L1-MOS","Grisuji-GFS-L2-MOS","MSwr-GFS-MOS"], #mos_teilnehmer,#["MM-EZ-MOS","MSwr-EZ-MOS"]#,['Grisuji-GFS-L1-MOS','Grisuji-GFS-L2-MOS']
@@ -207,13 +200,8 @@ auswertungselemente_alt = elemente_archiv_alt
 # Einfach in der Liste als Strings auflisten
 # Beispiel:
 auswertungsstaedte = stadtnamen
-#auswertungsstaedte = ["Zürich"]
-#auswertungsstaedte = ["Berlin", "Wien", "Innsbruck", "Leipzig"]
-#auswertungsstaedte = ["Berlin", "Leipzig", "Wien", "Zürich"]
-#auswertungsstaedte = ["Leipzig"]
-#auswertungsstaedte = ["Berlin"]
-#auswertungsstaedte = ["Wien"]
-#auswertungsstaedte = ["Innsbruck"]
+#auswertungsstaedte = ["Berlin", "Leipzig"]
+#auswertungsstaedte = ["Innsbruck", "Wien", "Zürich"]
 
 
 ## Auswertungsmittelung in Wochen
@@ -256,7 +244,7 @@ punkteersetzung_menschen = True # True oder False
 punkteersetzung_menschen_mindestprozentzahl = 50
 
 # Welche Spieler sollen zur Ersetzung verwendet werden?
-punkteersetzung_menschen_ersatzspieler = ["GRP_MOS", "MOS-Mix"]
+punkteersetzung_menschen_ersatzspieler = ("GRP_MOS", "MOS-Mix")
 
 #----------------------------------------------------------------------------#
 
@@ -286,7 +274,7 @@ beschriftungen = {"en" : {"titel": "MOS AUTOMATS COMPARISON",
 
 ## Anzahl der Spalten in der Legende der Grafik
 # Je nach Anzahl der Auswertungsteilnehmer möchte man mit der Spaltenanzahl
-# herumspielen. 5 scheint ein guter Mittelweg zu sein.
+# herumspielen. 4 oder 5 scheint ein guter Mittelweg zu sein.
 grafik_spaltenanzahl = 4
 
 

@@ -351,6 +351,8 @@ def city_to_id(city):
 
 if __name__ == "__main__":
 
+    faulty_dates = set()
+
     from argparse import ArgumentParser as ap
 
     # Parse command line arguments
@@ -475,6 +477,7 @@ if __name__ == "__main__":
                         
                     # der Spieler wurde fuer den Tag nicht gefunden
                     except KeyError:
+                        faulty_dates.add(i)
                         # alternativen Namen probieren
                         try: 
                             alternative_name = cfg.teilnehmerumbenennung[Player]
@@ -486,6 +489,7 @@ if __name__ == "__main__":
                         # eine leere Liste vom naechsten try mit 'NameError'
                         # abgefangen
                         except (KeyError, ValueError):
+                            faulty_dates.add(i)
                             #Ersatzspieler
                             try:
                                 ersatz_name = cfg.punkteersetzung_menschen_ersatzspieler
@@ -506,7 +510,7 @@ if __name__ == "__main__":
                                     p.unlink()
                                 continue
                     except Exception as e:
-                        print(e)
+                        faulty_dates.add(i)
                         import traceback
                         traceback.print_exc()
                         print(FileName)
@@ -536,6 +540,7 @@ if __name__ == "__main__":
                         
                     # der Spieler wurde fuer den Tag nicht gefunden
                     except NameError:
+                        faulty_dates.add(i)
                         #continue
                         UserValueLists[Player].append( np.nan )
                         UserValueLists[Player].append( i-1 )
@@ -660,3 +665,6 @@ if __name__ == "__main__":
     
     #print("Turniere mit fehlenden Spielern")
     #print( missing_list )
+
+    print("Turniertage mit fehlenden Spielern")
+    print(faulty_dates)
