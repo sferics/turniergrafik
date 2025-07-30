@@ -21,15 +21,16 @@ from matplotlib.cbook import get_sample_data
 
 # Ermöglicht das Wechseln der Ordner
 import os
-
+# Ermöglicht das Einlesen von Dateien
 import sys
-
+# Ermöglicht das Sortieren von Listen
 from operator import itemgetter
 
 # replace ajax_print by db_read
 #import ajax_print
 import db_read
 import graphics
+# Ermöglicht das Einlesen von Konfigurationsdateien
 import config as cfg
 
 #----------------------------------------------------------------------------#
@@ -42,7 +43,6 @@ missing_list = []
 #----------------------------------------------------------------------------#
 
 def date_2_index(input_date):
-
     """
     Tag-Index (der wievielte Tag, seit dem 02.01.1970) aus einem gegebenen
     Datum berechnen    
@@ -51,12 +51,12 @@ def date_2_index(input_date):
     Tag 8:     Freitag, 09.01.1970
     Tag 17837: Freitag, 02.11.2018
     """
-
+    # wenn ein Datum eingegeben wurde, konvertiere es in ein datetime-Objekt
     if not input_date == "":
-
+        
         # datetime-objekt wird in date-obj. umgewandelt
         day_x = dt.strptime(input_date, "%d.%m.%Y").date()
-
+        
     # wenn das Datum leer gelassen wurde, nimm das aktuelle Datum
     else:
         day_x = dt.now().date()
@@ -70,43 +70,42 @@ def date_2_index(input_date):
             # vier Tage abziehen um auf jeden Fall vor dem Freitag zu landen
             day_x -= timedelta(days = 4)
 
+    # Tag 1 ist der 02.01.1970, der erste Freitag im Unix-Zeit-Kalender
     day_1 = date(1970, 1, 2)
 
     # pruefen, ob das Datum zu frueh angesetzt wurde
     if day_x > day_1:
-
+        # Anzahl der Tage zwischen dem 02.01.1970 und dem eingegebenen Datum
         days_delta = day_x - day_1 #FIXME ?? + timedelta(days = 1)
-
+        # Anzahl der Tage als Integer zurueckgeben
         return days_delta.days
-
+    # wenn der Tag vor dem 02.01.1970 liegt, ist das Datum nicht valide
     else:
         raise ValueError("Der Starttermin ist nicht valide.")
 
 
 def index_2_date(input_index):
-
     """
     Datum aus dem Tagesindex (der wievielte Tag, seit dem 02.01.1970)
     berechnen (Beispiele -> siehe date_2_index())
     """
-
+    # wenn der Tagesindex groesser als 0 ist, kann das Datum berechnet werden
     if input_index > 0:
 
         # zur Berechnung des Datums muss nur der Tagesindex bzw. die Anzahl an
         # Tagen seit dem 02.01.1970 auf eben dieses Datum addiert werden
         return date(1970, 1, 2) + timedelta(days = input_index)
-
+    # wenn der Tagesindex kleiner oder gleich 0 ist, ist das Datum nicht valide
     else:
         raise ValueError("Der Tagesindex ist nicht korrekt.")
 
 
 def get_friday_range(begin, end):
-
     """
     bestimmt die Grenzen der zu bearbeitenden Freitags-Indizes
     (der wievielte Tag, seit dem 02.01.1970 etc. ..)
     """
-
+    # wenn der Start- und Endtag groesser als 0 sind
     if begin > 0 and end > begin:
 
         # rundet den Starttag auf den naechsten Freitag auf
@@ -119,13 +118,11 @@ def get_friday_range(begin, end):
         # end+1, da range exklusive dem Ende zaehlt
         #return begin+1, end+1
         return begin, end
-
+    # wenn der Start- oder Endtag kleiner oder gleich 0 ist, ist das Datum nicht valide
     else:
-
         raise ValueError("Der Start- oder End-Wert sind fehlerhaft.")
 
 #FIXME
-'''
 def old_2_new_players(players, rename_dict):
 
     """
@@ -141,10 +138,9 @@ def old_2_new_players(players, rename_dict):
 
     # Doppelte Spieler entfernen und als Tupel zurueckgeben
     return tuple(set(players))
-'''#FIXME
+#FIXME
 
 def short_term_mean(points, dates, mean_weaks, max_nan_ratio, cities=5):
-
     """
     berechnet aus einer Liste von Punktzahlen, die (arithmetischen)
     Mittelwerte ueber gewaehlte Zeitspannen am Ende der Liste
@@ -155,12 +151,11 @@ def short_term_mean(points, dates, mean_weaks, max_nan_ratio, cities=5):
 
     Rueckgabe: [(<Tagesindex(Ende jeder Zeitspanne)>,<Punkteverlust>)]
     """
-
+    # Liste der Mittelungszeitspannen
     mean_date_list = []
     #print( "points", points )
     #print( "dates", dates )
     #print( "mean_weaks", mean_weaks )
-
     for i in mean_weaks:
     
         # "schneidet" immer bestimmt grosse Stuecke heraus
@@ -174,7 +169,7 @@ def short_term_mean(points, dates, mean_weaks, max_nan_ratio, cities=5):
 
             # bilde mittelwert (arithmetisch) ohne NaNs
             mean = np.nanmean(points_span)
-
+        # wenn der Anteil an NaNs zu hoch ist, gib Nan als Mittelwert aus
         else:
             mean = np.nan
 
@@ -187,15 +182,14 @@ def short_term_mean(points, dates, mean_weaks, max_nan_ratio, cities=5):
         print(cities, i)
         print(cities*i)
         #date = dates[- (cities*i)]
-
+        
         mean_date_list.append((date, mean))
-
+    
     print(len(mean_date_list))
     return mean_date_list
 
 
 def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
-
     """
     berechnet aus einer Liste von Punktzahlen, die (arithmetischen)
     Mittelwerte ueber eine gewaehlte Zeitspanne, welche die Liste in
@@ -208,18 +202,19 @@ def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
 
     Rueckgabe: [(<Tagesindex(Ende jeder Zeitspanne)>,<Punkteverlust>)]
     """
-
+    
+    # Liste der Mittelungszeitspannen
     long_term_means = []
     ii = 0
 
     # geht in Schritten mit der definierten Zeitspannengroesse durch die Tage
-
+    # (z.B. 7 fuer eine Woche, 14 fuer zwei Wochen, 30 fuer einen Monat)
     if mean_time_span == "a":
         pass
         #TODO count weeks in year    
-
+    
     for i in range(0, len(points)+1, mean_time_span ):
-        
+            
         # "schneidet" immer gleich grosse Stuecke heraus
         points_span = points[i:i+mean_time_span]
 
@@ -234,7 +229,7 @@ def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
 
             # bilde mittelwert (arithmetisch) ohne NaNs
             mean = np.nanmean(points_span)
-
+        # wenn der Anteil an NaNs zu hoch ist, gib Nan als Mittelwert aus
         else:
             mean = np.nan
 
@@ -246,9 +241,9 @@ def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
         end_date = dates[ cities * ii * mean_time_span ]
         print( "end_date", end_date )
         ii += 1
-
+        
         long_term_means.append( (end_date, mean) )
-
+    
     return long_term_means
 
 
@@ -258,7 +253,6 @@ def get_player_mean(pointlist,
                     elemente_archiv,
                     elemente_max_punkte,
                     eval_indexes):
-
     """
     Berechnet das Tagesmittel eines einzelnen Spielers fuer einen gewaehlten
     Turniertag oder fuer das ganze Wochenende. Gibt NaN zurueck, falls der
@@ -327,51 +321,77 @@ def get_player_mean(pointlist,
     # Durchschnittlich verlorene Punkte berechnen (ohne NaNs)
     
     #print( "MEAN:", np.round( np.nanmean(PointsLost),1 ) )
-
+    #print( "PointsLost:", np.round(PointsLost,1) )
     return np.nanmean(PointsLost)
 
-
+#----------------------------------------------------------------------------#
+# Konfigurationen laden
 kuerzel = cfg.id_zu_kuerzel.values()
 ids     = cfg.id_zu_kuerzel.keys()
 kuerzel_zu_id = {}
+
+# Konvertiere die Abkuerzungen in IDs
 for k, i in zip(kuerzel, ids):
     kuerzel_zu_id[k] = i
 
 
 def city_to_id(city):
-    
+    """
+    Konvertiert eine Stadt in eine ID, die in der Datenbank verwendet wird.
+    Wenn eine ID (int) uebergeben wird, wird sie direkt zurueckgegeben.
+    Wenn eine Abkuerzung (3 Buchstaben) uebergeben wird, wird die ID aus dem
+    kuerzel_zu_id-Dictionary geholt.
+    Wenn eine Stadt (String) uebergeben wird, wird die ID aus der
+    cfg.stadt_zu_id-Liste geholt.
+    """
+    # wenn eine ID uebergeben wurde, gib sie direkt zurueck
     try: return int(city)
+    # wenn eine Abkuerzung uebergeben wurde, gib die ID aus dem Dictionary
     except ValueError:
+        # wenn die Abkuerzung in kuerzel_zu_id vorhanden ist, gib die ID zurueck
         if len(city) == 3:
-            return kuerzel_zu_id[city]
+            if city in kuerzel_zu_id:
+                return kuerzel_zu_id[city]
+        # wenn die Abkuerzung nicht in kuerzel_zu_id vorhanden ist, gib stadt_zu_id zurueck
         else: return cfg.stadt_zu_id[city]
 
 
 if __name__ == "__main__":
-
+    """
+    Hauptprogramm, welches die Auswertung durchfuehrt.
+    """
+    # Importiere die Konfiguration
     from argparse import ArgumentParser as ap
-
+    
     # Parse command line arguments
     ps = ap()
     ps.add_argument("-v", "--verbose", help="increase output verbosity",
                         action="store_true")
     options = ("params", "cities", "days", "times", "users")
+    # Optionen, die in der Konfiguration gesetzt werden koennen
     for option in options:
+        # Argumente mit dem Namen der Option, die in der Konfiguration gesetzt
         ps.add_argument("-"+option[0], "--"+option, type=str, help="Set "+option)
+    # Verarbeite die Argumente
     args = ps.parse_args()
-
+    
+    # Wenn verbose gesetzt wurde, wird die Ausgabe erweitert
     if args.verbose:
         verbose = True
-
+    
+    # TODO Umschreiben ohne exec und eval (ist unsicher und langsam)
     for option in options:
+        # versuche die Option aus den Argumenten zu lesen
         try: exec( option + "=" + "args." + option + ".split(',')" )
+        # wenn die Option nicht gesetzt wurde, wird sie auf None gesetzt
         except: exec(option + "=" + "None")
+        # wenn die Option nicht gesetzt wurde, wird sie auf None gesetzt
         print( eval(option), type(eval(option)) )
 
     # Anfangs- und Endtermin zum jeweiligen Tagesindex konvertieren
     begin, end = get_friday_range(date_2_index(cfg.starttermin),
                                   date_2_index(cfg.endtermin))
-
+    #print("Begin:", begin, "End:", end)
     cfg.auswertungselemente   = params if params else cfg.auswertungselemente
     print(cfg.auswertungselemente)
 
@@ -379,7 +399,7 @@ if __name__ == "__main__":
     try:
         eval_el_indexes = [cfg.elemente_archiv.index(s)
                            for s in cfg.auswertungselemente]
-
+    # wenn die Auswertungselemente nicht in der Elementeliste vorhanden sind
     except ValueError:
         print("Die Auswertungselemente sind nicht valide bzw. nicht "\
               "oder nur teilweise in der Elementeliste vorhanden")
@@ -396,6 +416,7 @@ if __name__ == "__main__":
 
     # Dictionary von Teilnehmern und dazugehoerige Punktelisten initialisieren
     UserValueLists = {}
+    # Teilnehmernamen in UserValueLists als Keys anlegen
     for p in cfg.auswertungsteilnehmer:
         UserValueLists[p] = []
 
@@ -403,9 +424,9 @@ if __name__ == "__main__":
 
     # Freitags-Indizes durchgehen (+1/+2: Iteration ab 1, inklusive Ende)
     for i in range(begin+1, end+1, 7):
-        
+        # Ausgabe des aktuellen Tages
         print( index_2_date( i-1 ) )
-
+        # Dateiname der Datei, die den Tagesmittelwert des Spielers enthaelt
         FileName = "{}/{}_{}.npz".format(cfg.archive_dir_name, 1, i)
         
         # erstelle die Datei, wenn die sie noch nicht angelegt wurde
@@ -418,7 +439,7 @@ if __name__ == "__main__":
         if os.path.getsize(FileName) == 22:
             print("Kein Turniertag!")
             continue
-
+        
         for city in cfg.auswertungsstaedte:
 
             # Stadt in ID konvertieren
@@ -428,7 +449,7 @@ if __name__ == "__main__":
             # (wird fuer jede Stadt einmal neu berechnet)
             zu_ignorierende_tage = \
                 [date_2_index(s) for s in cfg.zu_ignorierende_termine[city_id]]
-
+            # Dateiname der Datei, die den Tagesmittelwert des Spielers enthaelt
             FileName = "{}/{}_{}.npz".format(cfg.archive_dir_name, city_id, i)
 
             # erstelle die Datei, wenn die sie noch nicht angelegt wurde
@@ -442,7 +463,6 @@ if __name__ == "__main__":
 
             # Datei einlesen
             npzfile = np.load(FileName)
-            
             missing = 0
             
             for Player in cfg.auswertungsteilnehmer:
@@ -450,6 +470,7 @@ if __name__ == "__main__":
                 # Starttermin des Spielers auslesen
                 try:
                     start_date = date_2_index(cfg.mos_namen_starttermine[Player])
+                # wenn der Spieler keinen Starttermin hat, wird der Index 0
                 except KeyError:
                     start_date = 0
 
@@ -462,7 +483,6 @@ if __name__ == "__main__":
 
                     # versuche den Spieler fuer den Tag auszulesen
                     try:
-
                         # Punkte des Spielers aus Datei einlesen
                         player_point_list = npzfile[Player]
 
@@ -470,7 +490,7 @@ if __name__ == "__main__":
                     except KeyError:
                         # alternativen Namen probieren
                         try:
-                            
+                            # wenn der Spieler umbenannt wurde, wird der alternative Name genommen
                             alternative_name = cfg.teilnehmerumbenennung[Player]
                             #print("%s nicht gefunden! Alternativer Name: %s"
                             #      % (Player, alternative_name) )
@@ -484,7 +504,7 @@ if __name__ == "__main__":
                             try:
                                 ersatz_name = cfg.punkteersetzung_menschen_ersatzspieler
                                 player_point_list = npzfile[ersatz_name]
-                            
+                            # wenn der Ersatzspieler auch nicht gefunden wurde
                             except KeyError:
                                 missing += 1
                                 player_point_list = [np.nan] * 24
@@ -494,7 +514,7 @@ if __name__ == "__main__":
                                 for p in Path(cfg.archive_dir_name).glob("?_"+i+".nz"):
                                     p.unlink()
                                 break
-
+                    # falls der Spieler gefunden wurde, aber keine Punkte
                     try:
                         # Tagesmittel des Spielers an die jeweilige Liste anfuegen
                         #print(Player, "Tagesmittel")
@@ -555,9 +575,10 @@ if __name__ == "__main__":
                 # zu ignorierende Termine abfangen und mit NaN beschreiben
                 else:
                     UserValueLists[Player].append( (np.nan, i-1) )
-
+            
+            # Anzahl der fehlenden Spieler in der Datei
             if 0 < missing < len(cfg.auswertungsteilnehmer):
-                
+                #print("Fehlende Spieler in Datei {}: {}".format(FileName, missing))
                 if i not in missing_list:
                     missing_list.append(i)
                     #print(city)
@@ -573,7 +594,8 @@ if __name__ == "__main__":
     # Typ: [(string Player, [(datetime Date, float LostPoints)])]
     long_term_data = []
     short_term_data = []
-
+    
+    # Iteriere ueber alle Spieler in der UserValueLists
     for player in UserValueLists.keys():
 
         # Die Liste enthält abwechselnd Punktzahl und das zugehoerige Datum.
@@ -596,19 +618,24 @@ if __name__ == "__main__":
         #print( "MATRIX" )
         #print( np.round( userpoints.reshape(-1, len(cfg.auswertungsstaedte)), 1) )
 
+        # reshape der Punkteliste in eine Matrix, die so viele Zeilen hat,
+        # wie es Teilnehmer gibt und so viele Spalten, wie es Auswertungsstaedte
+        # gibt, und anschließendes mitteln ueber die Spalten
+        # (BER[1]+VIE[1]+../Staedteanzahl)
+        #print( "reshape" )
         userpoints = np.nanmean( \
             userpoints.reshape(-1, len(cfg.auswertungsstaedte)), axis=1)
-
+        #print( "userpoints" )
         #print( np.round(userpoints,1) )
-
+        
         # Langfrist und Kurzfristberechnungen
         cities = len(cfg.auswertungsstaedte)
-
+        # berechne die Langfristmittelwerte
         long_term_data.append((player, long_term_mean(userpoints, userdates,
                                             cfg.auswertungsmittelungszeitraum,
                                             cfg.anteil_datenverfuegbarkeit,
                                             cities)))
-        
+        # berechne die Kurzfristmittelwerte
         short_term_data.append((player, short_term_mean(userpoints, userdates,
                                             cfg.mittelungszeitspannen,
                                             cfg.datenluecken_kurzfrist,
@@ -622,7 +649,7 @@ if __name__ == "__main__":
            .format(time.time() - startTime))
     #------------------------------------------------------------------------#
 
-    # Grafik erstellen
+    # Grafik erstellen ueber die Langfrist- und Kurzfristmittelwerte
     graphics.erstelleGrafik(long_term_data, short_term_data, cfg)
 
     #------------------------------------------------------------------------#
