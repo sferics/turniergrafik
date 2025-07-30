@@ -172,7 +172,7 @@ auswertungstage = ["Sa", "So"]
 # in der Einstellung "linieneigenschaften" unten in der config, müssen manuell hinzugefügte Teilnehmer
 # auch Farben und Linieneigenschaften zugewiesen bekommen
 
-auswertungsteilnehmer = ["MSwr-MOS-Mix","MSwr-EZ-MOS","MSwr-GFS-MOS","DWD-MOS-Mix","DWD-EZ-MOS","DWD-ICON-MOS","MOS-Mix"]
+auswertungsteilnehmer = ["MSwr-MOS-Mix","MSwr-EZ-MOS","MSwr-GFS-MOS","DWD-MOS-Mix","DWD-MOS-Mix-test","DWD-EZ-MOS","DWD-ICON-MOS","MOS-Mix"]
 
 # fuer mehrere Grafiken mit unterschiedlichen Teilnehmern
 auswertungsteilnehmer_multi = ["Grisuji-GFS-L1-MOS","Grisuji-GFS-L2-MOS","MSwr-GFS-MOS"], #mos_teilnehmer,#["MM-EZ-MOS","MSwr-EZ-MOS"]#,['Grisuji-GFS-L1-MOS','Grisuji-GFS-L2-MOS']
@@ -303,6 +303,7 @@ linieneigenschaften = {"MOS-T": ["#9CC349", "--"],
                        "DWD-ICON-MOS": ["#FFE813", "-"],
                        "DWD-EZ-MOS": ["#5B1400", "-"],
                        "DWD-MOS-Mix": ["#DEC000", "--"],
+                       "DWD-MOS-Mix-test": ["#EDB000", "--"],
                        "MSwr-GFS-MOS": ["#00B7FF", "-"],
                        "MSwr-MOS-Mix": ["#000000", "--"],
                        "MOS-Mix": ["#007C11", "--"],

@@ -411,7 +411,7 @@ if __name__ == "__main__":
     # Freitags-Indizes durchgehen (+1/+2: Iteration ab 1, inklusive Ende)
     for i in range(begin+1, end+1, 7):
         
-        #print( index_2_date( i-1 ) )
+        print( index_2_date( i-1 ) )
         if i >= 19363:
             #TODO funktioniert nur, wenn alle Element gewaehlt wurden. Was tun bei spezifischen Elementen?
             cfg.auswertungselemente = cfg.auswertungselemente_alt

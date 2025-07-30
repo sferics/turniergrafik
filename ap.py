@@ -177,15 +177,15 @@ def short_term_mean(points, dates, mean_weaks, max_nan_ratio, cities=5):
         date = max(dates) - i*7
 
         # Datum fuer Mittelungszeitraum aus Liste ausschneiden
-        print(dates)
-        print(len(dates))
-        print(cities, i)
-        print(cities*i)
+        #print(dates)
+        #print(len(dates))
+        #print(cities, i)
+        #print(cities*i)
         #date = dates[- (cities*i)]
         
         mean_date_list.append((date, mean))
     
-    print(len(mean_date_list))
+    #print(len(mean_date_list))
     return mean_date_list
 
 
@@ -237,9 +237,9 @@ def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
         #end_date = begin_date + 7*i + 7*mean_time_span #TODO CHECKME!
         
         # Datum fuer Mittelungszeitraum aus Liste ausschneiden
-        print(mean_time_span)
+        #print(mean_time_span)
         end_date = dates[ cities * ii * mean_time_span ]
-        print( "end_date", end_date )
+        #print( "end_date", end_date )
         ii += 1
         
         long_term_means.append( (end_date, mean) )
