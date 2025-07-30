@@ -386,14 +386,14 @@ if __name__ == "__main__":
         # wenn die Option nicht gesetzt wurde, wird sie auf None gesetzt
         except: exec(option + "=" + "None")
         # wenn die Option nicht gesetzt wurde, wird sie auf None gesetzt
-        print( eval(option), type(eval(option)) )
+        #print( eval(option), type(eval(option)) )
 
     # Anfangs- und Endtermin zum jeweiligen Tagesindex konvertieren
     begin, end = get_friday_range(date_2_index(cfg.starttermin),
                                   date_2_index(cfg.endtermin))
     #print("Begin:", begin, "End:", end)
     cfg.auswertungselemente   = params if params else cfg.auswertungselemente
-    print(cfg.auswertungselemente)
+    #print(cfg.auswertungselemente)
 
     # Indizes der zu verwendenden Auswertungselemente finden
     try:
@@ -425,7 +425,7 @@ if __name__ == "__main__":
     # Freitags-Indizes durchgehen (+1/+2: Iteration ab 1, inklusive Ende)
     for i in range(begin+1, end+1, 7):
         # Ausgabe des aktuellen Tages
-        print( index_2_date( i-1 ) )
+        #print( index_2_date( i-1 ) )
         # Dateiname der Datei, die den Tagesmittelwert des Spielers enthaelt
         FileName = "{}/{}_{}.npz".format(cfg.archive_dir_name, 1, i)
         

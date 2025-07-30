@@ -444,8 +444,8 @@ if __name__ == "__main__":
     #npzfile_bak = np.load(Test.OutFilePath + ".npz.bak")
     #npzfile = np.load("BER_17739.npz")
     print('npzfile.files: {}'.format(npzfile.files))
-    print('npzfile["Schneegewitter"]: {}'.format(npzfile["Schneegewitter"]))
-    print('npzfile["Schneegewitter"]: {}'.format(npzfile["Schneegewitter"][0]))
+    #print('npzfile["Schneegewitter"]: {}'.format(npzfile["Schneegewitter"]))
+    #print('npzfile["Schneegewitter"]: {}'.format(npzfile["Schneegewitter"][0]))
     #print('npzfile["Schneegewitter"]: {}'.format(npzfile["ErrorTest"]))
     #print(Test.DayIndex, Test.Date)
 

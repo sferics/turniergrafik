@@ -244,9 +244,9 @@ def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
         #end_date = begin_date + 7*i + 7*mean_time_span #TODO CHECKME!
         
         # Datum fuer Mittelungszeitraum aus Liste ausschneiden
-        print(mean_time_span)
+        #print(mean_time_span)
         end_date = dates[ cities * (ii+1) * mean_time_span ]
-        print( "end_date", end_date )
+        #print( "end_date", end_date )
         ii += 1
 
         long_term_means.append( (end_date, mean) )
@@ -370,14 +370,14 @@ if __name__ == "__main__":
     for option in options:
         try: exec( option + "=" + "args." + option + ".split(',')" )
         except: exec(option + "=" + "None")
-        print( eval(option), type(eval(option)) )
+        #print( eval(option), type(eval(option)) )
 
     # Anfangs- und Endtermin zum jeweiligen Tagesindex konvertieren
     begin, end = get_friday_range(date_2_index(cfg.starttermin),
                                   date_2_index(cfg.endtermin))
 
     cfg.auswertungselemente   = params if params else cfg.auswertungselemente
-    print(cfg.auswertungselemente)
+    #print(cfg.auswertungselemente)
 
     # Indizes der zu verwendenden Auswertungselemente finden
     try:
@@ -411,7 +411,7 @@ if __name__ == "__main__":
     # Freitags-Indizes durchgehen (+1/+2: Iteration ab 1, inklusive Ende)
     for i in range(begin+1, end+1, 7):
         
-        print( index_2_date( i-1 ) )
+        #print( index_2_date( i-1 ) )
         if i >= 19363:
             #TODO funktioniert nur, wenn alle Element gewaehlt wurden. Was tun bei spezifischen Elementen?
             cfg.auswertungselemente = cfg.auswertungselemente_alt
