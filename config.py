@@ -46,16 +46,15 @@ url_template \
 ## Elemente
 # Variablenreihenfolge(!) in den Archiv-Dateien zu Kontrollzwecken
 elemente_archiv_alt     = ["N", "Sd", "dd", "ff", "fx", "Wv", "Wn", "PPP", "TTm","TTn", "TTd", "RR"]
-elemente_archiv         = ["Sd1","Sd24","dd12","ff12","fx24","PPP12","Tmin","T12","Tmax","Td12","RR1","RR24"]
+elemente_archiv_neu     = ["Sd1","Sd24","dd12","ff12","fx24","PPP12","Tmin","T12","Tmax","Td12","RR1","RR24"]
 
 # dazugehörige Einheiten
-elemente_alt_einheiten  = ["", "%", "grad", "kn", "kn", "", "", "hPa", "°C", "°C","°C", "mm"]
-elemente_einheiten      = ["min","%","grad","m/s","m/s","hPa","°C","°C","°C","°C","mm","mm"]
+elemente_einheiten_alt  = ["", "%", "grad", "kn", "kn", "", "", "hPa", "°C", "°C","°C", "mm"]
+elemente_einheiten_neu  = ["min","%","grad","m/s","m/s","hPa","°C","°C","°C","°C","mm","mm"]
 
 # dazugehörigen, maximale Punktzahlen
-elemente_alt_max_punkte     = [6.0, 5.0, 9.0, 6.0, 4.0, 10.0, 10.0, 10.0, 10.0, 10.0,10.0, 10.0]
-#elemente_max_punkte = [8, 8, 7, 7, 7, 7, 7, 7, 7, 7, 8, 8]
-elemente_max_punkte         = [9, 9, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9]
+elemente_max_punkte_alt     = [6.0, 5.0, 9.0, 6.0, 4.0, 10.0, 10.0, 10.0, 10.0, 10.0,10.0, 10.0]
+elemente_max_punkte_neu     = [9, 9, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9]
 
 ## Termin
 # Freitagsdaten, die zusätzlich zu den Wochenenden, zu denen keine Archivdaten
@@ -145,13 +144,13 @@ punkteersetzung = {"MOS-Mix" : "GRP_MOS"}
 #starttermin = "22.10.2016"
 #starttermin = "10.12.2008"
 #starttermin = "15.11.2008"
-starttermin  = "19.06.2015"
+#starttermin  = "19.06.2015"
 #starttermin  = "01.09.2016"
 #starttermin = "19.9.2016"
 #starttermin   = "19.6.2017"
 #endtermin   = "17.05.2019"
-#starttermin   = "04.06.2021" #TODO immer nur 20. August? Endtag inklusive
-endtermin    = "15.03.2025"
+starttermin   = "25.03.2025"
+endtermin    = "25.07.2025"
 #TODO Auto/"" Wert ist nicht korrekt?
 
 ## Auswertungstage (Auswertungszeitraum wäre irreführend, denn das ist es
@@ -172,7 +171,8 @@ auswertungstage = ["Sa", "So"]
 # in der Einstellung "linieneigenschaften" unten in der config, müssen manuell hinzugefügte Teilnehmer
 # auch Farben und Linieneigenschaften zugewiesen bekommen
 
-auswertungsteilnehmer = ["MSwr-MOS-Mix","MSwr-EZ-MOS","MSwr-GFS-MOS","DWD-MOS-Mix","DWD-MOS-Mix-test","DWD-EZ-MOS","DWD-ICON-MOS","MOS-Mix"]
+#auswertungsteilnehmer = ["MSwr-MOS-Mix","MSwr-EZ-MOS","MSwr-GFS-MOS","DWD-MOS-Mix","DWD-MOS-Mix-test","DWD-EZ-MOS","DWD-ICON-MOS","MOS-Mix"]
+auswertungsteilnehmer = ["MSwr-MOS-Mix","MSwr-EZ-MOS","MSwr-GFS-MOS","DWD-MOS-Mix","DWD-EZ-MOS","DWD-ICON-MOS","MOS-Mix"]
 
 # fuer mehrere Grafiken mit unterschiedlichen Teilnehmern
 auswertungsteilnehmer_multi = ["Grisuji-GFS-L1-MOS","Grisuji-GFS-L2-MOS","MSwr-GFS-MOS"], #mos_teilnehmer,#["MM-EZ-MOS","MSwr-EZ-MOS"]#,['Grisuji-GFS-L1-MOS','Grisuji-GFS-L2-MOS']
@@ -184,8 +184,8 @@ auswertungsteilnehmer_multi = ["Grisuji-GFS-L1-MOS","Grisuji-GFS-L2-MOS","MSwr-G
 
 ## Elemente für die Auswertung
 # mögliche Werte:
-auswertungselemente     = elemente_archiv     # damit alle verwendet werden
-auswertungselemente_alt = elemente_archiv_alt
+auswertungselemente_alt = elemente_archiv_alt[:] # damit alle verwendet werden
+auswertungselemente_neu = elemente_archiv_neu[:] # neue Elemente
 #auswertungselemente = [e for e in elemente_archiv if e not in ("Wv", "Wn")]
 # auswertungselemente = ["N", "Sd"]       #  um bestimmte zu verwenden
 #auswertungselemente = ["Wv", "Wn"]
@@ -232,8 +232,6 @@ anteil_datenverfuegbarkeit = 0.2
 datenluecken_kurzfrist = 0.75
 
 #----------------------------------------------------------------------------#
-# nicht mehr implementiert (spaeter falls benoetigt):
-
 ## Ersetzung Datenlücken menschlicher Spieler
 # Sollen Datenlücken menschlicher Spieler ersetzt werden?
 punkteersetzung_menschen = True # True oder False
@@ -244,7 +242,7 @@ punkteersetzung_menschen = True # True oder False
 punkteersetzung_menschen_mindestprozentzahl = 50
 
 # Welche Spieler sollen zur Ersetzung verwendet werden?
-punkteersetzung_menschen_ersatzspieler = ("GRP_MOS", "MOS-Mix")
+punkteersetzung_menschen_ersatzspieler = {"MSwr-GFS-MOS": "MSwr-EZ-MOS"}
 
 #----------------------------------------------------------------------------#
 

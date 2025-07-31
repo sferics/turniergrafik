@@ -134,9 +134,9 @@ class db:
         self.user_names = dict((v, k) for k, v in self.user_ids.items())
         
         # Parameter IDs und Parameternamen initialisieren
-        self.param_ids = self.get_param_ids(cfg.auswertungselemente)
+        self.param_ids_new = self.get_param_ids(cfg.auswertungselemente_neu)
         # Parameternamen und Param-IDs vertauschen
-        self.param_names = dict((v, k) for k, v in self.param_ids.items())
+        self.param_names_new = dict((v, k) for k, v in self.param_ids_new.items())
         
         # Alte Parameter IDs und Parameternamen initialisieren
         self.param_ids_old = self.get_param_ids(cfg.auswertungselemente_alt)
@@ -191,11 +191,15 @@ class ArchiveParse:
         # Wenn TDate groesser oder gleich 19363 ist, werden die neuen Parameter-IDs verwendet,
         if TDate >= 19363:
             # dann wird die Stadt-ID in einen String umgewandelt
-            param_ids = db.param_ids.values()
+            param_ids = db.param_ids_new.values()
         else:
             # ansonsten werden die alten Parameter-IDs verwendet
             param_ids = db.param_ids_old.values()
         
+        # Wenn die Anzahl der Parameter-IDs 12 ist, wird param_ids = "all" gesetzt
+        if len(param_ids) == 12:
+            param_ids = "all"
+
         # Wenn City eine Zahl ist, wird sie in einen String umgewandelt
         self.UserTables = self.get_user_tables(db, db.user_ids.values(), TDate, City, param_ids)
          

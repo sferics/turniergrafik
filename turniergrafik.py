@@ -42,7 +42,6 @@ missing_list = []
 #----------------------------------------------------------------------------#
 
 def date_2_index(input_date):
-
     """
     Tag-Index (der wievielte Tag, seit dem 02.01.1970) aus einem gegebenen
     Datum berechnen    
@@ -84,7 +83,6 @@ def date_2_index(input_date):
 
 
 def index_2_date(input_index):
-
     """
     Datum aus dem Tagesindex (der wievielte Tag, seit dem 02.01.1970)
     berechnen (Beispiele -> siehe date_2_index())
@@ -101,7 +99,6 @@ def index_2_date(input_index):
 
 
 def get_friday_range(begin, end):
-
     """
     bestimmt die Grenzen der zu bearbeitenden Freitags-Indizes
     (der wievielte Tag, seit dem 02.01.1970 etc. ..)
@@ -125,9 +122,7 @@ def get_friday_range(begin, end):
         raise ValueError("Der Start- oder End-Wert sind fehlerhaft.")
 
 #FIXME
-'''
 def old_2_new_players(players, rename_dict):
-
     """
     ersetzt in einer Teilnehmerliste alle alten durch neuere Teilnehmernamen
     (siehe cfg.teilnehmerumbenennung) und gibt sie als Tupel zurueck
@@ -141,10 +136,9 @@ def old_2_new_players(players, rename_dict):
 
     # Doppelte Spieler entfernen und als Tupel zurueckgeben
     return tuple(set(players))
-'''#FIXME
+
 
 def short_term_mean(points, dates, mean_weaks, max_nan_ratio, cities=5):
-
     """
     berechnet aus einer Liste von Punktzahlen, die (arithmetischen)
     Mittelwerte ueber gewaehlte Zeitspannen am Ende der Liste
@@ -195,7 +189,6 @@ def short_term_mean(points, dates, mean_weaks, max_nan_ratio, cities=5):
 
 
 def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
-
     """
     berechnet aus einer Liste von Punktzahlen, die (arithmetischen)
     Mittelwerte ueber eine gewaehlte Zeitspanne, welche die Liste in
@@ -260,7 +253,6 @@ def get_player_mean(pointlist,
                     elemente_archiv,
                     elemente_max_punkte,
                     eval_indexes):
-
     """
     Berechnet das Tagesmittel eines einzelnen Spielers fuer einen gewaehlten
     Turniertag oder fuer das ganze Wochenende. Gibt NaN zurueck, falls der
@@ -269,15 +261,16 @@ def get_player_mean(pointlist,
 
     # wenn beide Tage ausgewertet werden sollen
     if auswertungstage == ["Sa", "So"]:
-
+        
         # wenn alle Elemente gewaehlt wurden
         if auswertungselemente == elemente_archiv:
             #print("Alle Elemente")
-
             # elementweisen Punkteverlust berechnen
             # maximal-Punkte-Liste wird 2mal hintereinander
             # genommen, da Samstag und Sonntag nacheinander
             # aufsummiert werden
+            print("Maximale Punkte:", elemente_max_punkte)
+            print("Punkteliste:", pointlist)
             PointsLost = np.array((elemente_max_punkte * 2)) - np.array(pointlist)
 
             #print( pointlist )
@@ -285,7 +278,7 @@ def get_player_mean(pointlist,
 
         # wenn nur bestimmte Elemente ausgewertet werden sollen
         else:
-
+            #print("Nur bestimmte Elemente:", auswertungselemente)
             # gibt aus der Liste die genannten (Index) Elemente aus
             # (es werden die Indizes der zu evaluierenden Elemente genommen,
             # sowie die gleichen Indizes um 12 nach oben verschoben, um auch
@@ -376,24 +369,10 @@ if __name__ == "__main__":
     begin, end = get_friday_range(date_2_index(cfg.starttermin),
                                   date_2_index(cfg.endtermin))
 
-    cfg.auswertungselemente   = params if params else cfg.auswertungselemente
-    #print(cfg.auswertungselemente)
+    cfg.auswertungselemente_alt   = params if params else cfg.auswertungselemente_alt
+    cfg.auswertungselemente_neu   = params if params else cfg.auswertungselemente_neu
+    cfg.auswertungselemente       = cfg.auswertungselemente_neu[:] if end >= 19363 else cfg.auswertungselemente_alt[:]
 
-    # Indizes der zu verwendenden Auswertungselemente finden
-    try:
-        eval_el_indexes = [cfg.elemente_archiv.index(s)
-                           for s in cfg.auswertungselemente]
-
-    except ValueError:
-        print("Die Auswertungselemente sind nicht valide bzw. nicht "\
-              "oder nur teilweise in der Elementeliste vorhanden")
-        sys.exit()
-
-    # zu den Auswertungselementen passende Liste an maximalen Punkten fuer die
-    # jeweiligen Elemente berechnen
-    max_points_elements = [cfg.elemente_max_punkte[i]
-                            for i in eval_el_indexes]
-	
     cfg.auswertungsstaedte    = cities if cities else cfg.auswertungsstaedte
     cfg.auswertungsteilnehmer = users if users else cfg.auswertungsteilnehmer
     cfg.auswertungstage       = days if days else cfg.auswertungstage
@@ -412,9 +391,32 @@ if __name__ == "__main__":
     for i in range(begin+1, end+1, 7):
         
         print( index_2_date( i-1 ) )
-        if i >= 19363:
-            #TODO funktioniert nur, wenn alle Element gewaehlt wurden. Was tun bei spezifischen Elementen?
-            cfg.auswertungselemente = cfg.auswertungselemente_alt
+        # wenn das Datum vor dem 06.01.2023 liegt, dann die alten
+        # Auswertungselemente verwenden
+        print(i)
+        if i < 19363:
+            #TODO funktioniert nur, wenn alle Elemente gewaehlt wurden. Was tun bei spezifischen Elementen?
+            cfg.auswertungselemente = cfg.auswertungselemente_alt[:]
+            cfg.elemente_archiv     = cfg.elemente_archiv_alt[:]
+            cfg.elemente_max_punkte = cfg.elemente_max_punkte_alt[:]
+        else:
+            cfg.auswertungselemente = cfg.auswertungselemente_neu[:]
+            cfg.elemente_archiv     = cfg.elemente_archiv_neu[:]
+            cfg.elemente_max_punkte = cfg.elemente_max_punkte_neu[:]
+        
+        # Indizes der zu verwendenden Auswertungselemente finden
+        try:
+            eval_el_indexes = [cfg.elemente_archiv.index(s)
+                               for s in cfg.auswertungselemente]
+        except ValueError:
+            print("Die Auswertungselemente sind nicht valide bzw. nicht "\
+                  "oder nur teilweise in der Elementeliste vorhanden")
+            sys.exit()
+
+        # zu den Auswertungselementen passende Liste an maximalen Punkten fuer die
+        # jeweiligen Elemente berechnen
+        max_points_elements = [cfg.elemente_max_punkte[i]
+                                for i in eval_el_indexes]
 
         FileName = "{}/{}_{}.npz".format(cfg.archive_dir_name, 1, i)
         
@@ -528,7 +530,7 @@ if __name__ == "__main__":
                         continue
                     try:
                         # Tagesmittel des Spielers an die jeweilige Liste anfuegen
-                        #print(Player, "Tagesmittel")
+                        print(Player, "Tagesmittel")
                         UserValueLists[Player].append(
                             get_player_mean(player_point_list,
                                             cfg.auswertungstage,
