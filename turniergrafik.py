@@ -252,16 +252,40 @@ def get_player_mean(pointlist,
                     auswertungselemente,
                     elemente_archiv,
                     elemente_max_punkte,
-                    eval_indexes):
+                    eval_indexes,
+                    Player,
+                    npzfile):
     """
     Berechnet das Tagesmittel eines einzelnen Spielers fuer einen gewaehlten
     Turniertag oder fuer das ganze Wochenende. Gibt NaN zurueck, falls der
     Spieler fuer den Tag nicht auffindbar ist.
     """
-
     # wenn beide Tage ausgewertet werden sollen
     if auswertungstage == ["Sa", "So"]:
         
+        # Wenn die Punkteliste None-Werte enthaelt, dann
+        # ersetze diese entweder durch Null oder wenn
+        # punkteersetzung_params == True fuehre eine Ersetzung durch
+        if None in pointlist:
+            # wenn die Punkteliste None-Werte enthaelt, dann
+            # ersetze diese durch die Werte des Ersatzspielers
+            if cfg.punkteersetzung_params:
+                ersatzspieler       = cfg.punkteersetzung_ersatz[Player]
+                pointlist_ersatz    = npzfile[ersatzspieler]
+                pointlist_neu       = []
+                # Ersetze fehlende (None) Werte mit denen aus der Ersatzliste
+                for i, v in enumerate(pointlist):
+                    if v is None:
+                        pointlist_neu.append(pointlist_ersatz[i])
+                    else:
+                        pointlist_neu.append(v)
+                pointlist = np.array(pointlist_neu)
+            # wenn die Punkteliste None-Werte enthaelt, dann
+            # ersetze diese durch Null
+            else:
+                pointlist = [0 if v is None else v for v in pointlist]
+                pointlist = np.array(pointlist)
+
         # wenn alle Elemente gewaehlt wurden
         if auswertungselemente == elemente_archiv:
             #print("Alle Elemente")
@@ -269,8 +293,8 @@ def get_player_mean(pointlist,
             # maximal-Punkte-Liste wird 2mal hintereinander
             # genommen, da Samstag und Sonntag nacheinander
             # aufsummiert werden
-            print("Maximale Punkte:", elemente_max_punkte)
-            print("Punkteliste:", pointlist)
+            #print("Maximale Punkte:", elemente_max_punkte)
+            #print("Punkteliste:", pointlist)
             PointsLost = np.array((elemente_max_punkte * 2)) - np.array(pointlist)
 
             #print( pointlist )
@@ -279,13 +303,13 @@ def get_player_mean(pointlist,
         # wenn nur bestimmte Elemente ausgewertet werden sollen
         else:
             #print("Nur bestimmte Elemente:", auswertungselemente)
-            # gibt aus der Liste die genannten (Index) Elemente aus
+            # Dann gib aus der Liste die genannten (Index) Elemente aus
             # (es werden die Indizes der zu evaluierenden Elemente genommen,
             # sowie die gleichen Indizes um 12 nach oben verschoben, um auch
             # die Werte fuer Sonntag mit einzulesen)
             Points = itemgetter(*(eval_indexes+[i+12 for i in eval_indexes]))\
                                  (pointlist)
-
+            
             # Punkte von den elementweisen maximalen Punktzahlen
             # elementweise abziehen
             PointsLost = [((elemente_max_punkte * 2)[i] - v)
@@ -390,10 +414,10 @@ if __name__ == "__main__":
     # Freitags-Indizes durchgehen (+1/+2: Iteration ab 1, inklusive Ende)
     for i in range(begin+1, end+1, 7):
         
-        print( index_2_date( i-1 ) )
+        if verbose: print( index_2_date( i-1 ) )
         # wenn das Datum vor dem 06.01.2023 liegt, dann die alten
         # Auswertungselemente verwenden
-        print(i)
+        if verbose: print(i)
         if i < 19363:
             #TODO funktioniert nur, wenn alle Elemente gewaehlt wurden. Was tun bei spezifischen Elementen?
             cfg.auswertungselemente = cfg.auswertungselemente_alt[:]
@@ -453,7 +477,7 @@ if __name__ == "__main__":
                     #TODO Datei hier schreiben
 
             # Datei einlesen
-            npzfile = np.load(FileName)
+            npzfile = np.load(FileName, allow_pickle=True)
             
             missing = 0
             
@@ -494,7 +518,7 @@ if __name__ == "__main__":
                             faulty_dates.add(i)
                             #Ersatzspieler
                             try:
-                                ersatz_name = cfg.punkteersetzung_menschen_ersatzspieler
+                                ersatz_name = cfg.punkteersetzung_ersatz[Player]
                                 player_point_list = npzfile[ersatz_name]
                             
                             except (KeyError, ValueError):
@@ -537,7 +561,9 @@ if __name__ == "__main__":
                                             cfg.auswertungselemente,
                                             cfg.elemente_archiv,
                                             max_points_elements,
-                                            eval_el_indexes) )
+                                            eval_el_indexes,
+                                            Player,
+                                            npzfile) )
                         UserValueLists[Player].append( i-1 )
                         
                     # der Spieler wurde fuer den Tag nicht gefunden

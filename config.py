@@ -149,8 +149,9 @@ punkteersetzung = {"MOS-Mix" : "GRP_MOS"}
 #starttermin = "19.9.2016"
 #starttermin   = "19.6.2017"
 #endtermin   = "17.05.2019"
-starttermin   = "25.03.2025"
-endtermin    = "25.07.2025"
+starttermin   = "18.05.2025"
+endtermin     = "25.05.2025"
+#endtermin    = "25.07.2025"
 #TODO Auto/"" Wert ist nicht korrekt?
 
 ## Auswertungstage (Auswertungszeitraum wäre irreführend, denn das ist es
@@ -232,17 +233,17 @@ anteil_datenverfuegbarkeit = 0.2
 datenluecken_kurzfrist = 0.75
 
 #----------------------------------------------------------------------------#
-## Ersetzung Datenlücken menschlicher Spieler
-# Sollen Datenlücken menschlicher Spieler ersetzt werden?
-punkteersetzung_menschen = True # True oder False
+## Ersetzung Datenlücken bei einzelnen Parametern
+# Sollen Datenlücken von Spielern ersetzt werden?
+punkteersetzung_params = True # True oder False
+
+# Welche Spieler sollen zur Ersetzung verwendet werden?
+punkteersetzung_ersatz = {"MSwr-GFS-MOS": "MSwr-EZ-MOS"}
 
 # nicht mehr implementiert:
 # wie viel Prozent des jeweiligen Zeitraums muss der Spieler mindestens
 # mitgetippt haben, damit die Punkte ersetzt werden?
 punkteersetzung_menschen_mindestprozentzahl = 50
-
-# Welche Spieler sollen zur Ersetzung verwendet werden?
-punkteersetzung_menschen_ersatzspieler = {"MSwr-GFS-MOS": "MSwr-EZ-MOS"}
 
 #----------------------------------------------------------------------------#
 

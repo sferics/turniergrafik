@@ -126,7 +126,7 @@ class db:
             sys.exit(1)
         
         # users aus der Konfiguration laden
-        users = set(cfg.auswertungsteilnehmer) | set(cfg.punkteersetzung_menschen_ersatzspieler) | set(cfg.teilnehmerumbenennung.values())
+        users = set(cfg.auswertungsteilnehmer) | set(cfg.punkteersetzung_ersatz) | set(cfg.teilnehmerumbenennung.values())
         # Usernamen und User-IDs initialisieren
         self.user_ids  = self.get_user_ids(users)
          
@@ -197,8 +197,8 @@ class ArchiveParse:
             param_ids = db.param_ids_old.values()
         
         # Wenn die Anzahl der Parameter-IDs 12 ist, wird param_ids = "all" gesetzt
-        if len(param_ids) == 12:
-            param_ids = "all"
+        #if len(param_ids) == 12:
+        #    param_ids = "all"
 
         # Wenn City eine Zahl ist, wird sie in einen String umgewandelt
         self.UserTables = self.get_user_tables(db, db.user_ids.values(), TDate, City, param_ids)
@@ -246,12 +246,54 @@ class ArchiveParse:
                 UserTables[db.user_names[userID]] = np.array([])
         # Pruefen, ob nur bestimmte Param-IDs abgefragt werden sollen
         else:
-            # SQL-Tupel und Sortierung der Param-IDs
-            param_ids_tuple = sql_tuple(param_ids)
-            # Sortierung der Param-IDs fuer die SQL-Abfrage
-            param_ids_sort  = sql_sort(param_ids)
+            # NEU: Erzeuge die UNION ALL-Teile der Abfrage
+            # Erstellt eine Kette wie "SELECT 1 AS userID UNION ALL SELECT 2"
+            user_union = " UNION ALL ".join([f"SELECT {uid} AS userID" for uid in user_ids])
+            # Erstellt eine Kette wie "SELECT 1 AS betdate UNION ALL SELECT 2"
+            date_union = f"SELECT {Tdate+1} AS betdate UNION ALL SELECT {Tdate+2} AS betdate"
+            # Erstellt eine Kette wie "SELECT 1 AS paramID UNION ALL SELECT 2"
+            param_union = " UNION ALL ".join([f"SELECT {pid} AS paramID" for pid in param_ids])
+
+            # Deine bestehende Funktion zur Sortierung der Parameter
+            param_ids_sort = sql_sort(param_ids)
+            
             # SQL-Abfrage fuer die User-Tabellen
-            sql = f"SELECT userID, points FROM `wp_wetterturnier_bets` WHERE userID IN {user_ids_tuple} AND cityID = '{City}' AND betdate BETWEEN '{Tdate+1}' AND '{Tdate+2}' AND paramID IN {param_ids_tuple} GROUP BY `userID`,betdate, FIELD(paramID, {param_ids_sort}) ORDER BY userID"
+            sql = f"""
+            SELECT
+                scaffold.userID,
+                MAX(bets.points) AS points
+            FROM
+                (
+                    -- The new 3-part scaffold: all users X all dates X all parameters
+                    SELECT
+                        users.userID,
+                        dates.betdate,
+                        params.paramID
+                    FROM
+                        ({user_union}) AS users
+                    CROSS JOIN
+                        ({date_union}) AS dates
+                    CROSS JOIN
+                        ({param_union}) AS params
+                ) AS scaffold
+            LEFT JOIN
+                wp_wetterturnier_bets AS bets
+            ON
+                scaffold.userID = bets.userID
+                AND scaffold.paramID = bets.paramID
+                AND scaffold.betdate = bets.betdate -- Now we can join on the date
+                AND bets.cityID = '{City}'
+            GROUP BY
+                scaffold.userID,
+                scaffold.betdate,
+                scaffold.paramID
+            ORDER BY
+                -- This ORDER BY clause produces the exact sequence you require
+                scaffold.userID,
+                scaffold.betdate,
+                FIELD(scaffold.paramID, {param_ids_sort})
+            """
+            #print(sql)
             # Ausfuehren der SQL-Abfrage
             try:
                 db.cur.execute(sql)
@@ -276,7 +318,16 @@ class ArchiveParse:
                     UserTables[user_name] = []
                 # Punkte fuer den User hinzufuegen
                 UserTables[user_name] += [points]
-        
+                
+            # Erstelle eine Kopie von UserTables, da wir das Dictionary modifizieren werden
+            # Fuer alle user_names in UserTables pruefen ob 24 Nones in der Liste sind,
+            # falls ja wird der User aus der Liste geloescht
+            for user_name in UserTables.copy():
+                # Pruefen, ob die Liste 24 Nones enthaelt
+                if len(UserTables[user_name]) == 24 and all(p is None for p in UserTables[user_name]):
+                    # Wenn die Liste 24 Nones enthaelt, wird der User aus der Liste geloescht
+                    del UserTables[user_name]
+
         # Gebe die User-Tabellen zurueck
         return UserTables
 
@@ -312,7 +363,7 @@ if __name__ == "__main__":
     #------------------------------------------------------------------------#
 
     # Laden der Ausgabedatei
-    npzfile = np.load(Test.OutFilePath + ".npz")
+    npzfile = np.load(Test.OutFilePath + ".npz", allow_pickle=True)
     #npzfile_bak = np.load(Test.OutFilePath + ".npz.bak")
     #npzfile = np.load("BER_17739.npz")
     # Ausgabe der User-Tabellen
