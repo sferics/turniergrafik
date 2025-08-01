@@ -368,7 +368,16 @@ for k, i in zip(kuerzel, ids):
 
 
 def city_to_id(city):
-    
+    """
+    Konvertiert eine Stadt in eine ID, die in der Datenbank verwendet wird.
+    Wenn die Stadt eine ID ist, wird sie direkt zurueckgegeben.
+    Wenn die Stadt ein Kuerzel ist, wird es in eine ID umgewandelt.
+    Wenn die Stadt ein Name ist, wird der Name in eine ID umgewandelt.
+
+    param city: Stadtname, Kuerzel oder ID
+    return: ID der Stadt
+    :rtype: int
+    """
     try: return int(city)
     except ValueError:
         if len(city) == 3:

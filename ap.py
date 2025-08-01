@@ -462,7 +462,7 @@ if __name__ == "__main__":
                     #TODO Datei hier schreiben
 
             # Datei einlesen
-            npzfile = np.load(FileName)
+            npzfile = np.load(FileName, allow_pickle=True)
             missing = 0
             
             for Player in cfg.auswertungsteilnehmer:
@@ -514,7 +514,7 @@ if __name__ == "__main__":
                                 for p in Path(cfg.archive_dir_name).glob("?_"+i+".nz"):
                                     p.unlink()
                                 break
-                    # falls der Spieler gefunden wurde, aber keine Punkte
+                    # falls der Spieler gefunden wurde, aber keine Punkte hatte
                     try:
                         # Tagesmittel des Spielers an die jeweilige Liste anfuegen
                         #print(Player, "Tagesmittel")
@@ -530,6 +530,7 @@ if __name__ == "__main__":
                     # der Spieler wurde fuer den Tag nicht gefunden
                     except NameError:
                         #continue
+                        #print("NameError: %s nicht gefunden!" % Player)
                         UserValueLists[Player].append( np.nan )
                         UserValueLists[Player].append( i-1 )
 
@@ -592,7 +593,7 @@ if __name__ == "__main__":
 
     # Kurzfrist- und Langfrist-Listen initialisieren
     # Typ: [(string Player, [(datetime Date, float LostPoints)])]
-    long_term_data = []
+    long_term_data  = []
     short_term_data = []
     
     # Iteriere ueber alle Spieler in der UserValueLists

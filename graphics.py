@@ -34,7 +34,7 @@ import os
 # Variablen aus config.py mit cfg.variable aufrufbar
 import config as cfg
 
-from ap import index_2_date, kuerzel_zu_id
+from turniergrafik import index_2_date, kuerzel_zu_id
 
 def stadtname(stadt):
     """
