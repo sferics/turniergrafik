@@ -161,8 +161,8 @@ auswertungstage = ["Sa", "So"]
 # in der Einstellung "linieneigenschaften" unten in der config, müssen manuell hinzugefügte Teilnehmer
 # auch Farben und Linieneigenschaften zugewiesen bekommen
 
-#auswertungsteilnehmer = ["MSwr-MOS-Mix","MSwr-EZ-MOS","MSwr-GFS-MOS","DWD-MOS-Mix","DWD-MOS-Mix-test","DWD-EZ-MOS","DWD-ICON-MOS","MOS-Mix"]
-auswertungsteilnehmer = ["MSwr-MOS-Mix","MSwr-EZ-MOS","MSwr-GFS-MOS","DWD-MOS-Mix","DWD-EZ-MOS","DWD-ICON-MOS","MOS-Mix"]
+auswertungsteilnehmer = ["MSwr-MOS-Mix","MSwr-EZ-MOS","MSwr-GFS-MOS","DWD-MOS-Mix","DWD-MOS-Mix-test","DWD-EZ-MOS","DWD-ICON-MOS","MOS-Mix"]
+#auswertungsteilnehmer = ["MSwr-MOS-Mix","MSwr-EZ-MOS","MSwr-GFS-MOS","DWD-MOS-Mix","DWD-EZ-MOS","DWD-ICON-MOS","MOS-Mix"]
 
 # fuer mehrere Grafiken mit unterschiedlichen Teilnehmern
 auswertungsteilnehmer_multi = ["MSwr-MOS-Mix","MSwr-EZ-MOS","MSwr-GFS-MOS","DWD-MOS-Mix","DWD-EZ-MOS","DWD-ICON-MOS","MOS-Mix"]
@@ -227,7 +227,8 @@ punkteersetzung_ersatz = {"GRP_MOS": "MOS-Mix",
                           "MSwr-GFS-MOS": "MSwr-EZ-MOS",
                           "DWD-MOS-Mix": "DWD-EZ-MOS",
                           "DWD-EZ-MOS": "DWD-ICON-MOS",
-                          "DWD-ICON-MOS": "DWD-EZ-MOS",}
+                          "DWD-ICON-MOS": "DWD-EZ-MOS",
+                          "DWD-MOS-Mix-test": "DWD-MOS-Mix",}
 
 #FIXME nicht mehr implementiert:
 # wie viel Prozent des jeweiligen Zeitraums muss der Spieler mindestens
