@@ -37,6 +37,12 @@ import config as cfg
 from ap import index_2_date, kuerzel_zu_id
 
 def stadtname(stadt):
+    """
+    Liefert den Namen der Stadt, die in der Konfiguration
+    hinterlegt ist, zurück.
+    :param stadt: entweder eine Stadt-ID (int) oder ein 3-stelliges Kürzel
+    :return: Name der Stadt (String)
+    """
     if type(stadt) == int:
         return cfg.stadtnamen[stadt]
     elif len(stadt) == 3:
@@ -46,6 +52,12 @@ def stadtname(stadt):
 
 #TODO cfg.xxx lieber als Argumente von erstelleGrafik() (sonst 'verschleiert')
 def gibDateinamen(laufindex = 0, cfg=cfg):
+    """
+    Erstellt den Dateinamen für die zu speichernde Grafik.
+    :param laufindex: Laufindex, der an den Dateinamen angehängt wird
+    :param cfg: Konfiguration, die die Einstellungen enthält
+    :return: Dateiname der Grafik (String)
+    """
     #FIXME kann weg, wenn kein multi implementiert
     auswertungsstaedte = cfg.auswertungsstaedte
     stadtnamen = cfg.stadtnamen
@@ -95,7 +107,15 @@ def speicherGeplotteteWerte(ascii_datei_terminliste,
                             ascii_datei_spielernamen_punkteverlust,
                             plotname,
                             dateiname_plot):
-
+    """
+    Speichert die geplotteten Werte in einer ASCII-Datei.
+    :param ascii_datei_terminliste: Liste der Termine (Datum) für die X-Achse
+    :param ascii_datei_spielernamen_punkteverlust: Dictionary, das die
+        Spieler und ihre Punkteverluste enthält
+    :param plotname: Name des Plots (linker_plot oder rechter_plot)
+    :param dateiname_plot: Dateiname der Grafik, die gespeichert wird
+    :return: None
+    """
     plotname_zu_zeitspannenbeschreibung = {"linker_plot" : "years",
                                            "rechter_plot" : "weeks"}
 
@@ -137,10 +157,39 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
     liniendicke = cfg.liniendicke
 
     """
-    erstellt die Grafik.
-
-    xx_player_date_points hat den Typen:
+    Erstellt eine Grafik, die die langfristigen und kurzfristigen
+    Punkteverluste der Spieler anzeigt.
+    Die langfristigen Punkteverluste sind die Punkteverluste, die
+    über einen längeren Zeitraum (z.B. Jahre) gesammelt werden.
+    Die kurzfristigen Punkteverluste sind die Punkteverluste, die
+    über einen kürzeren Zeitraum (z.B. Wochen) gesammelt werden.
+    Die Daten für die langfristigen Punkteverluste sind in
+    langfrist_player_date_points gespeichert, die Daten für die
+    kurzfristigen Punkteverluste in kurzfrist_player_date_points.
+    Die Daten für langfrist_player_date_points und kurzfrist_player_date_points
+    sind Listen von Tupeln, die jeweils den Spielernamen und eine Liste
+    von Tupeln enthalten, die das Datum und den Punkteverlust
+    enthalten. Also:
+    langfrist_player_date_points hat den Typen:
     [(string Player, [(datetime Date, float LostPoints)])]
+    kurzfrist_player_date_points hat den Typen:
+    [(string Player, [(datetime Date, float LostPoints)])]
+    
+    Die Grafik wird in der Konfiguration angegebenen Sprache erstellt.
+    Die Achsenbeschriftungen, Titel und Legende werden entsprechend
+    der Sprache angepasst.
+    
+    :param langfrist_player_date_points: Langfristige Punkteverluste
+        der Spieler (Liste von Tupeln) 
+        [(string Player, [(datetime Date, float LostPoints)])]
+    :param kurzfrist_player_date_points: Kurzfristige Punkteverluste
+        der Spieler (Liste von Tupeln)
+        [(string Player, [(datetime Date, float LostPoints)])]
+    :param cfg: Konfiguration, die die Einstellungen enthält
+    :type cfg: config.Config
+    :raises ValueError: Wenn die Konfiguration ungültig ist
+
+    returns: None
     """
 
     locale.setlocale(locale.LC_ALL, 'en_US.utf8')
@@ -305,6 +354,15 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
     power = lambda x, y=10e10 : x**y
 
     def inverse_power(x, y=10e10):
+        """
+        Inverse Funktion für die Potenzfunktion, die für die Y-Achse
+        verwendet wird. Diese Funktion ermöglicht es, die Y-Achse
+        logarithmisch zu skalieren, ohne dass negative Werte
+        Probleme verursachen.
+        :param x: Eingabewerte (Array oder Liste)
+        :param y: Exponent (Standardwert ist 10e10)
+        :return: Array mit den inversen Potenzwerten
+        """
         res = []
         for i in x:
             if i < 0:
