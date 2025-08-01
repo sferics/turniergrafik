@@ -119,13 +119,6 @@ mos_namen_starttermine = {"DWD-ICON-MOS": "03.03.2000",
 # entspannter ausfüllen zu können.
 mos_teilnehmer = list(mos_namen_starttermine.keys())
 
-## Punkteersetzungen #TODO noch nicht implementiert
-# zwischenzeitliche Ausfälle von MOS-Systemen sollen teilweise durch andere
-# MOS ersetzt werden. Wird hier keine Konfiguration gefunden, werden fehlende
-# Einträge durch den Mittelwert der anderen MOS ersetzt.
-punkteersetzung = {"MOS-Mix" : "GRP_MOS"}
-
-
 ##############################################################################
 ########## Spezifische Konfiguration #########################################
 ##############################################################################
@@ -139,20 +132,17 @@ punkteersetzung = {"MOS-Mix" : "GRP_MOS"}
 # beim Endtermin der letzte Freitag vor dem angegebenen Datum.
 # Wenn Endtermin den Wert "" hat, wird der aktuellste, verfügbare Termin
 # genommen
-#starttermin = "22.06.2001"
-#starttermin = "01.07.2005"
-#starttermin = "22.10.2016"
-#starttermin = "10.12.2008"
-#starttermin = "15.11.2008"
-#starttermin  = "19.06.2015"
+#starttermin  = "22.06.2001"
+#starttermin  = "01.07.2005"
+#starttermin  = "22.10.2016"
+#starttermin  = "10.12.2008"
+#starttermin  = "15.11.2008"
+starttermin  = "19.06.2015"
 #starttermin  = "01.09.2016"
-#starttermin = "19.9.2016"
-#starttermin   = "19.6.2017"
-#endtermin   = "17.05.2019"
-starttermin   = "18.05.2025"
-endtermin     = "25.05.2025"
-#endtermin    = "25.07.2025"
-#TODO Auto/"" Wert ist nicht korrekt?
+#starttermin  = "19.09.2016"
+#starttermin  = "19.06.2017"
+#endtermin    = "01.01.2023"
+endtermin    = "31.07.2025"
 
 ## Auswertungstage (Auswertungszeitraum wäre irreführend, denn das ist es
 # gerade nicht): Soll jeweils das ganze Wochenende oder sollen nur die
@@ -160,7 +150,6 @@ endtermin     = "25.05.2025"
 # auswertungsart = ["Sa"] nur für Samstag
 # auswertungsart = ["Sa", "So"] für beide Tage
 auswertungstage = ["Sa", "So"]
-#auswertungstage = ["So"]
 
 ## Teilnehmer der Auswertung
 # Entweder eine Liste mit den Namen schreiben auswertungsteilnehmer = ["spielerA", "spielerB"]
@@ -176,12 +165,7 @@ auswertungstage = ["Sa", "So"]
 auswertungsteilnehmer = ["MSwr-MOS-Mix","MSwr-EZ-MOS","MSwr-GFS-MOS","DWD-MOS-Mix","DWD-EZ-MOS","DWD-ICON-MOS","MOS-Mix"]
 
 # fuer mehrere Grafiken mit unterschiedlichen Teilnehmern
-auswertungsteilnehmer_multi = ["Grisuji-GFS-L1-MOS","Grisuji-GFS-L2-MOS","MSwr-GFS-MOS"], #mos_teilnehmer,#["MM-EZ-MOS","MSwr-EZ-MOS"]#,['Grisuji-GFS-L1-MOS','Grisuji-GFS-L2-MOS']
-                #mos_teilnehmer,['Eugenia', 'EmJay', 'Enova', 'Echinacin', 'Egeria'],['Grisuji-GFS-L1-MOS','Grisuji-GFS-L2-MOS']
-                #["MM-EZ-MOS","MSwr-EZ-MOS"],\
-                #['Eugenia', 'EmJay', 'Enova', 'Echinacin', 'Egeria']
-                #,["DWD-MOS-Mix","MM-MOS-Mix"]
-#auswertungsteilnehmer_multi = mos_teilnehmer[:(len(mos_teilnehmer)-1)],["MM-EZ-MOS","MSwr-EZ-MOS"]#,["DWD-MOS-Mix","MM-MOS-Mix"]
+auswertungsteilnehmer_multi = ["MSwr-MOS-Mix","MSwr-EZ-MOS","MSwr-GFS-MOS","DWD-MOS-Mix","DWD-EZ-MOS","DWD-ICON-MOS","MOS-Mix"]
 
 ## Elemente für die Auswertung
 # mögliche Werte:
@@ -189,13 +173,6 @@ auswertungselemente_alt = elemente_archiv_alt[:] # damit alle verwendet werden
 auswertungselemente_neu = elemente_archiv_neu[:] # neue Elemente
 #auswertungselemente = [e for e in elemente_archiv if e not in ("Wv", "Wn")]
 # auswertungselemente = ["N", "Sd"]       #  um bestimmte zu verwenden
-#auswertungselemente = ["Wv", "Wn"]
-#auswertungselemente = ["Wv"]
-#auswertungselemente = ["Wn"]
-# auswertungselemente = ["RR"]
-
-#["N", "Sd", "dd", "ff", "fx", "Wv", "Wn", "PPP", "TTm","TTn", "TTd", "RR"]
-
 
 ## Städte für die Auswertung
 # Einfach in der Liste als Strings auflisten
@@ -233,14 +210,26 @@ anteil_datenverfuegbarkeit = 0.2
 datenluecken_kurzfrist = 0.75
 
 #----------------------------------------------------------------------------#
-## Ersetzung Datenlücken bei einzelnen Parametern
+## Ersetzung Datenlücken bei einzelnen Tagen oder Parametern
 # Sollen Datenlücken von Spielern ersetzt werden?
+# True fuehrt zu Ersetzung, False zu keiner Ersetzung
+# Bei fehlenden einzelnen Parametern fuehrt False zu
+# einer Ersetzung von fehlenden Punkten durch 0
 punkteersetzung_params = True # True oder False
 
 # Welche Spieler sollen zur Ersetzung verwendet werden?
-punkteersetzung_ersatz = {"MSwr-GFS-MOS": "MSwr-EZ-MOS"}
+# Ist der Name nicht in der Liste, wird der Standardwert
+# (0) verwendet. TODO Mittelwert von allen Teilnehmern?
+punkteersetzung_ersatz = {"GRP_MOS": "MOS-Mix",
+                          "MOS-Mix": "GRP_MOS",
+                          "MSwr-MOS-Mix": "MSwr-EZ-MOS",
+                          "MSwr-EZ-MOS": "MSwr-GFS-MOS",
+                          "MSwr-GFS-MOS": "MSwr-EZ-MOS",
+                          "DWD-MOS-Mix": "DWD-EZ-MOS",
+                          "DWD-EZ-MOS": "DWD-ICON-MOS",
+                          "DWD-ICON-MOS": "DWD-EZ-MOS",}
 
-# nicht mehr implementiert:
+#FIXME nicht mehr implementiert:
 # wie viel Prozent des jeweiligen Zeitraums muss der Spieler mindestens
 # mitgetippt haben, damit die Punkte ersetzt werden?
 punkteersetzung_menschen_mindestprozentzahl = 50
@@ -337,5 +326,4 @@ marker_groesse = 12
 # abs(ymax["linker_plot"]-ymax["rechter_plot"]) + abs(ymin["linker_plot"]-ymin["rechter_plot"]) < cfg.skalenfaktor*(ymax["linker_plot"]-ymin["linker_plot"])
 # Wenn Bedingung wahr ist, haben beide Plots die gleichen Limits auf der y-Achse
 # Wenn sie falsch ist oder Skalenfaktor == 0, haben sie unterschiedliche Limits.
-
 skalenfaktor = 0

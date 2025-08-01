@@ -259,36 +259,36 @@ class ArchiveParse:
             
             # SQL-Abfrage fuer die User-Tabellen
             sql = f"""
-            SELECT
+            SELECT -- Waehle die UserID und die Punkte
                 scaffold.userID,
                 MAX(bets.points) AS points
-            FROM
+            FROM -- von der Scaffold-Tabelle
                 (
-                    -- The new 3-part scaffold: all users X all dates X all parameters
-                    SELECT
+                    -- Dieser dreiteilige Scaffold erzeugt eine Kombination aller User, aller Daten und aller Parameter
+                    SELECT -- Waehle die UserID, Betdate und ParamID
                         users.userID,
                         dates.betdate,
                         params.paramID
-                    FROM
+                    FROM -- von der Kombination aller User, Daten und Parameter
                         ({user_union}) AS users
-                    CROSS JOIN
+                    CROSS JOIN -- Kreuzprodukt der User mit den Turnierterminen
                         ({date_union}) AS dates
-                    CROSS JOIN
+                    CROSS JOIN -- Kreuzprodukt der Betdaten mit den Parametern
                         ({param_union}) AS params
-                ) AS scaffold
-            LEFT JOIN
+                ) AS scaffold -- als Scaffold-Tabelle
+            LEFT JOIN -- Verknuepfen der Scaffold-Tabelle mit der Tipp-Tabelle
                 wp_wetterturnier_bets AS bets
-            ON
+            ON -- die Verknuepfung erfolgt ueber UserID, ParamID und Betdate (Turnierdatum)
                 scaffold.userID = bets.userID
                 AND scaffold.paramID = bets.paramID
-                AND scaffold.betdate = bets.betdate -- Now we can join on the date
+                AND scaffold.betdate = bets.betdate -- Hier wird die Turnierdaten-Tabelle mit der Scaffold-Tabelle verknuepft
                 AND bets.cityID = '{City}'
-            GROUP BY
+            GROUP BY -- Gruppierung nach UserID, Betdate und ParamID
                 scaffold.userID,
                 scaffold.betdate,
                 scaffold.paramID
             ORDER BY
-                -- This ORDER BY clause produces the exact sequence you require
+                -- Diese ORDER BY-Klausel sortiert Ergebnisse nach UserID, Betdate und Parametern
                 scaffold.userID,
                 scaffold.betdate,
                 FIELD(scaffold.paramID, {param_ids_sort})

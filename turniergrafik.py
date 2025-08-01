@@ -160,7 +160,7 @@ def short_term_mean(points, dates, mean_weaks, max_nan_ratio, cities=5):
         # "schneidet" immer bestimmt grosse Stuecke heraus
         # (dafuer gedacht immer kleinere Stuecke zu bekommen)
         points_span = points[-i:]
-        print(points_span)
+        #print(points_span)
 
         # gib Nan als Summe aus, wenn ein bestimmter Prozentsatz
         # (cfg.anteil_datenverfuegbarkeit) an NaNs ueberschritten wurde
@@ -270,21 +270,33 @@ def get_player_mean(pointlist,
             # wenn die Punkteliste None-Werte enthaelt, dann
             # ersetze diese durch die Werte des Ersatzspielers
             if cfg.punkteersetzung_params:
-                ersatzspieler       = cfg.punkteersetzung_ersatz[Player]
-                pointlist_ersatz    = npzfile[ersatzspieler]
-                pointlist_neu       = []
-                # Ersetze fehlende (None) Werte mit denen aus der Ersatzliste
-                for i, v in enumerate(pointlist):
-                    if v is None:
-                        pointlist_neu.append(pointlist_ersatz[i])
-                    else:
-                        pointlist_neu.append(v)
-                pointlist = np.array(pointlist_neu)
-            # wenn die Punkteliste None-Werte enthaelt, dann
-            # ersetze diese durch Null
-            else:
-                pointlist = [0 if v is None else v for v in pointlist]
-                pointlist = np.array(pointlist)
+                try:
+                    ersatzspieler       = cfg.punkteersetzung_ersatz[Player]
+                except KeyError:
+                    if verbose: 
+                        print("Ersatzspieler nicht gefunden:", Player)
+                else:
+                    pointlist_ersatz    = npzfile[ersatzspieler]
+                    pointlist_neu       = []
+                    # Ersetze fehlende (None) Werte mit denen aus der Ersatzliste
+                    for i, v in enumerate(pointlist):
+                        if v is None:
+                            pointlist_neu.append(pointlist_ersatz[i])
+                        else:
+                            pointlist_neu.append(v)
+                    #print("Ersatzspieler:", ersatzspieler)
+                    #print("Punkteliste Ersatz:", pointlist_neu)
+                    pointlist = np.array(pointlist_neu)
+            
+            # wenn die Punkteliste (immer noch) None-Werte enthaelt
+            # dann ersetze diese durch Null
+            pointlist = [0 if v is None else v for v in pointlist]
+            pointlist = np.array(pointlist)
+            #print("None-Werte durch Null ersetzt")
+            #print("Punkteliste:", pointlist)
+        
+        #print("Maximale Punkte:", elemente_max_punkte)
+        #print("Punkteliste:", pointlist)
 
         # wenn alle Elemente gewaehlt wurden
         if auswertungselemente == elemente_archiv:
@@ -293,8 +305,6 @@ def get_player_mean(pointlist,
             # maximal-Punkte-Liste wird 2mal hintereinander
             # genommen, da Samstag und Sonntag nacheinander
             # aufsummiert werden
-            #print("Maximale Punkte:", elemente_max_punkte)
-            #print("Punkteliste:", pointlist)
             PointsLost = np.array((elemente_max_punkte * 2)) - np.array(pointlist)
 
             #print( pointlist )
@@ -383,6 +393,7 @@ if __name__ == "__main__":
 
     if args.verbose:
         verbose = True
+    else: verbose = False
 
     for option in options:
         try: exec( option + "=" + "args." + option + ".split(',')" )
@@ -452,7 +463,7 @@ if __name__ == "__main__":
 
         #Dateigroesse prüfen (Ist Turniertag)?
         if os.path.getsize(FileName) == 22:
-            print("Kein Turniertag!")
+            if verbose: print("Kein Turniertag!")
             continue
 
         for city in cfg.auswertungsstaedte:
@@ -524,7 +535,8 @@ if __name__ == "__main__":
                             except (KeyError, ValueError):
                                 missing += 1
                                 player_point_list = [np.nan] * 24
-                                #sys.exit("%s nicht gefunden - kein Ersatz!" % Player)
+                                if verbose:
+                                    print(f"'{Player}' nicht gefunden - kein Ersatz!")
                                 
                                 # add NaN to list
                                 UserValueLists[Player].append( np.nan )
@@ -554,7 +566,7 @@ if __name__ == "__main__":
                         continue
                     try:
                         # Tagesmittel des Spielers an die jeweilige Liste anfuegen
-                        print(Player, "Tagesmittel")
+                        if verbose: print(Player, "Tagesmittel")
                         UserValueLists[Player].append(
                             get_player_mean(player_point_list,
                                             cfg.auswertungstage,
