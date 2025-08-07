@@ -21,8 +21,7 @@ virtuelle Umgebung zu verwenden, um Konflikte mit anderen Python-Paketen
 zu vermeiden.
 
 ## Installation mit Conda
-Alternativ kann das Programm auch mit Conda installiert werden. Dazu
-kann eine Conda-Umgebung erstellt werden, in der das Programm installiert wird.
+Alternativ kann das Programm auch mit Conda installiert werden. Dazu wird eine Conda-Umgebung mit den notwendigen Paketen erstellt.
 ```bash
 conda create -n turniergrafik python=3.10
 conda activate turniergrafik

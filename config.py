@@ -233,7 +233,7 @@ punkteersetzung_ersatz = {"GRP_MOS": "MOS-Mix",
 #FIXME nicht mehr implementiert:
 # wie viel Prozent des jeweiligen Zeitraums muss der Spieler mindestens
 # mitgetippt haben, damit die Punkte ersetzt werden?
-punkteersetzung_menschen_mindestprozentzahl = 50
+punkteersetzung_mindestprozentzahl = 50
 
 #----------------------------------------------------------------------------#
 

@@ -257,47 +257,56 @@ def get_player_mean(pointlist,
                     npzfile):
     """
     Berechnet das Tagesmittel eines einzelnen Spielers fuer einen gewaehlten
-    Turniertag oder fuer das ganze Wochenende. Gibt NaN zurueck, falls der
-    Spieler fuer den Tag nicht auffindbar ist.
+    Turniertag oder fuer das ganze Wochenende. Gib ein leeres Array zurueck,
+    wenn der Spieler nicht gefunden wurde oder die Punkteliste nur aus None-
+    Werten besteht.
     """
-    # wenn beide Tage ausgewertet werden sollen
-    if auswertungstage == ["Sa", "So"]:
-        
-        # Wenn die Punkteliste None-Werte enthaelt, dann
-        # ersetze diese entweder durch Null oder wenn
-        # punkteersetzung_params == True fuehre eine Ersetzung durch
-        if None in pointlist:
-            # wenn die Punkteliste None-Werte enthaelt, dann
-            # ersetze diese durch die Werte des Ersatzspielers
-            if cfg.punkteersetzung_params:
-                try:
-                    ersatzspieler       = cfg.punkteersetzung_ersatz[Player]
-                except KeyError:
-                    if verbose: 
-                        print("Ersatzspieler nicht gefunden:", Player)
-                else:
-                    pointlist_ersatz    = npzfile[ersatzspieler]
-                    pointlist_neu       = []
-                    # Ersetze fehlende (None) Werte mit denen aus der Ersatzliste
-                    for i, v in enumerate(pointlist):
-                        if v is None:
-                            pointlist_neu.append(pointlist_ersatz[i])
-                        else:
-                            pointlist_neu.append(v)
-                    #print("Ersatzspieler:", ersatzspieler)
-                    #print("Punkteliste Ersatz:", pointlist_neu)
-                    pointlist = np.array(pointlist_neu)
-            
-            # wenn die Punkteliste (immer noch) None-Werte enthaelt
-            # dann ersetze diese durch Null
-            pointlist = [0 if v is None else v for v in pointlist]
-            pointlist = np.array(pointlist)
-            #print("None-Werte durch Null ersetzt")
-            #print("Punkteliste:", pointlist)
-        
+    # Wenn die Punkteliste nur aus None-Werten besteht, dann
+    # gib NaN zurueck, da der Spieler nicht gefunden wurde
+    if all(v is None for v in pointlist):
+        if verbose:
+            print("Punkteliste nur aus None-Werten:", Player)
+        return np.nan
+    
+    # Wenn die Punkteliste einzelne None-Werte enthaelt, dann
+    # ersetze diese entweder durch Null oder wenn
+    # punkteersetzung_params == True fuehre eine Ersetzung durch
+    elif None in pointlist:
+        # wenn die Punkteliste None-Werte enthaelt, dann
+        # ersetze diese durch die Werte des Ersatzspielers
+        if cfg.punkteersetzung_params:
+            try:
+                ersatzspieler       = cfg.punkteersetzung_ersatz[Player]
+            except KeyError:
+                if verbose:
+                    print("Ersatzspieler nicht gefunden:", Player)
+            else:
+                pointlist_ersatz    = npzfile[ersatzspieler]
+                pointlist_neu       = []
+                # Ersetze fehlende (None) Werte mit denen aus der Ersatzliste
+                for i, v in enumerate(pointlist):
+                    if v is None:
+                        pointlist_neu.append(pointlist_ersatz[i])
+                    else:
+                        pointlist_neu.append(v)
+                #print("Ersatzspieler:", ersatzspieler)
+                #print("Punkteliste Ersatz:", pointlist_neu)
+                pointlist = np.array(pointlist_neu)
+
+        # wenn die Punkteliste (immer noch) None-Werte enthaelt
+        # dann ersetze diese durch Null (0)
+        pointlist = [0 if v is None else v for v in pointlist]
+        pointlist = np.array(pointlist)
+        #print("None-Werte durch Null ersetzt")
+        #print("Punkteliste:", pointlist)
+
         #print("Maximale Punkte:", elemente_max_punkte)
         #print("Punkteliste:", pointlist)
 
+
+    # wenn beide Tage ausgewertet werden sollen
+    if auswertungstage == ["Sa", "So"]:
+        
         # wenn alle Elemente gewaehlt wurden
         if auswertungselemente == elemente_archiv:
             #print("Alle Elemente")

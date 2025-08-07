@@ -502,7 +502,7 @@ if __name__ == "__main__":
                         except KeyError:
                             #Ersatzspieler
                             try:
-                                ersatz_name = cfg.punkteersetzung_menschen_ersatzspieler
+                                ersatz_name = cfg.punkteersetzung_ersatz[Player]
                                 player_point_list = npzfile[ersatz_name]
                             # wenn der Ersatzspieler auch nicht gefunden wurde
                             except KeyError:
