@@ -437,24 +437,37 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
 
     ### Generiere Informationen über den Plot, die unten hineingeschrieben
     ### werden
-    auswertungstage_plot = ""
-
     if sprache == "en":
-        tage_uebersetzung = {"Sa": "Saturday", "So": "Sunday"}
+        tage_uebersetzung = {"Sa": "Saturday", "So": "Sunday", "all": "both"}
     else:
-        tage_uebersetzung = {"Sa": "Samstag", "So": "Sonntag"}
+        tage_uebersetzung = {"Sa": "Samstag", "So": "Sonntag", "all": "beide"}
 
-    for tag in auswertungstage:
-        auswertungstage_plot += tage_uebersetzung[tag]+", "
+    if len(auswertungstage) == 2:
+        auswertungstage_plot = tage_uebersetzung["all"]
+    else:
+        auswertungstage_plot = ""
+        for tag in auswertungstage:
+            auswertungstage_plot += tage_uebersetzung[tag]+", "
+        if auswertungstage_plot.endswith(", "):
+            auswertungstage_plot = auswertungstage_plot[:-2]
 
-    staedte_plot = ""
-    for stadt in auswertungsstaedte:
-        staedte_plot += stadtname(stadt)+", "
+    if len(auswertungsstaedte) == len(cfg.stadtnamen):
+        staedte_plot = "all"
+        if sprache == "de":
+            staedte_plot += "e"
+    else:
+        staedte_plot = ""
+        for stadt in auswertungsstaedte:
+            staedte_plot += stadtname(stadt)+", "
+        if staedte_plot.endswith(", "):
+            staedte_plot = staedte_plot[:-2]
 
     elemente_plot = ""
     
     if len(auswertungselemente) == len(cfg.elemente_archiv):
         elemente_plot = "all"
+        if sprache == "de":
+            elemente_plot += "e"
     else:
         for element in auswertungselemente:
             elemente_plot += element+", "
@@ -471,11 +484,11 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
     
     if sprache == "en":
         plt.figtext(.01,.01,
-                    f"Averaged over – Days: {auswertungstage_plot[:-2]} – Cities: {staedte_plot[:-2]} – Element{s}: {elemente_plot}",
+                    f"Averaged over – Days: {auswertungstage_plot} – Cities: {staedte_plot} – Element{s}: {elemente_plot}",
                     fontsize=11)
     else:
         plt.figtext(.01,.01,
-                    f"Gemittelt über – Tage: {auswertungstage_plot[:-2]} – Städte: {staedte_plot[:-2]} – Element{s}: {elemente_plot}",
+                    f"Gemittelt über – Tage: {auswertungstage_plot} – Städte: {staedte_plot} – Element{s}: {elemente_plot}",
                     fontsize=11)
 
     ### Speichervorgang ###

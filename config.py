@@ -173,8 +173,8 @@ auswertungselemente_alt = elemente_archiv_alt[:] # damit alle verwendet werden
 #auswertungselemente_neu = elemente_archiv_neu[:] # neue Elemente
 #auswertungselemente_neu = ["PPP12"] # nur die Sd1-Werte verwenden
 #auswertungselemente_alt = [e for e in elemente_archiv_alt if e not in ("Wv", "Wn")]
-#auswertungselemente_neu  = [e for e in elemente_archiv_neu if "Sd" not in e]
-auswertungselemente_neu = ("Sd1", "Sd24")
+auswertungselemente_neu  = [e for e in elemente_archiv_neu if "Sd" not in e]
+#auswertungselemente_neu = ("Sd1", "Sd24")
 # auswertungselemente = ["N", "Sd"]       #  um bestimmte zu verwenden
 
 ## Städte für die Auswertung
@@ -192,15 +192,20 @@ auswertungsstaedte = stadtnamen
 # Gesamtwochenendswertungen berechnet oder eben von den vier Sams- oder
 # Sonntagen in den vier Wochen
 #auswertungsmittelungszeitraum = 13  # Vierteljare
-#auswertungsmittelungszeitraum = 26  # Halbjahre
-#auswertungsmittelungszeitraum  = 50 # Wochen
+#auswertungsmittelungszeitraum = 25  # Halbjahre
+#auswertungsmittelungszeitraum = 50 # Wochen
 auswertungsmittelungszeitraum = "a" #Jahre
+
+# Wenn Auswertungsmittelungszeitraum = "a" (Jahre) ist, dann wird der
+# Zeitraum automatisch auf die Jahre des Auswertungszeitraums gesetzt.
+# Die Mindestanzahl an Wochen, die für eine Jahresmittelung
+# vorhanden sein muss, kann hier eingestellt werden.
+mindestanzahl_wochen_jahresmittelung = 25
 
 # für die Kurzeitmittelungen im rechten Plot
 # beschreibt den Raum der Mittelung in Form von Wochen Abstand zum
 # Endzeitpunkt ([letzte Woche, letzte 2 Wochen, letzte 4 Wochen,..])
 mittelungszeitspannen = [50, 20, 10, 5, 2, 1]
-
 
 ## Prozenthürde der Datenverfügbarkeit für Auswertungszeitraum
 # Wenn beispielsweise über 4 Wochen gemittelt werden soll, wie viele Daten

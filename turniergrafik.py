@@ -253,9 +253,11 @@ def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
             idx         = dates.index(first_tournament_of_year[year])
             points_span = points[idx:idx+weeks_in_year[year]+1]
             
-            #TODO Mindestanzahl an Wochen in config festlegen
-            if len(points_span) < 25:
-                print(f"Nicht genug Daten für Jahr {year}!")
+            # Falls die Anzahl der Punkte kleiner ist als die
+            # Mindestanzahl an Wochen für die Jahresmittelung, dann
+            # wird das Jahr übersprungen
+            if len(points_span) < cfg.mindestanzahl_wochen_jahresmittelung:
+                if verbose: print(f"Nicht genug Daten für Jahr {year}!")
                 continue
             # Berechne den Mittelwert der Punkte, wenn der Anteil an NaNs
             # kleiner als der maximale Anteil an NaNs ist
@@ -263,6 +265,8 @@ def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
                 mean = np.nanmean(points_span)
             else:
                 mean = np.nan
+            # Haenge den Mittelwert und das Datum des letzten Turniers
+            # des Jahres an die Liste an
             long_term_means.append( (last_tournament_of_year[year], mean) )
 
         return long_term_means
