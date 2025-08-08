@@ -323,14 +323,22 @@ def get_player_mean(pointlist,
     # Wenn die Punkteliste nur aus None-Werten besteht, dann
     # gib NaN zurueck, da der Spieler nicht gefunden wurde
     if all(v is None for v in pointlist):
+        #TODO if cfg.punkteersetzung_spieler: Ersatzspieler
+        # verwenden, welcher in der Konfiguration
+        # angegeben ist, wenn cfg.punkteersetzung_spieler == True
         if verbose:
             print("Punkteliste nur aus None-Werten:", Player)
         return np.nan
-    
+
     # Wenn die Punkteliste einzelne None-Werte enthaelt, dann
     # ersetze diese entweder durch Null oder wenn
     # punkteersetzung_params == True fuehre eine Ersetzung durch
     elif None in pointlist:
+        #TODO Wenn wir ein nested Dictionary haben, dann
+        # prufe, ob der Spieler einen Ersatzspieler hat,
+        # und wenn ja, dann die Punkteliste des Ersatzspielers verwenden,
+        # bis in die letzte Ebene des Dictionaries
+        
         # wenn die Punkteliste None-Werte enthaelt, dann
         # ersetze diese durch die Werte des Ersatzspielers
         if cfg.punkteersetzung_params:
@@ -352,20 +360,19 @@ def get_player_mean(pointlist,
                 #print("Punkteliste Ersatz:", pointlist_neu)
                 pointlist = np.array(pointlist_neu)
         
-        #else:
-        #TODO wenn punkteersetzung_params == False, nehme
-        # den Mittelwert der Punkteliste aller Spieler, die an diesem Tag
-        # teilgenommen haben, und ersetze die None-Werte damit
+    # TODO Wenn immer noch None-Werte in der Punkteliste sind, nehme den
+    # den Mittelwert der Punkteliste aller Spieler, die an diesem Tag
+    # teilgenommen haben, und ersetze die None-Werte damit
+    
+    # wenn die Punkteliste (immer noch) None-Werte enthaelt
+    # dann ersetze diese durch Null (0)
+    pointlist = [0 if v is None else v for v in pointlist]
+    pointlist = np.array(pointlist)
+    #print("None-Werte durch Null ersetzt")
+    #print("Punkteliste:", pointlist)
 
-        # wenn die Punkteliste (immer noch) None-Werte enthaelt
-        # dann ersetze diese durch Null (0)
-        pointlist = [0 if v is None else v for v in pointlist]
-        pointlist = np.array(pointlist)
-        #print("None-Werte durch Null ersetzt")
-        #print("Punkteliste:", pointlist)
-
-        #print("Maximale Punkte:", elemente_max_punkte)
-        #print("Punkteliste:", pointlist)
+    #print("Maximale Punkte:", elemente_max_punkte)
+    #print("Punkteliste:", pointlist)
 
 
     # wenn beide Tage ausgewertet werden sollen

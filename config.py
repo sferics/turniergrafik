@@ -219,7 +219,12 @@ datenluecken_kurzfrist = 0.75
 
 #----------------------------------------------------------------------------#
 ## Ersetzung Datenlücken bei einzelnen Tagen oder Parametern
-# Sollen Datenlücken von Spielern ersetzt werden?
+
+# Sollen Datenlücken bei einzelnen Tagen ersetzt werden?
+# True fuehrt zu Ersetzung, False zu keiner Ersetzung
+punkteersetzung_spieler = True # True oder False
+
+# Sollen Datenlücken bei einzelnen Parametern ersetzt werden?
 # True fuehrt zu Ersetzung, False zu keiner Ersetzung
 # Bei fehlenden einzelnen Parametern fuehrt False zu
 # einer Ersetzung von fehlenden Punkten durch 0
