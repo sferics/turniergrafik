@@ -322,14 +322,46 @@ def get_player_mean(pointlist,
     """
     # Wenn die Punkteliste nur aus None-Werten besteht, dann
     # gib NaN zurueck, da der Spieler nicht gefunden wurde
+    # Dies sollte eigentlich nicht passieren, leere Tipps schon vorher
+    # in db_read.py abfangen werden. Sicher ist sicherer.
     if all(v is None for v in pointlist):
-        #TODO if cfg.punkteersetzung_spieler: Ersatzspieler
-        # verwenden, welcher in der Konfiguration
-        # angegeben ist, wenn cfg.punkteersetzung_spieler == True
         if verbose:
             print("Punkteliste nur aus None-Werten:", Player)
-        return np.nan
-
+        if cfg.punkteersetzung_spieler:
+            # Wenn cfg.punkteersetzung_spieler == True, dann
+            # versuche den Ersatzspieler zu finden und dessen Punkteliste
+            # zu verwenden
+            ersatzspieler = find_replacement_players(cfg.punkteersetzung_ersatz, Player)
+            
+            for e in ersatzspieler:
+                try:
+                    # Punkteliste des Ersatzspielers aus Datei einlesen
+                    pointlist = npzfile[e]
+                    # Wenn der Ersatzspieler gefunden wurde, dann
+                    # verwende dessen Punkteliste, sofern sie nicht
+                    # nur aus None-Werten besteht
+                    if all(v is None for v in pointlist):
+                        if verbose:
+                            print("Punkteliste des Ersatzspielers nur aus None-Werten:", e)
+                        continue
+                    else:
+                        # Wenn der Ersatzspieler gefunden wurde und seine
+                        # Punkteliste nicht nur aus None-Werten besteht,
+                        # dann verwende diese Punkteliste
+                        return np.array(pointlist)
+                except KeyError:
+                    # Wenn der Ersatzspieler nicht gefunden wurde, dann gib NaN zurueck
+                    if verbose:
+                        print("Ersatzspieler nicht gefunden:", e)
+                    continue
+            
+            # Wenn alle Ersatzspieler keine Werte hatten, gib NaN zurueck
+            if verbose:
+                print("Ersatzspieler haben keine Werte oder wurden nicht gefunden:", ersatzspieler)
+            # Gib NaN zurueck, da der Spieler nicht gefunden wurde
+            #TODO stattdessen den Mittelwert der Punkteliste aller Spieler
+            return np.nan
+    
     # Wenn die Punkteliste einzelne None-Werte enthaelt, dann
     # ersetze diese entweder durch Null oder wenn
     # punkteersetzung_params == True fuehre eine Ersetzung durch
@@ -342,24 +374,26 @@ def get_player_mean(pointlist,
         # wenn die Punkteliste None-Werte enthaelt, dann
         # ersetze diese durch die Werte des Ersatzspielers
         if cfg.punkteersetzung_params:
-            try:
-                ersatzspieler = cfg.punkteersetzung_ersatz[Player]
-            except KeyError:
-                if verbose:
-                    print("Ersatzspieler nicht gefunden:", Player)
-            else:
-                pointlist_ersatz    = npzfile[ersatzspieler]
-                pointlist_neu       = []
-                # Ersetze fehlende (None) Werte mit denen aus der Ersatzliste
+            ersatzspieler = find_replacement_players(cfg.punkteersetzung_ersatz, Player)
+            for e in ersatzspieler:
+                try:
+                    # Punkteliste des Ersatzspielers aus Datei einlesen
+                    pointlist_ersatz = npzfile[e]
+                except KeyError:
+                    if verbose:
+                        print("Ersatzspieler nicht gefunden:", e)
+                    continue
+                # Wenn der Ersatzspieler gefunden wurde, dann
+                # ersetze die None-Werte in der Punkteliste des Spielers
+                pointlist_neu = []
                 for i, v in enumerate(pointlist):
                     if v is None:
                         pointlist_neu.append(pointlist_ersatz[i])
                     else:
                         pointlist_neu.append(v)
-                #print("Ersatzspieler:", ersatzspieler)
-                #print("Punkteliste Ersatz:", pointlist_neu)
                 pointlist = np.array(pointlist_neu)
-        
+                break
+    
     # TODO Wenn immer noch None-Werte in der Punkteliste sind, nehme den
     # den Mittelwert der Punkteliste aller Spieler, die an diesem Tag
     # teilgenommen haben, und ersetze die None-Werte damit
@@ -373,7 +407,8 @@ def get_player_mean(pointlist,
 
     #print("Maximale Punkte:", elemente_max_punkte)
     #print("Punkteliste:", pointlist)
-
+    
+    n_elements = len(elemente_archiv)
 
     # wenn beide Tage ausgewertet werden sollen
     if auswertungstage == ["Sa", "So"]:
@@ -392,9 +427,9 @@ def get_player_mean(pointlist,
             #print("Nur bestimmte Elemente:", auswertungselemente)
             # Dann gib aus der Liste die genannten (Index) Elemente aus
             # (es werden die Indizes der zu evaluierenden Elemente genommen,
-            # sowie die gleichen Indizes um 12 nach oben verschoben, um auch
+            # sowie die gleichen Indizes um n_elements nach oben verschoben, um auch
             # die Werte fuer Sonntag mit einzulesen)
-            Points = itemgetter(*(eval_indexes+[i+12 for i in eval_indexes]))\
+            Points = itemgetter(*(eval_indexes+[i+n_elements for i in eval_indexes]))\
                                  (pointlist)
             
             # Punkte von den elementweisen maximalen Punktzahlen
@@ -415,9 +450,9 @@ def get_player_mean(pointlist,
 
             # gibt aus der Liste die genannten (Index) Elemente aus
             # (da die Listen immer Samstag und Sonntag hintereinander
-            # beinhalten, muss hier auf den Index immer 12 aufgerechnet werden
-            # um die Samstags-Werte zu ueberspringen)
-            Points = itemgetter(*[i+12 for i in eval_indexes])(pointlist)
+            # beinhalten, muss hier auf den Index immer n_elements aufgerechnet
+            # werden um die Samstags-Werte zu ueberspringen)
+            Points = itemgetter(*[i+n_elements for i in eval_indexes])(pointlist)
 
         else:
             raise ValueError("Nur Samstag (Sa) und Sonntag (So) sind valide "\
@@ -460,6 +495,22 @@ def city_to_id(city):
         if len(city) == 3:
             return kuerzel_zu_id[city]
         else: return cfg.stadt_zu_id[city]
+
+
+def find_replacement_players(UserValueLists, Player):
+    """
+    Findet Ersatzspieler fuer einen Spieler, der in der
+    UserValueLists-Dictionary.
+    """
+    # Wenn der Spieler nicht gefunden wurde, dann versuche Ersatzspieler
+    # in der Konfiguration zu finden
+    try:
+        ersatzspieler = cfg.punkteersetzung_ersatz[Player]
+    except KeyError:
+        if verbose:
+            print("Keine Ersatzspieler gefunden fuer:", Player)
+        ersatzspieler = tuple()
+    return ersatzspieler
 
 
 if __name__ == "__main__":
@@ -542,6 +593,7 @@ if __name__ == "__main__":
         try:
             eval_el_indexes = [cfg.elemente_archiv.index(s)
                                for s in cfg.auswertungselemente]
+            #eval_el_indexes = list(range(len(cfg.auswertungselemente)))
         except ValueError:
             print("Die Auswertungselemente sind nicht valide bzw. nicht "\
                   "oder nur teilweise in der Elementeliste vorhanden")
@@ -566,15 +618,18 @@ if __name__ == "__main__":
             continue
 
         for city in cfg.auswertungsstaedte:
-
+            
             # Stadt in ID konvertieren
             city_id = city_to_id(city)
-
+            
             # zu ignorierende Termine der entsprechenden Stadt in IDs umwandeln
             # (wird fuer jede Stadt einmal neu berechnet)
             zu_ignorierende_tage = \
                 [date_2_index(s) for s in cfg.zu_ignorierende_termine[city_id]]
-
+            
+            # Allgemeine zu ignorierende Termine hinzufuegen fuer alle Staedte
+            zu_ignorierende_tage += cfg.zu_ignorierende_termine_allgemein
+             
             FileName = "{}/{}_{}.npz".format(cfg.archive_dir_name, city_id, i)
 
             # erstelle die Datei, wenn die sie noch nicht angelegt wurde
@@ -665,7 +720,6 @@ if __name__ == "__main__":
                         continue
                     try:
                         # Tagesmittel des Spielers an die jeweilige Liste anfuegen
-                        if verbose: print(Player, "Tagesmittel")
                         UserValueLists[Player].append(
                             get_player_mean(player_point_list,
                                             cfg.auswertungstage,
@@ -675,15 +729,41 @@ if __name__ == "__main__":
                                             eval_el_indexes,
                                             Player,
                                             npzfile) )
-                        UserValueLists[Player].append( i-1 )
                         
                     # der Spieler wurde fuer den Tag nicht gefunden
                     except NameError:
-                        faulty_dates.add(i)
-                        #continue
-                        UserValueLists[Player].append( np.nan )
-                        UserValueLists[Player].append( i-1 )
-
+                        # wenn der Spieler nicht gefunden wurde, dann finde
+                        # Ersatzspieler aus Konfiguration
+                        ersatzspieler = find_replacement_players(UserValueLists, Player)
+                        
+                        for e in ersatzspieler:
+                            try:
+                                # Punkte des Ersatzspielers aus Datei einlesen
+                                player_point_list = npzfile[e]
+                                
+                                # Tagesmittel des Ersatzspielers an die jeweilige
+                                # Liste anfuegen
+                                UserValueLists[Player].append(
+                                    get_player_mean(player_point_list,
+                                                    cfg.auswertungstage,
+                                                    cfg.auswertungselemente,
+                                                    cfg.elemente_archiv,
+                                                    max_points_elements,
+                                                    eval_el_indexes,
+                                                    Player,
+                                                    npzfile) )
+                                
+                                break  # Ersatzspieler gefunden, Schleife verlassen
+                            except KeyError:
+                                #TODO wenn kein Ersatzspieler gefunden wurde,
+                                # dann versuche den Mittelwert der anderen Spieler
+                                # zu verwenden
+                                # wenn der Ersatzspieler nicht gefunden wurde,
+                                # dann gib NaN zurueck
+                                UserValueLists[Player].append( np.nan )
+                    
+                    UserValueLists[Player].append( i-1 )
+                    #FIXME entfernen oder verschieben weiter nach oben
                     """
                     players_in_file = npzfile.keys()
                     name = "" #FIXME ACHTUNG: So darf es keinen Spieler mit

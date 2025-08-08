@@ -69,6 +69,9 @@ zu_ignorierende_termine = {1: ["21.10.2005", "21.03.2008", "24.12.2004",
                            5: ["02.08.2013", "04.09.2009"],
                            2: ["05.04.2013", "31.12.2004"],}
 
+# Allgemeine Termine, die nicht in die Auswertung eingehen sollen (z.B. Feiertage)
+zu_ignorierende_termine_allgemein = ["07.04.2023"]
+
 #TODO Statt Strings der Namen lieber die IDs nutzen
 ## Teilnehmerumbenennungen
 # links jeweils der Name vor einer Änderung, rechts der Neue
@@ -233,15 +236,15 @@ punkteersetzung_params = True # True oder False
 # Welche Spieler sollen zur Ersetzung verwendet werden?
 # Ist der Name nicht in der Liste, wird der Standardwert
 # (0) verwendet. TODO Mittelwert von allen Teilnehmern?
-punkteersetzung_ersatz = {"GRP_MOS": "MOS-Mix",
-                          "MOS-Mix": "GRP_MOS",
-                          "MSwr-MOS-Mix": "MSwr-EZ-MOS",
-                          "MSwr-EZ-MOS": "MSwr-GFS-MOS",
-                          "MSwr-GFS-MOS": "MSwr-EZ-MOS",
-                          "DWD-MOS-Mix": "DWD-EZ-MOS",
-                          "DWD-EZ-MOS": "DWD-ICON-MOS",
-                          "DWD-ICON-MOS": "DWD-EZ-MOS",
-                          "DWD-MOS-Mix-test": "DWD-MOS-Mix",}
+punkteersetzung_ersatz = {"GRP_MOS": ("MOS-Mix"),
+                          "MOS-Mix": ("GRP_MOS"),
+                          "MSwr-MOS-Mix": ("MSwr-EZ-MOS", "MSwr-GFS-MOS"),
+                          "MSwr-EZ-MOS": ("MSwr-GFS-MOS"),
+                          "MSwr-GFS-MOS": ("MSwr-EZ-MOS"),
+                          "DWD-MOS-Mix": ("DWD-EZ-MOS", "DWD-ICON-MOS"),
+                          "DWD-EZ-MOS": ("DWD-ICON-MOS"),
+                          "DWD-ICON-MOS": ("DWD-EZ-MOS"),
+                          "DWD-MOS-Mix-test": ("DWD-MOS-Mix")}
 
 #FIXME nicht mehr implementiert:
 # wie viel Prozent des jeweiligen Zeitraums muss der Spieler mindestens

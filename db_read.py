@@ -134,12 +134,12 @@ class db:
         self.user_names = dict((v, k) for k, v in self.user_ids.items())
         
         # Parameter IDs und Parameternamen initialisieren
-        self.param_ids_new = self.get_param_ids(cfg.auswertungselemente_neu)
+        self.param_ids_new = self.get_param_ids(cfg.elemente_archiv_neu)
         # Parameternamen und Param-IDs vertauschen
         self.param_names_new = dict((v, k) for k, v in self.param_ids_new.items())
         
         # Alte Parameter IDs und Parameternamen initialisieren
-        self.param_ids_old = self.get_param_ids(cfg.auswertungselemente_alt)
+        self.param_ids_old = self.get_param_ids(cfg.elemente_archiv_alt)
         # Parameternamen und Param-IDs vertauschen 
         self.param_names_old = dict((v, k) for k, v in self.param_ids_old.items())
 
@@ -230,7 +230,10 @@ class ArchiveParse:
         UserTables      = {}
         
         # Pruefen, ob alle User-IDs abgefragt werden sollen
+        #TODO param_ids == "all" entfernen, da es nicht mehr benoetigt wird
+        # oder nur wenn cfg.punkteersetzung_params == False
         if param_ids == "all":
+            print("param_ids == 'all'")
             # SQL-Abfrage fuer die User-Tabellen
             sql = f"SELECT userID, points_d1, points_d2 FROM `wp_wetterturnier_betstat` WHERE userID IN {user_ids_tuple} AND cityID = {City} AND tdate = {Tdate}"
             # Ausfuehren der SQL-Abfrage
@@ -318,14 +321,14 @@ class ArchiveParse:
                     UserTables[user_name] = []
                 # Punkte fuer den User hinzufuegen
                 UserTables[user_name] += [points]
-                
+            
             # Erstelle eine Kopie von UserTables, da wir das Dictionary modifizieren werden
             # Fuer alle user_names in UserTables pruefen ob 24 Nones in der Liste sind,
             # falls ja wird der User aus der Liste geloescht
             for user_name in UserTables.copy():
-                # Pruefen, ob die Liste 24 Nones enthaelt
-                if len(UserTables[user_name]) == 24 and all(p is None for p in UserTables[user_name]):
-                    # Wenn die Liste 24 Nones enthaelt, wird der User aus der Liste geloescht
+                # Pruefen, ob die Liste nur Nones enthaelt
+                if all(p is None for p in UserTables[user_name]):
+                    # Wenn die Liste nur Nones enthaelt, wird der User aus der Liste geloescht
                     del UserTables[user_name]
 
         # Gebe die User-Tabellen zurueck
