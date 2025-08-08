@@ -7,6 +7,8 @@ import locale
 from datetime import date
 from datetime import timedelta
 from datetime import datetime as dt
+# fuer die Umwandlung von Strings in Datumsobjekte
+from copy import copy
 
 # einfachere Berechnungen und Umgang mit Fehlwerten
 import numpy as np
@@ -51,10 +53,12 @@ def date_2_index(input_date):
     Tag 17837: Freitag, 02.11.2018
     """
 
-    if not input_date == "":
-
-        # datetime-objekt wird in date-obj. umgewandelt
+    if type(input_date) is str:
+        # String in ein Datum umwandeln
         day_x = dt.strptime(input_date, "%d.%m.%Y").date()
+    elif type(input_date) is date:
+        # wenn ein Datum uebergeben wurde, dann direkt verwenden
+        day_x = copy(input_date)
 
     # wenn das Datum leer gelassen wurde, nimm das aktuelle Datum
     else:
@@ -187,6 +191,15 @@ def short_term_mean(points, dates, mean_weaks, max_nan_ratio, cities=5):
     #print(len(mean_date_list))
     return mean_date_list
 
+def index_2_year(date_index):
+    """
+    Gibt das Jahr des Tagesindex zurueck
+    """
+    if date_index > 0:
+        return index_2_date(date_index).year
+    else:
+        raise ValueError("Der Tagesindex ist nicht korrekt.")
+
 
 def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
     """
@@ -205,14 +218,56 @@ def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
     long_term_means = []
     ii = 0
 
-    # geht in Schritten mit der definierten Zeitspannengroesse durch die Tage
-
+    # Wenn Jahre individuell ausgewertet werden sollen
     if mean_time_span == "a":
+        # Berechne für jedes Jahr die Mittelungszeitspanne individuell
+        # Berechne die Anzahl der Tage im Jahr
+        year_start = index_2_year(dates[0])
+        year_end   = index_2_year(dates[-1])
         
-        # calculate the average number of weeks in all years from number of dates and cities
-        # and set it as mean_time_span. This is done to get the same number of weeks for all years
-        mean_time_span = int( len(dates) / cities / 52 ) #FIXME
+        weeks_in_year = {}
+        dates_in_year = {}
 
+        # Die Mittelungszeitspanne ist für jedes Jahr unterschiedlich
+        for d in dates:
+            year = index_2_year(d)
+            if year not in weeks_in_year:
+                weeks_in_year[year] = 1
+                dates_in_year[year] = []
+            weeks_in_year[year] += 1
+            dates_in_year[year].append(d)
+
+        dates = dates[::cities]  # Datenliste auf die Anzahl der Städte reduzieren
+        first_tournament_of_year    = {}
+        last_tournament_of_year     = {}
+        long_term_means             = []
+
+        for year in range(year_start, year_end+1):
+            
+            # Erstes Tournier des Jahres finden
+            first_tournament_of_year[year] = min(dates_in_year[year])
+            # Letztes Tournier des Jahres finden
+            last_tournament_of_year[year] = max(dates_in_year[year])
+
+            # Finde den Index des ersten Turniers des Jahres in dates
+            idx         = dates.index(first_tournament_of_year[year])
+            points_span = points[idx:idx+weeks_in_year[year]+1]
+            
+            #TODO Mindestanzahl an Wochen in config festlegen
+            if len(points_span) < 25:
+                print(f"Nicht genug Daten für Jahr {year}!")
+                continue
+            # Berechne den Mittelwert der Punkte, wenn der Anteil an NaNs
+            # kleiner als der maximale Anteil an NaNs ist
+            if (np.isnan(points_span).sum() / len(points_span)) < max_nan_ratio:
+                mean = np.nanmean(points_span)
+            else:
+                mean = np.nan
+            long_term_means.append( (last_tournament_of_year[year], mean) )
+
+        return long_term_means
+    
+    # geht in Schritten mit der definierten Zeitspannengroesse durch die Tage
     for i in range(0, len(points)+1, mean_time_span ):
         
         # "schneidet" immer gleich grosse Stuecke heraus
@@ -276,7 +331,7 @@ def get_player_mean(pointlist,
         # ersetze diese durch die Werte des Ersatzspielers
         if cfg.punkteersetzung_params:
             try:
-                ersatzspieler       = cfg.punkteersetzung_ersatz[Player]
+                ersatzspieler = cfg.punkteersetzung_ersatz[Player]
             except KeyError:
                 if verbose:
                     print("Ersatzspieler nicht gefunden:", Player)
@@ -292,6 +347,11 @@ def get_player_mean(pointlist,
                 #print("Ersatzspieler:", ersatzspieler)
                 #print("Punkteliste Ersatz:", pointlist_neu)
                 pointlist = np.array(pointlist_neu)
+        
+        #else:
+        #TODO wenn punkteersetzung_params == False, nehme
+        # den Mittelwert der Punkteliste aller Spieler, die an diesem Tag
+        # teilgenommen haben, und ersetze die None-Werte damit
 
         # wenn die Punkteliste (immer noch) None-Werte enthaelt
         # dann ersetze diese durch Null (0)
@@ -315,10 +375,7 @@ def get_player_mean(pointlist,
             # genommen, da Samstag und Sonntag nacheinander
             # aufsummiert werden
             PointsLost = np.array((elemente_max_punkte * 2)) - np.array(pointlist)
-
-            #print( pointlist )
-            #print(np.round(PointsLost,1))
-
+            
         # wenn nur bestimmte Elemente ausgewertet werden sollen
         else:
             #print("Nur bestimmte Elemente:", auswertungselemente)
@@ -404,7 +461,7 @@ if __name__ == "__main__":
     ps = ap()
     ps.add_argument("-v", "--verbose", help="increase output verbosity",
                         action="store_true")
-    options = ("params", "cities", "days", "times", "users")
+    options = ("params", "cities", "days", "tournaments", "users")
     for option in options:
         ps.add_argument("-"+option[0], "--"+option, type=str, help="Set "+option)
     args = ps.parse_args()
@@ -417,7 +474,18 @@ if __name__ == "__main__":
         try: exec( option + "=" + "args." + option + ".split(',')" )
         except: exec(option + "=" + "None")
         #print( eval(option), type(eval(option)) )
-
+    
+    # Wenn Start- und Endttermine angegeben wurden, dann konvertiere sie in Tagesindizes
+    if tournaments:
+        # Beispiel: "02.01.2023,09.01.2025"
+        if len(tournaments) == 2:
+            # Start- und Endtermin in Tagesindizes umwandeln
+            cfg.starttermin = tournaments[0]
+            cfg.endtermin   = tournaments[1]
+        else:
+            raise ValueError("Die Datumsangabe ist nicht korrekt. "\
+                             "Bitte im Format 'dd.mm.yyyy,dd.mm.yyyy' eingeben.")
+    
     # Anfangs- und Endtermin zum jeweiligen Tagesindex konvertieren
     begin, end = get_friday_range(date_2_index(cfg.starttermin),
                                   date_2_index(cfg.endtermin))
@@ -442,11 +510,13 @@ if __name__ == "__main__":
 
     # Freitags-Indizes durchgehen (+1/+2: Iteration ab 1, inklusive Ende)
     for i in range(begin+1, end+1, 7):
-        
+        # Ausgabe des aktuellen Datums
         if verbose: print( index_2_date( i-1 ) )
         # wenn das Datum vor dem 06.01.2023 liegt, dann die alten
         # Auswertungselemente verwenden
+        # Ausgabe der Tagesindizes
         if verbose: print(i)
+        
         if i < 19363:
             #TODO funktioniert nur, wenn alle Elemente gewaehlt wurden. Was tun bei spezifischen Elementen?
             cfg.auswertungselemente = cfg.auswertungselemente_alt[:]
@@ -696,7 +766,7 @@ if __name__ == "__main__":
 
         long_term_data.append((player, long_term_mean(userpoints, userdates,
                                             cfg.auswertungsmittelungszeitraum,
-                                            cfg.anteil_datenverfuegbarkeit,
+                                            cfg.datenluecken_langfrist,
                                             cities)))
         
         short_term_data.append((player, short_term_mean(userpoints, userdates,
@@ -725,4 +795,4 @@ if __name__ == "__main__":
     #print( missing_list )
 
     print("Turniertage mit fehlenden Spielern")
-    print(faulty_dates)
+    print( sorted(faulty_dates) )

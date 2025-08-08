@@ -142,7 +142,7 @@ starttermin  = "19.06.2015"
 #starttermin  = "19.09.2016"
 #starttermin  = "19.06.2017"
 #endtermin    = "01.01.2023"
-endtermin    = "31.07.2025"
+endtermin    = "01.08.2025"
 
 ## Auswertungstage (Auswertungszeitraum wäre irreführend, denn das ist es
 # gerade nicht): Soll jeweils das ganze Wochenende oder sollen nur die
@@ -170,8 +170,11 @@ auswertungsteilnehmer_multi = ["MSwr-MOS-Mix","MSwr-EZ-MOS","MSwr-GFS-MOS","DWD-
 ## Elemente für die Auswertung
 # mögliche Werte:
 auswertungselemente_alt = elemente_archiv_alt[:] # damit alle verwendet werden
-auswertungselemente_neu = elemente_archiv_neu[:] # neue Elemente
-#auswertungselemente = [e for e in elemente_archiv if e not in ("Wv", "Wn")]
+#auswertungselemente_neu = elemente_archiv_neu[:] # neue Elemente
+#auswertungselemente_neu = ["PPP12"] # nur die Sd1-Werte verwenden
+#auswertungselemente_alt = [e for e in elemente_archiv_alt if e not in ("Wv", "Wn")]
+#auswertungselemente_neu  = [e for e in elemente_archiv_neu if "Sd" not in e]
+auswertungselemente_neu = ("Sd1", "Sd24")
 # auswertungselemente = ["N", "Sd"]       #  um bestimmte zu verwenden
 
 ## Städte für die Auswertung
@@ -190,10 +193,10 @@ auswertungsstaedte = stadtnamen
 # Sonntagen in den vier Wochen
 #auswertungsmittelungszeitraum = 13  # Vierteljare
 #auswertungsmittelungszeitraum = 26  # Halbjahre
-auswertungsmittelungszeitraum  = 50 # Wochen
-#auswertungsmittelungszeitraum = "a" #Jahre
+#auswertungsmittelungszeitraum  = 50 # Wochen
+auswertungsmittelungszeitraum = "a" #Jahre
 
-# für die Kurzeitmittelungen im linken Plot
+# für die Kurzeitmittelungen im rechten Plot
 # beschreibt den Raum der Mittelung in Form von Wochen Abstand zum
 # Endzeitpunkt ([letzte Woche, letzte 2 Wochen, letzte 4 Wochen,..])
 mittelungszeitspannen = [50, 20, 10, 5, 2, 1]
@@ -203,7 +206,7 @@ mittelungszeitspannen = [50, 20, 10, 5, 2, 1]
 # Wenn beispielsweise über 4 Wochen gemittelt werden soll, wie viele Daten
 # müssen für diesen Zeitraum mindestens vorhanden sein, sodass die Daten
 # gemittelt angezeigt werden sollen? (dimensionslos: [0-1])
-anteil_datenverfuegbarkeit = 0.2
+datenluecken_langfrist = 0.2
 
 # Wie viel Prozent der Daten müssen für die Kurzfristgrafik (also die rechte
 # Teilgrafik) vorhanden sein? (dimensionslos: [0-1])
@@ -241,7 +244,7 @@ punkteersetzung_mindestprozentzahl = 50
 ### Grafikeinstellungen ###
 
 ## Sprache der Beschriftung
-sprache = "en" # "de" oder "en"
+sprache = "de" # "de" oder "en"
 
 # einzelne beschriftungen (außer der untersten Zeile, dort wohl kaum
 # notwendig)
@@ -254,8 +257,8 @@ beschriftungen = {"en" : {"titel": "MOS AUTOMATS COMPARISON",
                           "achse_rechts": "Lower values: Better"},
 
                   "de" : {"titel": "VERGLEICH MOS-SYSTEME",
-                          "titel_links": "Letzten Jahre",
-                          "titel_rechts": "Letzten Wochen",
+                          "titel_links": "Letzte Jahre",
+                          "titel_rechts": "Letzte Wochen",
                           "achse_links": "Verlorene Punkte pro "\
                                          "individueller Vorhersage\n(pro "\
                                          "Tag, Stadt und Element)",

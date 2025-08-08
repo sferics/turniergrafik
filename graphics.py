@@ -458,17 +458,25 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
     else:
         for element in auswertungselemente:
             elemente_plot += element+", "
-
+        if elemente_plot.endswith(", "):
+            elemente_plot = elemente_plot[:-2]
+    
+    if len(auswertungselemente) == 1:
+        s = ""
+    else:
+        if sprache == "en":
+            s = "s"
+        else:
+            s = "e"
+    
     if sprache == "en":
         plt.figtext(.01,.01,
-                    "Averaged over – Days: {} – Cities: {} – Elements: {}"\
-                    .format(auswertungstage_plot[:-2], staedte_plot[:-2],
-                    elemente_plot), fontsize=11)
+                    f"Averaged over – Days: {auswertungstage_plot[:-2]} – Cities: {staedte_plot[:-2]} – Element{s}: {elemente_plot}",
+                    fontsize=11)
     else:
         plt.figtext(.01,.01,
-                    "Gemittelt über – Tage: {} – Städte: {} – Elemente: {}"\
-                    .format(auswertungstage_plot[:-2], staedte_plot[:-2],
-                    elemente_plot), fontsize=11)
+                    f"Gemittelt über – Tage: {auswertungstage_plot[:-2]} – Städte: {staedte_plot[:-2]} – Element{s}: {elemente_plot}",
+                    fontsize=11)
 
     ### Speichervorgang ###
     dateiname_plot = gibDateinamen(cfg=cfg)
