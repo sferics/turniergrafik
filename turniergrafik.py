@@ -535,11 +535,14 @@ if __name__ == "__main__":
     if args.verbose:
         verbose = True
     else: verbose = False
-
-    for option in options:
-        try: exec( option + "=" + "args." + option + ".split(',')" )
-        except: exec(option + "=" + "None")
-        #print( eval(option), type(eval(option)) )
+    
+    # Konfiguration der Auswertungselemente, Staedte, Tage, Turniere und
+    # Teilnehmer laden, explizit ohne exec (schneller und sicherer)
+    params = args.params.split(',') if args.params else None
+    cities = args.cities.split(',') if args.cities else None
+    days   = args.days.split(',') if args.days else None
+    tournaments = args.tournaments.split(',') if args.tournaments else None
+    users  = args.users.split(',') if args.users else None
     
     # Wenn Start- und Endttermine angegeben wurden, dann konvertiere sie in Tagesindizes
     if tournaments:
