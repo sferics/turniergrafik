@@ -140,19 +140,21 @@ mos_teilnehmer = list(mos_namen_starttermine.keys())
 #starttermin  = "22.10.2016"
 #starttermin  = "10.12.2008"
 #starttermin  = "15.11.2008"
-starttermin  = "19.06.2015"
+#starttermin  = "19.06.2015"
 #starttermin  = "01.09.2016"
 #starttermin  = "19.09.2016"
 #starttermin  = "19.06.2017"
 #endtermin    = "01.01.2023"
+starttermin  = "26.07.2025"
 endtermin    = "01.08.2025"
 
 ## Auswertungstage (Auswertungszeitraum wäre irreführend, denn das ist es
 # gerade nicht): Soll jeweils das ganze Wochenende oder sollen nur die
 # Samstage/Sonntage ausgewerten werden?
-# auswertungsart = ["Sa"] nur für Samstag
-# auswertungsart = ["Sa", "So"] für beide Tage
-auswertungstage = ["Sa", "So"]
+#auswertungstage = ["Sa"] #nur für Samstag
+auswertungstage = ["So"] #nur für Sonntag
+#auswertungstage = ["Sa", "So"] #für beide Tage
+#auswertungstage = ["Sa", "So"]
 
 ## Teilnehmer der Auswertung
 # Entweder eine Liste mit den Namen schreiben auswertungsteilnehmer = ["spielerA", "spielerB"]
@@ -176,14 +178,16 @@ auswertungselemente_alt = elemente_archiv_alt[:] # damit alle verwendet werden
 #auswertungselemente_neu = elemente_archiv_neu[:] # neue Elemente
 #auswertungselemente_neu = ["PPP12"] # nur die Sd1-Werte verwenden
 #auswertungselemente_alt = [e for e in elemente_archiv_alt if e not in ("Wv", "Wn")]
-auswertungselemente_neu  = [e for e in elemente_archiv_neu if "Sd" not in e]
+#auswertungselemente_neu  = [e for e in elemente_archiv_neu if "Sd" not in e]
 #auswertungselemente_neu = ("Sd1", "Sd24")
+auswertungselemente_neu = ("Sd1",)
 # auswertungselemente = ["N", "Sd"]       #  um bestimmte zu verwenden
 
 ## Städte für die Auswertung
 # Einfach in der Liste als Strings auflisten
 # Beispiel:
-auswertungsstaedte = stadtnamen
+#auswertungsstaedte = stadtnamen
+auswertungsstaedte = ["Berlin"]
 #auswertungsstaedte = ["Berlin", "Leipzig"]
 #auswertungsstaedte = ["Innsbruck", "Wien", "Zürich"]
 

@@ -331,6 +331,8 @@ class ArchiveParse:
                     # Wenn die Liste nur Nones enthaelt, wird der User aus der Liste geloescht
                     del UserTables[user_name]
 
+        print(UserTables)
+
         # Gebe die User-Tabellen zurueck
         return UserTables
 

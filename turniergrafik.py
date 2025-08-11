@@ -441,7 +441,7 @@ def get_player_mean(pointlist,
 
         # wenn nur Samstag ausgewertet werden soll
         if auswertungstage == ["Sa"]:
-
+            
             # gibt aus der Liste die genannten (Index) Elemente aus
             Points = itemgetter(*eval_indexes)(pointlist)
 
@@ -458,7 +458,11 @@ def get_player_mean(pointlist,
             raise ValueError("Nur Samstag (Sa) und Sonntag (So) sind valide "\
                              "Auswertungstage {}".format(auswertungstage))
 
-
+        # Wenn wir nur einen Wert haben, hat Points kein Attribut
+        # __len__ und wir muessen es in eine Liste umwandeln
+        if not hasattr(Points, '__len__'):
+            Points = [Points]
+        
         # Punkte von den elementweisen maximalen Punktzahlen
         # elementweise abziehen
         PointsLost = [(elemente_max_punkte[i] - v)
@@ -549,7 +553,7 @@ if __name__ == "__main__":
                              "Bitte im Format 'dd.mm.yyyy,dd.mm.yyyy' eingeben.")
     
     # Anfangs- und Endtermin zum jeweiligen Tagesindex konvertieren
-    begin, end = get_friday_range(date_2_index(cfg.starttermin),
+    begin, end = get_friday_range(date_2_index(cfg.starttermin)-1,
                                   date_2_index(cfg.endtermin))
 
     cfg.auswertungselemente_alt   = params if params else cfg.auswertungselemente_alt
@@ -885,5 +889,5 @@ if __name__ == "__main__":
     #print("Turniere mit fehlenden Spielern")
     #print( missing_list )
 
-    print("Turniertage mit fehlenden Spielern")
+    print("Turniertage mit fehlenden Spielern / Tipps:")
     print( sorted(faulty_dates) )
