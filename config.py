@@ -25,6 +25,9 @@ stadt_zu_id = {
     "Leipzig": 5,
 }
 
+# Keys und Values tauschen
+id_zu_stadt = {v: k for k, v in stadt_zu_id.items()}
+
 # StadtID zu Abkuerzung konvertieren
 id_zu_kuerzel = {
     1: "BER",
@@ -33,6 +36,9 @@ id_zu_kuerzel = {
     4: "IBK",
     5: "LEI",
 }
+
+# Abkuerzung zu StadtID konvertieren
+kuerzel_zu_id = {v: k for k, v in id_zu_kuerzel.items()}
 
 # Name der Ordners, in dem die Archiv-Dateien geladert werden sollen
 archive_dir_name = "archiv"

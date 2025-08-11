@@ -562,6 +562,17 @@ if __name__ == "__main__":
     cfg.auswertungselemente_alt   = params if params else cfg.auswertungselemente_alt
     cfg.auswertungselemente_neu   = params if params else cfg.auswertungselemente_neu
     cfg.auswertungselemente       = cfg.auswertungselemente_neu[:] if end >= 19363 else cfg.auswertungselemente_alt[:]
+    
+    # Die Städte können entweder als IDs, Kürzel oder Namen angegeben werden.
+    if cities:
+        for i, c in enumerate(cities):
+            match len(c):
+                case 1: # ID zu Stadtnamen konvertieren
+                    cities[i] = cfg.id_zu_stadt[int(c)]
+                case 3: # Kuerzel zu Stadtnamen konvertieren
+                    cities[i] = cfg.id_zu_stadt[cfg.kuerzel_zu_id[c]]
+                case _: # Stadtnamen bleiben unveraendert
+                    pass
 
     cfg.auswertungsstaedte    = cities if cities else cfg.auswertungsstaedte
     cfg.auswertungsteilnehmer = users if users else cfg.auswertungsteilnehmer
@@ -874,23 +885,24 @@ if __name__ == "__main__":
 
         #print( "short term" )
         #print( short_term_data[0] )
-
-    #------------------------------------------------------------------------#
-    print ("Benoetigte Laufzeit der Rechnungen ohne Grafik: {0} Sekunden"
-           .format(time.time() - startTime))
-    #------------------------------------------------------------------------#
-
-    # Grafik erstellen
-    graphics.erstelleGrafik(long_term_data, short_term_data, cfg)
-
-    #------------------------------------------------------------------------#
-    # Ausgabe der Laufzeit des Programms
-    print ("Benoetigte Laufzeit des Scriptes: {0} Sekunden"
-           .format(time.time() - startTime))
-    #------------------------------------------------------------------------#
     
-    #print("Turniere mit fehlenden Spielern")
-    #print( missing_list )
+    if verbose:
+        #------------------------------------------------------------------------#
+        print ("Benoetigte Laufzeit der Rechnungen ohne Grafik: {0} Sekunden"
+               .format(time.time() - startTime))
+        #------------------------------------------------------------------------#
 
-    print("Turniertage mit fehlenden Spielern / Tipps:")
-    print( sorted(faulty_dates) )
+        # Grafik erstellen
+        graphics.erstelleGrafik(long_term_data, short_term_data, cfg)
+
+        #------------------------------------------------------------------------#
+        # Ausgabe der Laufzeit des Programms
+        print ("Benoetigte Laufzeit des Scriptes: {0} Sekunden"
+               .format(time.time() - startTime))
+        #------------------------------------------------------------------------#
+        
+        #print("Turniere mit fehlenden Spielern")
+        #print( missing_list )
+
+        print("Turniertage mit fehlenden Spielern / Tipps:")
+        print( sorted(faulty_dates) )

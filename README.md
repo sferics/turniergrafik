@@ -100,10 +100,31 @@ um den Zeitraum für die Turniergrafiken zu ändern oder um die zu betrachteten
 Spieler zu ändern. Es ist wichtig, die Argumente korrekt anzugeben,
 um sicherzustellen, dass das Programm die gewünschten Ergebnisse liefert.
 
-Die verfügbaren Argumente sind:
-TODO: Hier sollten die verfügbaren Kommandozeilenargumente aufgelistet und
-beschrieben werden. Diese finden sich in der Datei `turniergrafik.py`
-im Teil `if __name__ == "__main__":`.
+### Die verfügbaren Argumente sind:
+```bash
+python turniergrafik.py -h
+usage: turniergrafik.py [-h] [-v] [-p PARAMS] [-c CITIES] [-d DAYS] [-t TOURNAMENTS] [-u USERS]
+
+options:
+-h, --help - show this help message and exit
+-v, --verbose - increase output verbosity
+-p, --params PARAMS - Set params
+-c, --cities CITIES - Set cities
+-d, --days DAYS - Set days
+-t, --tournaments TOURNAMENTS - Set tournaments
+-u, --users USERS - Set users
+```
+
+### Erklärung der einzelnen Optionen
+
+```-h/--help``` Zeigt die Hilfe an und beendet das Programm.
+```-v/--verbose``` Zeigt mehr (Debug)-Output bei der Ausführung an. Im Code erkennbar durch if ```verbose: print(x)```
+```-p/--params``` Parameter, die ausgewertet werden sollen, getrennt durch Kommas [Bsp: ```-p Sd1,Sd24,RR24```]
+```-c/--cities``` Städtenamen als ID, Kürzel oder ganzer Name [Bsp: -c ```BER,4,Zürich```]
+```-d/--days``` Tage, die ausgewertet werden sollen (Sa = Samstag, So = Sonntag) [Bsp: ```-d Sa,So```]
+```-t/--tournaments``` Start- und Enddatum (einschließlich!) der auszuwertenden Turniere [Bsp: ```-t 03.01.2023,08.08.2025```]
+```-u/--user``` Namen der Spieler, die betrachtet werden sollen [Bsp: ```-u MSwr-MOS-Mix,MSwr-EZ-MOS,MSwr-GFS-MOS```]
+
 
 ## Konfiguration und Anpassung
 Konfigurationen koennen, wie gehabt, in der 'config.py' geaendert werden.
