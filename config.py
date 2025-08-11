@@ -240,15 +240,15 @@ punkteersetzung_params = True # True oder False
 # Welche Spieler sollen zur Ersetzung verwendet werden?
 # Ist der Name nicht in der Liste, wird der Standardwert
 # (0) verwendet. TODO Mittelwert von allen Teilnehmern?
-punkteersetzung_ersatz = {"GRP_MOS": ("MOS-Mix"),
-                          "MOS-Mix": ("GRP_MOS"),
-                          "MSwr-MOS-Mix": ("MSwr-EZ-MOS", "MSwr-GFS-MOS"),
-                          "MSwr-EZ-MOS": ("MSwr-GFS-MOS"),
-                          "MSwr-GFS-MOS": ("MSwr-EZ-MOS"),
-                          "DWD-MOS-Mix": ("DWD-EZ-MOS", "DWD-ICON-MOS"),
-                          "DWD-EZ-MOS": ("DWD-ICON-MOS"),
-                          "DWD-ICON-MOS": ("DWD-EZ-MOS"),
-                          "DWD-MOS-Mix-test": ("DWD-MOS-Mix")}
+punkteersetzung_ersatz = {"GRP_MOS": ["MOS-Mix"],
+                          "MOS-Mix": ["GRP_MOS"],
+                          "MSwr-MOS-Mix": ["MSwr-EZ-MOS", "MSwr-GFS-MOS"],
+                          "MSwr-EZ-MOS": ["MSwr-GFS-MOS"],
+                          "MSwr-GFS-MOS": ["MSwr-EZ-MOS"],
+                          "DWD-MOS-Mix": ["DWD-EZ-MOS", "DWD-ICON-MOS"],
+                          "DWD-EZ-MOS": ["DWD-ICON-MOS"],
+                          "DWD-ICON-MOS": ["DWD-EZ-MOS"],
+                          "DWD-MOS-Mix-test": ["DWD-MOS-Mix"]}
 
 #FIXME nicht mehr implementiert:
 # wie viel Prozent des jeweiligen Zeitraums muss der Spieler mindestens
