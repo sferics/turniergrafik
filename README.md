@@ -117,13 +117,13 @@ options:
 
 ### Erklärung der einzelnen Optionen
 
-```-h/--help``` Zeigt die Hilfe an und beendet das Programm.
-```-v/--verbose``` Zeigt mehr (Debug)-Output bei der Ausführung an. Im Code erkennbar durch if ```verbose: print(x)```
-```-p/--params``` Parameter, die ausgewertet werden sollen, getrennt durch Kommas [Bsp: ```-p Sd1,Sd24,RR24```]
-```-c/--cities``` Städtenamen als ID, Kürzel oder ganzer Name [Bsp: -c ```BER,4,Zürich```]
-```-d/--days``` Tage, die ausgewertet werden sollen (Sa = Samstag, So = Sonntag) [Bsp: ```-d Sa,So```]
-```-t/--tournaments``` Start- und Enddatum (einschließlich!) der auszuwertenden Turniere [Bsp: ```-t 03.01.2023,08.08.2025```]
-```-u/--user``` Namen der Spieler, die betrachtet werden sollen [Bsp: ```-u MSwr-MOS-Mix,MSwr-EZ-MOS,MSwr-GFS-MOS```]
+```-h/--help``` Zeigt die Hilfe an und beendet das Programm.<br/>
+```-v/--verbose``` Zeigt mehr (Debug)-Output bei der Ausführung an. Im Code erkennbar durch if ```verbose: print(x)```<br/>
+```-p/--params``` Parameter, die ausgewertet werden sollen, getrennt durch Kommas [Bsp: ```-p Sd1,Sd24,RR24```]<br/>
+```-c/--cities``` Städtenamen als ID, Kürzel oder ganzer Name [Bsp: -c ```BER,4,Zürich```]<br/>
+```-d/--days``` Tage, die ausgewertet werden sollen (Sa = Samstag, So = Sonntag) [Bsp: ```-d Sa,So```]<br/>
+```-t/--tournaments``` Start- und Enddatum (einschließlich!) der auszuwertenden Turniere [Bsp: ```-t 03.01.2023,08.08.2025```]<br/>
+```-u/--user``` Namen der Spieler, die betrachtet werden sollen [Bsp: ```-u MSwr-MOS-Mix,MSwr-EZ-MOS,MSwr-GFS-MOS```]<br/>
 
 
 ## Konfiguration und Anpassung
