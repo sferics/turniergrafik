@@ -84,7 +84,7 @@ geladen werden, oder sie kann bei Bedarf angefordert werden.
 python3 turniergrafik.py
 ```
 
-## Kommandzeilenargumente
+## Kommandzeilen-Argumente
 Das Programm kann mit verschiedenen Kommandozeilenargumenten gestartet werden,
 um bestimmte Funktionen auszuführen oder das Verhalten des Programms zu ändern.
 Wenn keine Argumente angegeben werden, wird das Programm mit den Einstellungen
