@@ -36,6 +36,7 @@ import config as cfg
 
 from turniergrafik import index_2_date, kuerzel_zu_id
 
+#TODO move to turniergrafik.py and re-use, remove from here
 def stadtname(stadt):
     """
     Liefert den Namen der Stadt, die in der Konfiguration
@@ -43,10 +44,13 @@ def stadtname(stadt):
     :param stadt: entweder eine Stadt-ID (int) oder ein 3-stelliges Kürzel
     :return: Name der Stadt (String)
     """
+    # Wenn die Stadt eine ID ist, wird der Name direkt aus cfg.stadtnamen geholt
     if type(stadt) == int:
         return cfg.stadtnamen[stadt]
+    # Wenn die Stadt ein 3-stelliges Kürzel ist, wird die ID aus kuerzel_zu_id geholt
     elif len(stadt) == 3:
         return cfg.stadtnamen[kuerzel_zu_id[stadt] - 1 ]
+    # Wenn die Stadt ein String ist, wird die ID aus stadt_zu_id geholt
     return cfg.stadtnamen[ cfg.stadt_zu_id[stadt] - 1 ]
 
 
@@ -68,39 +72,50 @@ def gibDateinamen(laufindex = 0, cfg=cfg):
 
     ### Erstelle Dateinamen für Plot
     now = dt.now()
-
+    
+    # Wenn alle Städte ausgewertet werden, wird "allCities" verwendet
     if auswertungsstaedte == stadtnamen:
         stadtinfo = "allCities"
+    # Wenn nur bestimmt Städte ausgewertet werden, dann werden diese
+    # in einem String zusammengefasst
     else:
         stadtinfo = ""
         for stadt in cfg.auswertungsstaedte:
             stadtinfo += stadtname(stadt)
-
+    
+    # Info über die ausgewerteten Tage (Sa, So oder beide)
     taginfo = ""
     tage_uebersetzung_kurz = {"Sa" : "Sat", "So" : "Sun"}
     for tag in auswertungstage:
         taginfo += tage_uebersetzung_kurz[tag]
 
-
+    # Wenn alle Elemente ausgewertet werden, wird "allElements" verwendet
     if auswertungselemente == elemente_archiv:
         elementinfo = "allElements"
+    # Wenn nur bsestimmte Elemente ausgewertet werden, dann werden diese
+    # in einem String mit Bindestrichen getrennt zusammengefasst
     else:
         elementinfo = ""
         for element in auswertungselemente:
             elementinfo += element+"-"
         # Löschen des letzten Bindestrichs
         elementinfo = elementinfo[:-1]
-
+    
+    # Info über das Datum, an dem die Grafik erstellt wurde
     zeitinfo = now.strftime("%Y-%m-%d")
-
+    
+    # Die Teilnehmer werden in einem String durch Unterstriche getrennt
     teilnehmer = ""
     for i in auswertungsteilnehmer:
         teilnehmer += (i + "_")
-
-    print( "{}_{}_{}_{}_{}.png".format(zeitinfo, taginfo, stadtinfo,
-            elementinfo, teilnehmer[:-1]) )
-    return "{}_{}_{}_{}_{}.png".format(zeitinfo, taginfo, stadtinfo,
-            elementinfo, teilnehmer[:-1])
+    
+    # Entferne den letzten Unterstrich aus dem Teilnehmer-String
+    teilnehmer = teilnehmer[:-1]
+    # Speichere den Dateinamen der Grafik im Format:
+    file_name = f"{zeitinfo}_{taginfo}_{stadtinfo}_{elementinfo}_{teilnehmer}.png"
+    print( "Dateiname der Grafik: ", file_name )
+    # Gib den Dateinamen zurück, der für die Grafik verwendet wird
+    return file_name
 
 
 def speicherGeplotteteWerte(ascii_datei_terminliste,
@@ -123,21 +138,28 @@ def speicherGeplotteteWerte(ascii_datei_terminliste,
     #FIXME schwer lesbar -> ugly..
     dateiname_txt_file = ('.').join(dateiname_plot.split('.')[:-1]) + "_" \
         + plotname_zu_zeitspannenbeschreibung[plotname] + ".txt"
-
+    
+    # Erstelle eine ASCII-Datei, in der die geplotteten Werte stehen
     with open(dateiname_txt_file, 'w') as f:
-
+        # Schreibe die Kopfzeile mit den Terminen
         kopfzeile = " "*22
+        # Kopfzeile: "Spielername" + " Termin1" + " Termin2" + ...
         for termin in ascii_datei_terminliste:
             kopfzeile += " "+str(termin)
+        # Füge die Kopfzeile in die Datei ein
         f.write(kopfzeile+"\n")
-
+        
+        # Schreibe die Spieler und ihre Punkteverluste
         for spielername, punkteverluste \
                 in ascii_datei_spielernamen_punkteverlust.items():
+            # Spielername linksbündig mit 22 Zeichen
             zeile = spielername.ljust(22)
-
+            
+            # Füge die Punkteverluste für jeden Termin hinzu
             for punkteverlust in punkteverluste:
                 zeile += " "+str(round(punkteverlust,3)).ljust(8)
-
+            
+            # Füge die Zeile in die Datei ein
             f.write(zeile+"\n")
 
 
@@ -191,27 +213,38 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
 
     returns: None
     """
-
+    # Setze die Locale für die Datums- und Zeitformatierung
     locale.setlocale(locale.LC_ALL, 'en_US.utf8')
-
+    
+    # Erstelle eine neue Figur mit den angegebenen Abmessungen
     fig = plt.figure(figsize=(11.69,8.27))
     
+    # Erstelle ein GridSpec-Objekt für die Anordnung der Subplots
     gs = matplotlib.gridspec.GridSpec(1, 2, width_ratios=[7, 4])
+    # Setze den Abstand zwischen den Subplots
     gs.update(wspace=0.12)
-
+    
+    # Erstelle die Subplots für den linken und rechten Plot
     # TODO ugly..
     plots = {"linker_plot" : plt.subplot(gs[0]),
              "rechter_plot" : plt.subplot(gs[1])}
-
+    
     # TODO REFAKTORISIEREN!
+    # Initialisiere Variablen für die Speicherung der Daten
     ascii_datei_terminliste = {"linker_plot": [], "rechter_plot": []}
+    # Dictionary, das die Spieler und ihre Punkteverluste enthält
     ascii_datei_spielernamen_punkteverlust = {"linker_plot": {},
                                               "rechter_plot": {}}
+    # Initialisiere Variablen für die X-Achse
     x_beginn_zeitstempel = {"linker_plot": 0, "rechter_plot": 0}
+    # X-Achse Ende Zeitstempel
     x_ende_zeitstempel = {"linker_plot": 0, "rechter_plot": 0}
+    # X-Achse für die Plots
     x = {"linker_plot": [], "rechter_plot": []}
+    # Terminliste für die X-Achse
     xlabel_terminliste = {"linker_plot": [], "rechter_plot": []}
-
+    
+    # Y-Achse Min- und Max-Werte für die Plots
     ymin = {}
     ymax = {}
 
@@ -234,13 +267,14 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
         #print( "KURZFRIST:\n", kurzfrist_player_date_points )
 
         #print(langfrist_player_date_points)
-
+        
+        # Durchgehen der Teilnehmer und deren Punkteverluste
         for teilnehmer, turniertag_punkteverlust \
             in langfrist_player_date_points \
             if plotname == "linker_plot" else kurzfrist_player_date_points:
-
+            
             punkteverluste_plot = []
-
+            
             x[plotname] = []
             i = 7
 
@@ -249,19 +283,28 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
 
                 # Index des Turniertages in ein Date-Obj. unwandeln
                 turniertag = index_2_date(turniertag)
-
+                
+                # Wenn der linke Plot ausgewertet wird, wird der
+                # entsprechende Zeitstempel in der X-Achse gespeichert
                 if plotname == "linker_plot":
                     x[plotname].append(turniertag)
                     x_ende_zeitstempel[plotname] = turniertag
+                # Beim rechten Plot wird der Zeitstempel in der X-Achse
+                # in der Form 1/7 (1 Woche) gespeichert
                 else:
                     x[plotname].append(1/i)
                     x_ende_zeitstempel[plotname] = 1/i
-
+                
+                # Zur Liste der Punkteverluste wird der aktuelle
+                # Punkteverlust hinzugefügt
                 punkteverluste_plot.append(punkteverlust)
-
+                
+                # Die Min- und Max-Werte für die Y-Achse werden aktualisiert
                 ymin[plotname] = np.nanmin([ymin[plotname], punkteverlust])
                 ymax[plotname] = np.nanmax([ymax[plotname], punkteverlust])
-
+                
+                # Wenn der erste Turniertag ist, wird der Zeitstempel
+                # für den Beginn des Turniertages gespeichert
                 if erster_turniertag:
                     x_beginn_zeitstempel[plotname]  = turniertag
                     erster_turniertag = False
@@ -279,20 +322,25 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
                         .append(turniertag.strftime("%Y%m%d"))
 
                 i+=4
-
+            
+            # Wenn der erste Teilnehmer verarbeitet wurde, wird
+            # erster_teilnehmer auf False gesetzt, damit die
+            # Zeitstempel für die X-Achse nicht mehrfach geschrieben werden
             erster_teilnehmer = False
-
+            
             label_name = teilnehmer
-
+            
+            # Soll der Teilnehmer dickgedruckt dargestellt werden?
             if teilnehmer in teilnehmerlinien_dickgedruckt:
                 spielerliniendicke = liniendicke[plotname]["dick"]
             else:
                 spielerliniendicke = liniendicke[plotname]["normal"]
-
+            
+            # Speichere die Punkteverluste des Teilnehmers für die ASCII-Datei
+            # und für die geplotteten Werte in einem Dictionary
             ascii_datei_spielernamen_punkteverlust[plotname][label_name] \
                 = punkteverluste_plot
             
-
             # Spezialfall, dass im linken Plot genug Daten für den neuesten
             # Zeitpunkt vorhanden sind, aber nicht für ältere Zeitpunkte
             # in dem Fall soll beim linken Plot beim aktuellsten Zeitpunkt ein
@@ -315,7 +363,7 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
                           color = linieneigenschaften[label_name][0],
                           linestyle = linieneigenschaften[label_name][1],
                           linewidth = spielerliniendicke)
-
+                
                 plot.plot(x[plotname][-1],
                           punkteverluste_plot[-1],
                           color = linieneigenschaften[label_name][0],
@@ -331,16 +379,19 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
                           color=linieneigenschaften[label_name][0],
                           linestyle = linieneigenschaften[label_name][1],
                           linewidth = spielerliniendicke)
-
+    
+    # Setze die X-Achsen-Beschriftungen für die Plots
     box = plot.get_position()
-
+    
+    # Setze die Position des linken Plots
     plot.set_position([box.x0, box.y0 + box.height*0.08, box.width,
                       box.height*0.78])
-
+    # Definiere die Limits für die X-Achsen des linken Plots
     plots["linker_plot"].set_xlim(
         x_beginn_zeitstempel["linker_plot"],
         x_ende_zeitstempel["linker_plot"])
-
+    
+    # Setze die Y-Achsen-Beschriftungen für den linken Plot
     plots["linker_plot"].set_ylabel(
         beschriftungen[sprache]["achse_links"],
         multialignment='center',
@@ -370,14 +421,17 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
             else:
                 res.append(i**(1/y))
         return np.array(res)
-
+    
+    # Setze die Y-Achsen-Skalierung für den linken Plot
     plots["linker_plot"].set_yscale('function', functions=(inverse_power, power))
     #plots["rechter_plot"].set_yscale('function', functions=(inverse_power_6, power_6))
     
+    # Für den rechten Plot nutze 1/7 und das Ende des Zeitstempels
+    # als Begrenzung der X-Achse
     plots["rechter_plot"].set_xlim(1/7, x_ende_zeitstempel["rechter_plot"])
-
+    # Setze die Labels für die Y-Achse des rechten Plots auf die rechte Seite
     plots["rechter_plot"].yaxis.set_label_position("right")
-
+    # Setze die Beschriftungen des rechten Plots (Y-Achse)
     plots["rechter_plot"].set_ylabel(
         beschriftungen[sprache]["achse_rechts"],
         fontsize = 'large',
@@ -396,14 +450,16 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
             min(ymin["linker_plot"],ymin["rechter_plot"]),
             max(ymax["linker_plot"],ymax["rechter_plot"]))
     """
-
+    
+    # Setze die X-Achsen Ticks (Markierungen) für die Plots
     for plotname, plot in plots.items():
         plot.set_xticks(x[plotname])
         plot.set_xticklabels(xlabel_terminliste[plotname],
                              rotation=45, ha="right")
-
+        # Plotte ein Grid (Gitter) für die X-Achse
         plot.grid()
-
+    
+    # Setze die Legende für den linken Plot
     plots["linker_plot"].legend(
         loc = 'upper center',
         bbox_to_anchor = (0.8, 1.29),
@@ -411,25 +467,39 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
         shadow = True,
         ncol = legende_spaltenanzahl,
         fontsize = 'medium')
-
+    
+    # Definiere den Titel für die Grafik
     plt.figtext(.33, .96, beschriftungen[sprache]["titel"],
                 fontsize=18, fontweight='bold')
-
+    # Setze den Titel für den linken Plot
     plt.figtext(.27, .77, beschriftungen[sprache]["titel_links"],
                 fontsize=18, fontweight='bold')
-
+    # Setze den Titel für den rechten Plot
     plt.figtext(.74, .77, beschriftungen[sprache]["titel_rechts"],
                 fontsize=18, fontweight='bold')
 
     ### COPYRIGHT LOGO ###
+    # Versuche das Meteo Service Logo oben rechts in der Grafik
+    # darzustellen. Wenn die Logo-Datei nicht gefunden wird,
+    # wird eine Fehlermeldung ausgegeben.
     try:
         # FIXME
+        # Die Datei logo.png muss im selben Verzeichnis liegen wie
+        # dieses Skript, damit das Logo angezeigt wird.
         im = plt.imread(get_sample_data(os.getcwd()+'/logo.png'))
         #im = plt.imread(get_sample_data('logo.png'))
+        # Füge das Logo in die Grafik ein
+        # Die Position des Logos wird in der oberen rechten Ecke
+        # der Grafik festgelegt
         newax = fig.add_axes([0.74, 0.94, 0.25, 0.05], anchor='NE', zorder=-1)
+        # Zeige das Logo an
         newax.imshow(im)
+        # Setze die Achsen des Logos auf "off", damit keine Achsen
+        # angezeigt werden
         newax.axis('off')
     except:
+        # Wenn die Logo-Datei nicht gefunden wird, wird eine Fehlermeldung
+        # ausgegeben und das Logo wird nicht angezeigt.
         pass
         print("Damit das Meteo Service Logo oben rechts in der Grafik "\
               "erscheint, muss das Logo (logo.png standardmäßig) im selben "\
@@ -437,13 +507,19 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
 
     ### Generiere Informationen über den Plot, die unten hineingeschrieben
     ### werden
+    # Wenn die Sprache Englisch ist, werden die Tage in Englisch übersetzt
     if sprache == "en":
         tage_uebersetzung = {"Sa": "Saturday", "So": "Sunday", "all": "both"}
+    # Wenn die Sprache Deutsch ist, werden die Tage in Deutsch übersetzt
     else:
         tage_uebersetzung = {"Sa": "Samstag", "So": "Sonntag", "all": "beide"}
 
+    # Wenn nur ein Tag ausgewertet wird, wird der Tag in der
+    # entsprechenden Sprache ausgegeben
     if len(auswertungstage) == 2:
         auswertungstage_plot = tage_uebersetzung["all"]
+    # Wenn nur ein Tag ausgewertet wird, wird nur dieser Tag
+    # auch in der entsprechenden Sprache ausgegeben
     else:
         auswertungstage_plot = ""
         for tag in auswertungstage:
@@ -451,10 +527,13 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
         if auswertungstage_plot.endswith(", "):
             auswertungstage_plot = auswertungstage_plot[:-2]
 
+    # Wenn alle Städte ausgewertet werden, wird "all(e)" verwendet
     if len(auswertungsstaedte) == len(cfg.stadtnamen):
         staedte_plot = "all"
         if sprache == "de":
             staedte_plot += "e"
+    # Wenn nur bestimmte Städte ausgewertet werden, dann werden diese
+    # in einem String mit Kommas getrennt zusammengefasst
     else:
         staedte_plot = ""
         for stadt in auswertungsstaedte:
@@ -464,16 +543,21 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
 
     elemente_plot = ""
     
+    # Wenn alle Elemente ausgewertet werden, wird "all(e)" verwendet
     if len(auswertungselemente) == len(cfg.elemente_archiv):
         elemente_plot = "all"
         if sprache == "de":
             elemente_plot += "e"
+    # Wenn nur bestimmte Elemente ausgewertet werden, dann werden diese
+    # in einem String mit Kommas getrennt zusammengefasst
     else:
         for element in auswertungselemente:
             elemente_plot += element+", "
         if elemente_plot.endswith(", "):
             elemente_plot = elemente_plot[:-2]
     
+    # Wenn nur ein Element ausgewertet wird, wird kein "s" oder "e" angehängt
+    # (für die Pluralform)
     if len(auswertungselemente) == 1:
         s = ""
     else:
@@ -482,11 +566,14 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
         else:
             s = "e"
     
+    # Füge die Informationen über den Plot unten in die Grafik ein
     if sprache == "en":
+        # Wenn die Sprache Englisch ist, wird "Averaged over" verwendet
         plt.figtext(.01,.01,
                     f"Averaged over – Days: {auswertungstage_plot} – Cities: {staedte_plot} – Element{s}: {elemente_plot}",
                     fontsize=11)
     else:
+        # Wenn die Sprache Deutsch ist, wird "Gemittelt über" verwendet
         plt.figtext(.01,.01,
                     f"Gemittelt über – Tage: {auswertungstage_plot} – Städte: {staedte_plot} – Element{s}: {elemente_plot}",
                     fontsize=11)
@@ -496,18 +583,22 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
 
     # Speicherung ASCII-Datei, in der die geplotteten Werte stehen
     for plotname in ["linker_plot", "rechter_plot"]:
+        # Speichere die geplotteten Werte in einer ASCII-Datei
         speicherGeplotteteWerte(
             ascii_datei_terminliste[plotname],
             ascii_datei_spielernamen_punkteverlust[plotname],
             plotname,
             dateiname_plot)
-
+    
+    # Setze den Abstand zwischen den Subplots
     plt.subplots_adjust(left=0.08, right=0.97, top=0.76, bottom=0.13)
 
     # Speicherung Plot
     plt.savefig(dateiname_plot, transparent = False)
-
+    
+    # Schließe die Grafik, um Speicher freizugeben
     plt.clf()
+    #plt.gcf().clear()
+    # Lösche die Achsen und schließe die Grafik
     plt.cla()
     plt.close()
-

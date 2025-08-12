@@ -150,9 +150,9 @@ mos_teilnehmer = list(mos_namen_starttermine.keys())
 #starttermin  = "01.09.2016"
 #starttermin  = "19.09.2016"
 #starttermin  = "19.06.2017"
-#endtermin    = "01.01.2023"
-starttermin  = "26.07.2025"
-endtermin    = "01.08.2025"
+starttermin    = "01.01.2023"
+#starttermin  = "26.07.2025"
+endtermin    = "08.08.2025"
 
 ## Auswertungstage (Auswertungszeitraum wäre irreführend, denn das ist es
 # gerade nicht): Soll jeweils das ganze Wochenende oder sollen nur die
