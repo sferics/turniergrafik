@@ -51,6 +51,10 @@ def date_2_index(input_date):
     Tag 1:     Freitag, 02.01.1970
     Tag 8:     Freitag, 09.01.1970
     Tag 17837: Freitag, 02.11.2018
+
+    :param input_date: Datum als String im Format "dd.mm.yyyy" oder
+
+    :return: Tagesindex (der wievielte Tag, seit dem 02.01.1970)
     """
 
     if type(input_date) is str:
@@ -90,6 +94,10 @@ def index_2_date(input_index):
     """
     Datum aus dem Tagesindex (der wievielte Tag, seit dem 02.01.1970)
     berechnen (Beispiele -> siehe date_2_index())
+
+    :param input_index: Tagesindex (der wievielte Tag, seit dem 02.01.1970)
+
+    :return: Datum des Tagesindex
     """
 
     if input_index > 0:
@@ -104,8 +112,13 @@ def index_2_date(input_index):
 
 def get_friday_range(begin, end):
     """
-    bestimmt die Grenzen der zu bearbeitenden Freitags-Indizes
+    Bestimmt die Grenzen der zu bearbeitenden Freitags-Indizes
     (der wievielte Tag, seit dem 02.01.1970 etc. ..)
+    
+    :param begin: Start-Index (der wievielte Tag, seit dem 02.01.1970)
+    :param end: End-Index (der wievielte Tag, seit dem 02.01.1970)
+
+    :return: Tupel mit den Start- und End-Indizes der Freitage
     """
 
     if begin > 0 and end > begin:
@@ -128,14 +141,20 @@ def get_friday_range(begin, end):
 #FIXME
 def old_2_new_players(players, rename_dict):
     """
-    ersetzt in einer Teilnehmerliste alle alten durch neuere Teilnehmernamen
+    Ersetzt in einer Teilnehmerliste alle alten durch neuere Teilnehmernamen
     (siehe cfg.teilnehmerumbenennung) und gibt sie als Tupel zurueck
+
+    :param players: Liste der Teilnehmernamen
+    :param rename_dict: Dictionary mit alten Teilnehmernamen als Keys und
+    den neuen Teilnehmernamen als Values
+
+    :return: Tupel der Teilnehmernamen, in denen alle alten Namen durch
+    die neuen ersetzt wurden, ohne Duplikate
     """
-
+    # Iterieren ueber die Teilnehmerliste und ersetzen
+    # der alten Namen durch die neuen Namen
     for i, p in enumerate(players):
-
         if p in rename_dict:
-
            players[i] =  rename_dict[p]
 
     # Doppelte Spieler entfernen und als Tupel zurueckgeben
@@ -144,14 +163,18 @@ def old_2_new_players(players, rename_dict):
 
 def short_term_mean(points, dates, mean_weaks, max_nan_ratio, cities=5):
     """
-    berechnet aus einer Liste von Punktzahlen, die (arithmetischen)
+    Berechnet aus einer Liste von Punktzahlen, die (arithmetischen)
     Mittelwerte ueber gewaehlte Zeitspannen am Ende der Liste
+    
+    :param points: Liste der Punktzahlen
+    :param dates: Liste der Tagesindizes (der wievielte Tag, seit dem 02.01.1970)
+    :param mean_weaks: Liste der Zeitspannen, ueber die der Mittelwert gebildet
+    werden soll (in Wochen)
+    :param max_nan_ratio: Maximaler Anteil an NaN-Werten, der erlaubt ist, um
+                          einen Mittelwert zu berechnen
+    :param cities: Anzahl der Staedte, die in der Liste enthalten sind (default: 5)
 
-    Argumente:
-    Punkteliste, Mittelungszeitspannen(Liste), Enddatum(Index),
-    max Anteil an NaNs
-
-    Rueckgabe: [(<Tagesindex(Ende jeder Zeitspanne)>,<Punkteverlust>)]
+    :return: Liste von Tupeln, die das Datum des letzten Tages des Mittelungszeitraums
     """
 
     mean_date_list = []
@@ -194,6 +217,10 @@ def short_term_mean(points, dates, mean_weaks, max_nan_ratio, cities=5):
 def index_2_year(date_index):
     """
     Gibt das Jahr des Tagesindex zurueck
+    
+    :param date_index: Tagesindex (der wievielte Tag, seit dem 02.01.1970)
+    
+    :return: Jahr des Tagesindex
     """
     if date_index > 0:
         return index_2_date(date_index).year
@@ -203,16 +230,20 @@ def index_2_year(date_index):
 
 def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
     """
-    berechnet aus einer Liste von Punktzahlen, die (arithmetischen)
+    Berechnet aus einer Liste von Punktzahlen, die (arithmetischen)
     Mittelwerte ueber eine gewaehlte Zeitspanne, welche die Liste in
     Abschnitte gleicher Groesse unterteilt (der Rest wird verworfen, falls er
     kuerzer ist als die gewaehlte Zeitspanne):
     [...|...|...|..] -> [...|...|...] (. = Eintraege, | = Abschnittsende)
 
-    Argumente:
-    Punkteliste, Mittelungszeitspanne, Anfangsdatum(Index), max Anteil an NaNs
+    :param points: Liste der Punktzahlen
+    :param dates: Liste der Tagesindizes (der wievielte Tag, seit dem 02.01.1970)
+    :param mean_time_span: Zeitspanne, ueber die der Mittelwert gebildet werden soll
+    :param max_nan_ratio: Maximaler Anteil an NaN-Werten, der erlaubt ist, um
+                          einen Mittelwert zu berechnen
+    :param cities: Anzahl der Staedte, die in der Liste enthalten sind (default: 5)
 
-    Rueckgabe: [(<Tagesindex(Ende jeder Zeitspanne)>,<Punkteverlust>)]
+    :return: Liste von Tupeln, die das Datum des letzten Tages des Mittelungszeitraums
     """
 
     long_term_means = []
@@ -319,6 +350,17 @@ def get_player_mean(pointlist,
     Turniertag oder fuer das ganze Wochenende. Gib ein leeres Array zurueck,
     wenn der Spieler nicht gefunden wurde oder die Punkteliste nur aus None-
     Werten besteht.
+    
+    :param pointlist: Punkteliste des Spielers
+    :param auswertungstage: Liste der auszuwertenden Tage (z.B. ["Sa", "So"])
+    :param auswertungselemente: Liste der auszuwertenden Elemente (z.B. ["A", "B"])
+    :param elemente_archiv: Liste der Elemente im Archiv
+    :param elemente_max_punkte: Liste der maximalen Punkte pro Element
+    :param eval_indexes: Indizes der auszuwertenden Elemente in elemente_archiv
+    :param Player: Name des Spielers
+    :param npzfile: Numpy-Datei, die die Punktelisten der Spieler enthaelt
+    
+    :return: Tagesmittel des Spielers als Numpy-Array oder NaN, wenn der Spieler
     """
     # Wenn die Punkteliste nur aus None-Werten besteht, dann
     # gib NaN zurueck, da der Spieler nicht gefunden wurde

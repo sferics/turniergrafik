@@ -41,7 +41,9 @@ def stadtname(stadt):
     """
     Liefert den Namen der Stadt, die in der Konfiguration
     hinterlegt ist, zurück.
+    
     :param stadt: entweder eine Stadt-ID (int) oder ein 3-stelliges Kürzel
+    
     :return: Name der Stadt (String)
     """
     # Wenn die Stadt eine ID ist, wird der Name direkt aus cfg.stadtnamen geholt
@@ -58,8 +60,10 @@ def stadtname(stadt):
 def gibDateinamen(laufindex = 0, cfg=cfg):
     """
     Erstellt den Dateinamen für die zu speichernde Grafik.
+    
     :param laufindex: Laufindex, der an den Dateinamen angehängt wird
     :param cfg: Konfiguration, die die Einstellungen enthält
+    
     :return: Dateiname der Grafik (String)
     """
     #FIXME kann weg, wenn kein multi implementiert
@@ -124,11 +128,13 @@ def speicherGeplotteteWerte(ascii_datei_terminliste,
                             dateiname_plot):
     """
     Speichert die geplotteten Werte in einer ASCII-Datei.
+    
     :param ascii_datei_terminliste: Liste der Termine (Datum) für die X-Achse
     :param ascii_datei_spielernamen_punkteverlust: Dictionary, das die
         Spieler und ihre Punkteverluste enthält
     :param plotname: Name des Plots (linker_plot oder rechter_plot)
     :param dateiname_plot: Dateiname der Grafik, die gespeichert wird
+    
     :return: None
     """
     plotname_zu_zeitspannenbeschreibung = {"linker_plot" : "years",
@@ -211,7 +217,7 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
     :type cfg: config.Config
     :raises ValueError: Wenn die Konfiguration ungültig ist
 
-    returns: None
+    :return: None
     """
     # Setze die Locale für die Datums- und Zeitformatierung
     locale.setlocale(locale.LC_ALL, 'en_US.utf8')
@@ -410,8 +416,10 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
         verwendet wird. Diese Funktion ermöglicht es, die Y-Achse
         logarithmisch zu skalieren, ohne dass negative Werte
         Probleme verursachen.
+        
         :param x: Eingabewerte (Array oder Liste)
         :param y: Exponent (Standardwert ist 10e10)
+        
         :return: Array mit den inversen Potenzwerten
         """
         res = []
