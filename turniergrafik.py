@@ -99,7 +99,7 @@ def index_2_date(input_index):
 
     :return: Datum des Tagesindex
     """
-
+    # pruefen, ob der Tagesindex gueltig ist
     if input_index > 0:
 
         # zur Berechnung des Datums muss nur der Tagesindex bzw. die Anzahl an
@@ -135,7 +135,6 @@ def get_friday_range(begin, end):
         return begin, end
 
     else:
-
         raise ValueError("Der Start- oder End-Wert sind fehlerhaft.")
 
 #FIXME
@@ -176,12 +175,10 @@ def short_term_mean(points, dates, mean_weaks, max_nan_ratio, cities=5):
 
     :return: Liste von Tupeln, die das Datum des letzten Tages des Mittelungszeitraums
     """
-
+    # Initialisiere eine Liste fuer die Mittelwerte und die zugehoerigen Daten
     mean_date_list = []
-    #print( "points", points )
-    #print( "dates", dates )
-    #print( "mean_weaks", mean_weaks )
-
+    
+    # Iteriere ueber die gewaehlten Zeitspannen
     for i in mean_weaks:
     
         # "schneidet" immer bestimmt grosse Stuecke heraus
@@ -195,7 +192,7 @@ def short_term_mean(points, dates, mean_weaks, max_nan_ratio, cities=5):
 
             # bilde mittelwert (arithmetisch) ohne NaNs
             mean = np.nanmean(points_span)
-
+        # wenn der Prozentsatz an NaNs ueberschritten wurde, gib Nan aus
         else:
             mean = np.nan
 
@@ -203,12 +200,8 @@ def short_term_mean(points, dates, mean_weaks, max_nan_ratio, cities=5):
         date = max(dates) - i*7
 
         # Datum fuer Mittelungszeitraum aus Liste ausschneiden
-        #print(dates)
-        #print(len(dates))
-        #print(cities, i)
-        #print(cities*i)
-        #date = dates[- (cities*i)]
-
+        # Haenge den Mittelwert und das Datum des letzten Tages
+        # des Mittelungszeitraums an die Liste an
         mean_date_list.append((date, mean))
 
     #print(len(mean_date_list))
@@ -310,7 +303,7 @@ def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
             # Haenge den Mittelwert und das Datum des letzten Turniers
             # des Jahres an die Liste an
             long_term_means.append( (last_tournament_of_year[year], mean) )
-
+        
         return long_term_means
     
     # geht in Schritten mit der definierten Zeitspannengroesse durch die Tage
@@ -342,9 +335,11 @@ def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
         end_date = dates[ cities * (ii+1) * mean_time_span ]
         #print( "end_date", end_date )
         ii += 1
-
+        
+        # Haenge den Mittelwert und das Datum des letzten Tages
+        # des Mittelungszeitraums an die Liste an
         long_term_means.append( (end_date, mean) )
-
+    
     return long_term_means
 
 
