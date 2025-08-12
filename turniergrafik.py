@@ -255,24 +255,35 @@ def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
         # Berechne die Anzahl der Tage im Jahr
         year_start = index_2_year(dates[0])
         year_end   = index_2_year(dates[-1])
-        
+        # Anzahl der Wochen und Spieltage für jedes Jahr in Dictionary speichern
         weeks_in_year = {}
         dates_in_year = {}
 
         # Die Mittelungszeitspanne ist für jedes Jahr unterschiedlich
         for d in dates:
+            # Berechne das Jahr des Tagesindex
             year = index_2_year(d)
+            # Wenn das Jahr noch nicht in der Liste ist, dann
+            # initialisiere es mit der Anzahl der Wochen und dem Datum
             if year not in weeks_in_year:
+                # Anzahl der Wochen im Jahr auf 1 setzen
                 weeks_in_year[year] = 1
+                # Initialisiere das Datum für das Jahr
                 dates_in_year[year] = []
+            # Wenn das Datum im Jahr liegt, dann zaehle die Woche hoch
             weeks_in_year[year] += 1
+            # Füge das Datum zur Liste der Daten im Jahr hinzu
             dates_in_year[year].append(d)
 
-        dates = dates[::cities]  # Datenliste auf die Anzahl der Städte reduzieren
+        # Die Spieltage in der Liste sind in Schritten abhängig von der Anzahl der Städte
+        # (d.h. die Liste ist in Blöcke unterteilt, die jeweils die Daten
+        # für eine Stadt enthalten)
+        dates = dates[::cities]
         first_tournament_of_year    = {}
         last_tournament_of_year     = {}
         long_term_means             = []
-
+        
+        # Gehe durch die Jahre und berechne die Mittelwerte
         for year in range(year_start, year_end+1):
             
             # Erstes Tournier des Jahres finden
@@ -518,6 +529,8 @@ def get_player_mean(pointlist,
     return np.nanmean(PointsLost)
 
 
+# Konvertierung von Kürzeln in IDs
+# (z.B. "BER" -> 1, "HAM" -> 2, ...)
 kuerzel = cfg.id_zu_kuerzel.values()
 ids     = cfg.id_zu_kuerzel.keys()
 kuerzel_zu_id = {}
@@ -560,7 +573,9 @@ def find_replacement_players(UserValueLists, Player):
 
 
 if __name__ == "__main__":
-
+    
+    # Fehlerhafte Daten, die nicht ausgewertet werden konnten
+    # (z.B. Spieler nicht gefunden, Datei nicht vorhanden etc.)
     faulty_dates = set()
 
     from argparse import ArgumentParser as ap
@@ -573,7 +588,9 @@ if __name__ == "__main__":
     for option in options:
         ps.add_argument("-"+option[0], "--"+option, type=str, help="Set "+option)
     args = ps.parse_args()
-
+    
+    # Wenn verbose als Argument angegeben wurde, dann setze verbose auf True
+    # um mehr Informationen auszugeben
     if args.verbose:
         verbose = True
     else: verbose = False
@@ -600,7 +617,7 @@ if __name__ == "__main__":
     # Anfangs- und Endtermin zum jeweiligen Tagesindex konvertieren
     begin, end = get_friday_range(date_2_index(cfg.starttermin)-1,
                                   date_2_index(cfg.endtermin))
-
+    # Alte und neue Auswertungselemente setzen
     cfg.auswertungselemente_alt   = params if params else cfg.auswertungselemente_alt
     cfg.auswertungselemente_neu   = params if params else cfg.auswertungselemente_neu
     cfg.auswertungselemente       = cfg.auswertungselemente_neu[:] if end >= 19363 else cfg.auswertungselemente_alt[:]
@@ -615,7 +632,8 @@ if __name__ == "__main__":
                     cities[i] = cfg.id_zu_stadt[cfg.kuerzel_zu_id[c]]
                 case _: # Stadtnamen bleiben unveraendert
                     pass
-
+    
+    # Konfiguration der Auswertungselemente, Staedte, Tage und Teilnehmer
     cfg.auswertungsstaedte    = cities if cities else cfg.auswertungsstaedte
     cfg.auswertungsteilnehmer = users if users else cfg.auswertungsteilnehmer
     cfg.auswertungstage       = days if days else cfg.auswertungstage
