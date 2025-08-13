@@ -941,23 +941,22 @@ if __name__ == "__main__":
         #print( "short term" )
         #print( short_term_data[0] )
     
-    if verbose:
-        #------------------------------------------------------------------------#
-        print ("Benoetigte Laufzeit der Rechnungen ohne Grafik: {0} Sekunden"
-               .format(time.time() - startTime))
-        #------------------------------------------------------------------------#
+    #------------------------------------------------------------------------#
+    print ("Benoetigte Laufzeit der Rechnungen ohne Grafik: {0} Sekunden"
+           .format(time.time() - startTime))
+    #------------------------------------------------------------------------#
 
-        # Grafik erstellen
-        graphics.erstelleGrafik(long_term_data, short_term_data, cfg)
+    # Grafik erstellen
+    graphics.erstelleGrafik(long_term_data, short_term_data, cfg)
 
-        #------------------------------------------------------------------------#
-        # Ausgabe der Laufzeit des Programms
-        print ("Benoetigte Laufzeit des Scriptes: {0} Sekunden"
-               .format(time.time() - startTime))
-        #------------------------------------------------------------------------#
-        
-        #print("Turniere mit fehlenden Spielern")
-        #print( missing_list )
+    #------------------------------------------------------------------------#
+    # Ausgabe der Laufzeit des Programms
+    print ("Benoetigte Laufzeit des Scriptes: {0} Sekunden"
+           .format(time.time() - startTime))
+    #------------------------------------------------------------------------#
+    
+    #print("Turniere mit fehlenden Spielern")
+    #print( missing_list )
 
-        print("Turniertage mit fehlenden Spielern / Tipps:")
-        print( sorted(faulty_dates) )
+    print("Turniertage mit fehlenden Spielern / Tipps:")
+    print( sorted(faulty_dates) )

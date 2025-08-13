@@ -220,7 +220,7 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
     :return: None
     """
     # Setze die Locale für die Datums- und Zeitformatierung
-    locale.setlocale(locale.LC_ALL, 'en_US.utf8')
+    locale.setlocale(locale.LC_ALL, 'en_US.UTF8')
     
     # Erstelle eine neue Figur mit den angegebenen Abmessungen
     fig = plt.figure(figsize=(11.69,8.27))
