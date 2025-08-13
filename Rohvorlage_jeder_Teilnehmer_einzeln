@@ -271,7 +271,9 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
         x[plotname] = []
         i = 7
 
-    for turniertag, punkteverlust in turniertag_punkteverlust:
+    for turniertag, punkteverlust in turniertag_punkteverlust:         # wenn ich einrücke, dann erscheinen alle Teilnehmer in einer png-Datei. Ich will aber jeden einzelnen 
+                                                                        # Teilnehmer pro Plot haben. Daher ist die Einrückung rausgenommen. Rücke ich ein, dann erscheinen alle
+                                                                        # Teilnehmer in einem Plot.
         turniertag = index_2_date(turniertag)
         x[plotname].append(turniertag)
         x_ende_zeitstempel[plotname] = turniertag
