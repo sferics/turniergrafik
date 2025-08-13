@@ -222,21 +222,15 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
     # Setze die Locale für die Datums- und Zeitformatierung
     locale.setlocale(locale.LC_ALL, 'en_US.UTF8')
     
-    if cfg.auswertungsteilnnehmer_multi:
+    if cfg.auswertungsteilnehmer_multi:
         for teilnehmer in cfg.auswertungsteilnehmer:
-            # Wenn der Teilnehmer nicht in den langfristigen oder kurzfristigen
-            # Punkten enthalten ist, wird eine Fehlermeldung ausgegeben
-            if teilnehmer not in langfrist_player_date_points and\
-               teilnehmer not in kurzfrist_player_date_points:
-                raise ValueError(f"Teilnehmer {teilnehmer} nicht in den "\
-                                 "langfristigen oder kurzfristigen Punkten enthalten")
-            # Wenn der Teilnehmer in den langfristigen oder kurzfristigen
-            # Punkten enthalten ist, wird die Grafik für den Teilnehmer erstellt
+            # Betrachte nur einen Teilnehmer, wenn multi ausgewertet wird
             cfg.auswertungsteilnehmer = [teilnehmer]
             cfg.auswertungsteilnehmer_multi = False
+            
             # Rufe die Funktion zur Erstellung der Grafik auf
-            erstelleGrafik(langfrist_player_date_points[teilnehmer],
-                           kurzfrist_player_date_points[teilnehmer],
+            erstelleGrafik(langfrist_player_date_points,
+                           kurzfrist_player_date_points,
                            cfg=cfg)
     else:
         # Erstelle eine neue Figur mit den angegebenen Abmessungen
@@ -296,6 +290,10 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
                 in langfrist_player_date_points \
                 if plotname == "linker_plot" else kurzfrist_player_date_points:
                 
+                if teilnehmer not in cfg.auswertungsteilnehmer:
+                    # Wenn der Teilnehmer nicht ausgewertet wird, überspringe ihn
+                    continue
+
                 punkteverluste_plot = []
                 
                 x[plotname] = []
