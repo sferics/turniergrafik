@@ -31,7 +31,7 @@ conda install --file requirements_conda.txt
 
 # Benötigte Python-Version
 Das Programm wurde mit Python 3.11 entwickelt und getestet. Es wird empfohlen,
-eine Python-Version ab 3.11 zu verwenden, um Kompatibilitätsprobleme zu vermeiden.
+die Python-Version 3.11 zu verwenden, um Kompatibilitätsprobleme zu vermeiden.
 Die Installation dieser Version kann je nach Betriebssystem unterschiedlich
 aussehen. Für die meisten Linux-Distributionen kann Python über den
 Paketmanager installiert werden. Für Windows und macOS kann es
