@@ -22,7 +22,7 @@ führen kann. Daher wird die Verwendung einer virtuellen Umgebung
 empfohlen, um die Abhängigkeiten isoliert zu halten.
 
 pip install -r requirements_pip.txt kann auf manchen PCs problematisch sein wegen den enthaltenen Links.
-Im Zweifel muss pip install Module durchgeführt sein und die Module sind in der
+Im Zweifel muss pip install Module durchgeführt werden und die Module sind in der
 Datei requirements.txt enthalten.
 
 ## Installation mit Conda
@@ -48,7 +48,7 @@ sudo apt install python3.11
 sudo apt install python3-pip python3.11-venv
 ```
 
-Nur mit Python3.11 funktioniert das Prgramm ordnungsgemaäß.
+Nur mit Python3.11 funktioniert das Prgramm ordnungsgemäß.
 Bei macOS gibt es eine weitere Alternative, wie Python heruntergeladen werden kann:
 Mithilfe des Paketmanagers homebrew kann Python ebenfalls
 mit brew install python3.11 installiert werden
@@ -75,7 +75,7 @@ pip install -r requirements_pip.txt
 conda install --file requirements_conda.txt
 ```
 funktioniert nicht auf jedem PC. Dann muss requirements_pip.txt
-bzw. requirements_conda.txt geoeffnet werden und der komplette
+bzw. requirements_conda.txt geöffnet werden und der komplette
 Text kopiert werden. Dann wird folgender Befehl ausgefuehrt:
 ```bash
 # Für pip
@@ -86,11 +86,13 @@ conda install -forge alle Module
 # Probleme mit mariadb
 Bei der Installation der Module kann mariadb eine Fehlermeldung
 auslösen. Mit which mariadb_config nachschauen, wo mariadb liegt.
-Dann muss bei macOS nano ~/.zshrc ausgefuehrt werden und 
+Dann muss bei macOS nano ~/.zshrc ausgeführt werden und 
 export PATH="/pfad/zum/mariadb-connector-c/<version>/bin:$PATH"
-hinzugefuegt werden. Dann source ~/.zshrc ausfuehren. Zum Schluss
-erneut pip install Module oder conda install -forge Module
-ausfuehren.
+hinzugefügt werden. Bei Linux nano ~/.bashrc öffnen und
+export PATH="/pfad/zum/mariadb-connector-c/<version>/bin:$PATH"
+eintragen. Dann source ~/.zshrc bei macOS bzw. source ~/.bashrc
+bei Linux ausführen. Zum Schluss erneut pip install Module oder conda 
+install -forge Module ausführen.
 
 
 # Hinweise zur Benutzung
