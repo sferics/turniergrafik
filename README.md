@@ -133,3 +133,7 @@ findet sich auf Nuclino unter:
 ```link
 https://app.nuclino.com/mswr/Task-board/Turniergrafik-Programm-Dokumentation-7ec03150-ca38-4f98-947d-15d38f079cb8#c6b2e
 ```
+## Einzelne Teilnehmer anzeigen lassen
+In 'graphics.py' wird in der Funktion erstelleGrafik eine Rekurion durchgeführt werden, wenn jeder Auswertungsteilnehmer, definiert in config.py, einzeln betrachtet werden soll. Die Rekursion wird mit cfg.auswertungsteilnehmer_multi = False (cfg heißt config) gestoppt. erstelleGrafik wird rekursiv für jeden Teilnehmer einzeln aufgerufen. Wenn der Teilnehmer in keinem der beiden Dictionaries (langfrist_player_date_points und kurzfrist_player_date_points) vorhanden ist, wird eine Fehlermeldung erzeugt. Im else-Teil wird der Plot generiert. Das bedeutet: Beide Teile sind wichtig.
+
+In 'config.py' bekommt jeder Teilnehmer einen Farbcode und eine Linieneigenschaft zugewiesen. Zum Beispiel: "DWD-MOS-Mix": ["#DEC000", "--"]. "--" ist nicht die einzige Linieneigenschaft. Es gibt auch noch "-" (durchgezogen), "-:" (Strich und Punkt) und ":" (gepunktet). Man kann die Farbcodes auch ändern. DWD-MOS-Mix und MSwr-MOS-Mix haben dicke Linien. Auch das kann in 'config.py' mittels der Zahlencodierung von 1 (sehr dünn) bis 4 (sehr dick) eingestellt werden.
