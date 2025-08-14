@@ -48,7 +48,7 @@ sudo apt install python3.11
 sudo apt install python3-pip python3.11-venv
 ```
 
-Nur mit Python3.11 funktioniert das Prgramm ordnungsgemäß.
+Nur mit Python3.11 funktioniert das Programm ordnungsgemäß.
 Bei macOS gibt es eine weitere Alternative, wie Python heruntergeladen werden kann:
 Mithilfe des Paketmanagers homebrew kann Python ebenfalls
 mit brew install python3.11 installiert werden
@@ -67,7 +67,7 @@ pip install -r requirements_pip.txt
 conda install --file requirements_conda.txt
 ```
 
-# Andere Moeglichkeit zum Laden der wichtigen Module
+# Andere Möglichkeit zum Laden der wichtigen Module
 ```bash
 # Für pip
 pip install -r requirements_pip.txt
@@ -86,13 +86,15 @@ conda install -forge alle Module
 # Probleme mit mariadb
 Bei der Installation der Module kann mariadb eine Fehlermeldung
 auslösen. Mit which mariadb_config nachschauen, wo mariadb liegt.
-Dann muss bei macOS nano ~/.zshrc ausgeführt werden und 
-export PATH="/pfad/zum/mariadb-connector-c/<version>/bin:$PATH"
-hinzugefügt werden. Bei Linux nano ~/.bashrc öffnen und
-export PATH="/pfad/zum/mariadb-connector-c/<version>/bin:$PATH"
-eintragen. Dann source ~/.zshrc bei macOS bzw. source ~/.bashrc
-bei Linux ausführen. Zum Schluss erneut pip install Module oder conda 
-install -forge Module ausführen.
+Dann muss bei macOS nano # ~/.zshrc ausgeführt 
+werden und # export PATH="/pfad/zum/mariadb-connector-c/<version>/bin:$PATH"
+hinzugefügt werden. Bei Linux nano # ~/.bashrc 
+öffnen und # export PATH="/pfad/zum/mariadb-connector-c/<version>/bin:$PATH"
+eintragen. Dann source # ~/.zshrc bei macOS 
+bzw. # source ~/.bashrc bei Linux 
+ausführen. Zum Schluss erneut # pip install Module 
+oder conda # install -forge Module 
+ausführen.
 
 
 # Hinweise zur Benutzung
