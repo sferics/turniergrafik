@@ -86,14 +86,14 @@ conda install -forge alle Module
 # Probleme mit mariadb
 Bei der Installation der Module kann mariadb eine Fehlermeldung
 auslösen. Mit which mariadb_config nachschauen, wo mariadb liegt.
-Dann muss bei macOS nano # ~/.zshrc ausgeführt 
-werden und # export PATH="/pfad/zum/mariadb-connector-c/<version>/bin:$PATH"
-hinzugefügt werden. Bei Linux nano # ~/.bashrc 
-öffnen und # export PATH="/pfad/zum/mariadb-connector-c/<version>/bin:$PATH"
-eintragen. Dann source # ~/.zshrc bei macOS 
-bzw. # source ~/.bashrc bei Linux 
-ausführen. Zum Schluss erneut # pip install Module 
-oder conda # install -forge Module 
+Dann muss bei macOS nano ~/.zshrc ausgeführt 
+werden und export PATH="/pfad/zum/mariadb-connector-c/<version>/bin:$PATH"
+hinzugefügt werden. Bei Linux nano ~/.bashrc 
+öffnen und export PATH="/pfad/zum/mariadb-connector-c/<version>/bin:$PATH"
+eintragen. Dann source ~/.zshrc bei macOS 
+bzw. source ~/.bashrc bei Linux 
+ausführen. Zum Schluss erneut pip install Module 
+oder conda install -forge Module 
 ausführen.
 
 
