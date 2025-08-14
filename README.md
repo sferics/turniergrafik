@@ -16,6 +16,15 @@ pip install -r requirements_pip.txt
 ```
 Stattdessen kann auch nur das Kommando `pip install requirements_pip.txt`
 verwendet werden, um die Abhängigkeiten zu installieren.
+
+'pip install requirements_pip.txt' funktioniert nicht, da pip install
+nicht mit Links umgehen kann. Es ist empfhelenswert, 
+pip install Module aus requirements_pip.txt zu verwenden. Es
+ist auch möglich, dass das Modul mariad noch nicht kompatibel ist.
+Dazu muss bei macOS ~/.zsh geöffnet werden und noch die Zeile 
+'Zeile' ergänzt werden. Dann können alle Module mit 'pip install
+Module' installiert werden. Dann erscheint auch keine Fehlermeldung bi den Verlinkungen.
+
 Dann wird das Programm in der aktuellen Umgebung installiert, was aber
 zu Konflikten mit anderen Python-Projekten und dem System-Python
 führen kann. Daher wird die Verwendung einer virtuellen Umgebung
@@ -28,10 +37,12 @@ conda create -n turniergrafik python=3.11
 conda activate turniergrafik
 conda install --file requirements_conda.txt
 ```
+Wenn 'conda install --file requirements_conda.txt' nicht möglich ist, kann man auch mit conda install -forge Module die
+notwendigen Pakete installieren. Auch hier sollte unbedingt mariad in ~/.zsh ergänzt werden, da es sonst eine Fehlermeldung gibt. Dann funktioniert auch alles.
 
 # Benötigte Python-Version
 Das Programm wurde mit Python 3.11 entwickelt und getestet. Es wird empfohlen,
-eine Python-Version ab 3.11 zu verwenden, um Kompatibilitätsprobleme zu vermeiden.
+die Python-Version 3.11 zu verwenden, um Kompatibilitätsprobleme zu vermeiden.
 Die Installation dieser Version kann je nach Betriebssystem unterschiedlich
 aussehen. Für die meisten Linux-Distributionen kann Python über den
 Paketmanager installiert werden. Für Windows und macOS kann es
@@ -43,10 +54,12 @@ sudo apt install python3.11
 # Optional: Installation von pip (Python-Paketverwaltung) und venv (virtuelle Umgebung)
 sudo apt install python3-pip python3.11-venv
 ```
-Falls diese Version nicht verfügbar ist, kann auch eine neuere Version
-installiert werden, da das Programm auch mit neueren Python-Versionen
-kompatibel ist. Es wird jedoch empfohlen, mindestens Python 3.11 zu verwenden,
-um sicherzustellen, dass das Programm ordnungsgemäß funktioniert.
+Mit den Versionen python3.12 und python3.13 funktioniert die Installation
+der Pakete vor allem bei mariad.py nicht. 
+
+Bei macOS kann man python3.11 ähnlich wie bei Linux installieren
+mit homebrew. Der Befehl ist hier: brew install python3.11.
+
 
 # Abhängigkeiten
 Die Abhängigkeiten des Programms sind in der Datei `requirements_pip.txt`
@@ -61,6 +74,15 @@ pip install -r requirements_pip.txt
 # Für conda
 conda install --file requirements_conda.txt
 ```
+Alternativ können die Abhängigkeiten auch mit pip install Module oder
+conda install -forge Module installiert werden, falls 
+```bash
+# Für pip
+pip install -r requirements_pip.txt
+# Für conda
+conda install --file requirements_conda.txt
+```
+nicht funktioniert.
 
 # Hinweise zur Benutzung
 Das Programm ist so konzipiert, dass es die Daten der letzten Jahre
@@ -83,6 +105,8 @@ geladen werden, oder sie kann bei Bedarf angefordert werden.
 ```bash
 python3 turniergrafik.py
 ```
+'python3 turniergrafik.py' ist bei macOS Pflicht, bei Linux funktioniert auch 
+'python turniergrafik.py'. 
 
 ## Kommandzeilen-Argumente
 Das Programm kann mit verschiedenen Kommandozeilenargumenten gestartet werden,
@@ -133,3 +157,7 @@ findet sich auf Nuclino unter:
 ```link
 https://app.nuclino.com/mswr/Task-board/Turniergrafik-Programm-Dokumentation-7ec03150-ca38-4f98-947d-15d38f079cb8#c6b2e
 ```
+## Einzelne Teilnehmer anzeigen lassen
+In 'graphics.py' wird in der Funktion erstelleGrafik eine Rekurion durchgeführt werden, wenn jeder Auswertungsteilnehmer, definiert in config.py, einzeln betrachtet werden soll. Die Rekursion wird mit cfg.auswertungsteilnehmer_multi = False (cfg heißt config) gestoppt. erstelleGrafik wird rekursiv für jeden Teilnehmer einzeln aufgerufen. Wenn der Teilnehmer in keinem der beiden Dictionaries (langfrist_player_date_points und kurzfrist_player_date_points) vorhanden ist, wird eine Fehlermeldung erzeugt. Im else-Teil wird der Plot generiert. Das bedeutet: Beide Teile sind wichtig.
+
+In 'config.py' bekommt jeder Teilnehmer einen Farbcode und eine Linieneigenschaft zugewiesen. Zum Beispiel: "DWD-MOS-Mix": ["#DEC000", "--"]. "--" ist nicht die einzige Linieneigenschaft. Es gibt auch noch "-" (durchgezogen), "-:" (Strich und Punkt) und ":" (gepunktet). Man kann die Farbcodes auch ändern. DWD-MOS-Mix und MSwr-MOS-Mix haben dicke Linien. Auch das kann in 'config.py' mittels der Zahlencodierung von 1 (sehr dünn) bis 4 (sehr dick) eingestellt werden.
