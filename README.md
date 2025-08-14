@@ -21,7 +21,7 @@ zu Konflikten mit anderen Python-Projekten und dem System-Python
 führen kann. Daher wird die Verwendung einer virtuellen Umgebung
 empfohlen, um die Abhängigkeiten isoliert zu halten.
 
-pip install -r requirements_pip.txt kann problematisch sein wegen den enthaltenen Links.
+pip install -r requirements_pip.txt kann auf manchen PCs problematisch sein wegen den enthaltenen Links.
 Im Zweifel muss pip install Module durchgeführt sein und die Module sind in der
 Datei requirements.txt enthalten.
 
@@ -32,9 +32,6 @@ conda create -n turniergrafik python=3.11
 conda activate turniergrafik
 conda install --file requirements_conda.txt
 ```
-Auch hier kann conda install --file requirements_conda.txt nicht ausgeführt werden
-wegen der enthaltenen Links. Jedes einzelne Modul aus requirements_conda.txt
-muss mit conda install -forge Module installiert werden.
 
 # Benötigte Python-Version
 Das Programm wurde mit Python 3.11 entwickelt und getestet. Es wird empfohlen,
@@ -69,9 +66,32 @@ pip install -r requirements_pip.txt
 # Für conda
 conda install --file requirements_conda.txt
 ```
-Das funktioniert nicht. Es muss, wie oben bereicts erwähnt, 
-pip install -r Module bzw. conda install -forge Module
-verwendet werden.
+
+# Andere Moeglichkeit zum Laden der wichtigen Module
+```bash
+# Für pip
+pip install -r requirements_pip.txt
+# Für conda
+conda install --file requirements_conda.txt
+```
+funktioniert nicht auf jedem PC. Dann muss requirements_pip.txt
+bzw. requirements_conda.txt geoeffnet werden und der komplette
+Text kopiert werden. Dann wird folgender Befehl ausgefuehrt:
+```bash
+# Für pip
+pip install alle Module
+# Für conda
+conda install -forge alle Module
+```
+# Probleme mit mariadb
+Bei der Installation der Module kann mariadb eine Fehlermeldung
+auslösen. Mit which mariadb_config nachschauen, wo mariadb liegt.
+Dann muss bei macOS nano ~/.zshrc ausgefuehrt werden und 
+export PATH="/pfad/zum/mariadb-connector-c/<version>/bin:$PATH"
+hinzugefuegt werden. Dann source ~/.zshrc ausfuehren. Zum Schluss
+erneut pip install Module oder conda install -forge Module
+ausfuehren.
+
 
 # Hinweise zur Benutzung
 Das Programm ist so konzipiert, dass es die Daten der letzten Jahre
