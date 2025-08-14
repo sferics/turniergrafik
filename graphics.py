@@ -219,7 +219,7 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
     :return: None
     """
     # Setze die Locale für die Datums- und Zeitformatierung
-    locale.setlocale(locale.LC_ALL, 'en_US.UTF8')
+    locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
     
     if cfg.auswertungsteilnehmer_multi:
         for teilnehmer in cfg.auswertungsteilnehmer:
