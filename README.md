@@ -21,6 +21,10 @@ zu Konflikten mit anderen Python-Projekten und dem System-Python
 führen kann. Daher wird die Verwendung einer virtuellen Umgebung
 empfohlen, um die Abhängigkeiten isoliert zu halten.
 
+pip install -r requirements_pip.txt kann problematisch sein wegen den enthaltenen Links.
+Im Zweifel muss pip install Module durchgeführt sein und die Module sind in der
+Datei requirements.txt enthalten.
+
 ## Installation mit Conda
 Alternativ kann das Programm auch mit Conda installiert werden. Dazu wird eine Conda-Umgebung mit den notwendigen Paketen erstellt.
 ```bash
@@ -43,10 +47,11 @@ sudo apt install python3.11
 # Optional: Installation von pip (Python-Paketverwaltung) und venv (virtuelle Umgebung)
 sudo apt install python3-pip python3.11-venv
 ```
-Falls diese Version nicht verfügbar ist, kann auch eine neuere Version
-installiert werden, da das Programm auch mit neueren Python-Versionen
-kompatibel ist. Es wird jedoch empfohlen, mindestens Python 3.11 zu verwenden,
-um sicherzustellen, dass das Programm ordnungsgemäß funktioniert.
+
+Nur mit Python3.11 funktioniert das Prgramm ordnungsgemaäß.
+Bei macOS gibt es eine weitere Alternative, wie Python heruntergeladen werden kann:
+Mithilfe des Paketmanagers homebrew kann Python ebenfalls
+mit brew install python3.11 installiert werden
 
 # Abhängigkeiten
 Die Abhängigkeiten des Programms sind in der Datei `requirements_pip.txt`
