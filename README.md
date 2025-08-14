@@ -32,6 +32,9 @@ conda create -n turniergrafik python=3.11
 conda activate turniergrafik
 conda install --file requirements_conda.txt
 ```
+Auch hier kann conda install --file requirements_conda.txt nicht ausgeführt werden
+wegen der enthaltenen Links. Jedes einzelne Modul aus requirements_conda.txt
+muss mit conda install -forge Module installiert werden.
 
 # Benötigte Python-Version
 Das Programm wurde mit Python 3.11 entwickelt und getestet. Es wird empfohlen,
@@ -66,6 +69,9 @@ pip install -r requirements_pip.txt
 # Für conda
 conda install --file requirements_conda.txt
 ```
+Das funktioniert nicht. Es muss, wie oben bereicts erwähnt, 
+pip install -r Module bzw. conda install -forge Module
+verwendet werden.
 
 # Hinweise zur Benutzung
 Das Programm ist so konzipiert, dass es die Daten der letzten Jahre
