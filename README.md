@@ -21,6 +21,10 @@ zu Konflikten mit anderen Python-Projekten und dem System-Python
 führen kann. Daher wird die Verwendung einer virtuellen Umgebung
 empfohlen, um die Abhängigkeiten isoliert zu halten.
 
+pip install -r requirements_pip.txt kann auf manchen PCs problematisch sein wegen den enthaltenen Links.
+Im Zweifel muss pip install Module durchgeführt sein und die Module sind in der
+Datei requirements.txt enthalten.
+
 ## Installation mit Conda
 Alternativ kann das Programm auch mit Conda installiert werden. Dazu wird eine Conda-Umgebung mit den notwendigen Paketen erstellt.
 ```bash
@@ -31,7 +35,7 @@ conda install --file requirements_conda.txt
 
 # Benötigte Python-Version
 Das Programm wurde mit Python 3.11 entwickelt und getestet. Es wird empfohlen,
-eine Python-Version ab 3.11 zu verwenden, um Kompatibilitätsprobleme zu vermeiden.
+die Python-Version 3.11 zu verwenden, um Kompatibilitätsprobleme zu vermeiden.
 Die Installation dieser Version kann je nach Betriebssystem unterschiedlich
 aussehen. Für die meisten Linux-Distributionen kann Python über den
 Paketmanager installiert werden. Für Windows und macOS kann es
@@ -43,10 +47,11 @@ sudo apt install python3.11
 # Optional: Installation von pip (Python-Paketverwaltung) und venv (virtuelle Umgebung)
 sudo apt install python3-pip python3.11-venv
 ```
-Falls diese Version nicht verfügbar ist, kann auch eine neuere Version
-installiert werden, da das Programm auch mit neueren Python-Versionen
-kompatibel ist. Es wird jedoch empfohlen, mindestens Python 3.11 zu verwenden,
-um sicherzustellen, dass das Programm ordnungsgemäß funktioniert.
+
+Nur mit Python3.11 funktioniert das Prgramm ordnungsgemaäß.
+Bei macOS gibt es eine weitere Alternative, wie Python heruntergeladen werden kann:
+Mithilfe des Paketmanagers homebrew kann Python ebenfalls
+mit brew install python3.11 installiert werden
 
 # Abhängigkeiten
 Die Abhängigkeiten des Programms sind in der Datei `requirements_pip.txt`
@@ -61,6 +66,32 @@ pip install -r requirements_pip.txt
 # Für conda
 conda install --file requirements_conda.txt
 ```
+
+# Andere Moeglichkeit zum Laden der wichtigen Module
+```bash
+# Für pip
+pip install -r requirements_pip.txt
+# Für conda
+conda install --file requirements_conda.txt
+```
+funktioniert nicht auf jedem PC. Dann muss requirements_pip.txt
+bzw. requirements_conda.txt geoeffnet werden und der komplette
+Text kopiert werden. Dann wird folgender Befehl ausgefuehrt:
+```bash
+# Für pip
+pip install alle Module
+# Für conda
+conda install -forge alle Module
+```
+# Probleme mit mariadb
+Bei der Installation der Module kann mariadb eine Fehlermeldung
+auslösen. Mit which mariadb_config nachschauen, wo mariadb liegt.
+Dann muss bei macOS nano ~/.zshrc ausgefuehrt werden und 
+export PATH="/pfad/zum/mariadb-connector-c/<version>/bin:$PATH"
+hinzugefuegt werden. Dann source ~/.zshrc ausfuehren. Zum Schluss
+erneut pip install Module oder conda install -forge Module
+ausfuehren.
+
 
 # Hinweise zur Benutzung
 Das Programm ist so konzipiert, dass es die Daten der letzten Jahre
@@ -133,3 +164,7 @@ findet sich auf Nuclino unter:
 ```link
 https://app.nuclino.com/mswr/Task-board/Turniergrafik-Programm-Dokumentation-7ec03150-ca38-4f98-947d-15d38f079cb8#c6b2e
 ```
+## Einzelne Teilnehmer anzeigen lassen
+In 'graphics.py' wird in der Funktion erstelleGrafik eine Rekurion durchgeführt werden, wenn jeder Auswertungsteilnehmer, definiert in config.py, einzeln betrachtet werden soll. Die Rekursion wird mit cfg.auswertungsteilnehmer_multi = False (cfg heißt config) gestoppt. erstelleGrafik wird rekursiv für jeden Teilnehmer einzeln aufgerufen. Wenn der Teilnehmer in keinem der beiden Dictionaries (langfrist_player_date_points und kurzfrist_player_date_points) vorhanden ist, wird eine Fehlermeldung erzeugt. Im else-Teil wird der Plot generiert. Das bedeutet: Beide Teile sind wichtig.
+
+In 'config.py' bekommt jeder Teilnehmer einen Farbcode und eine Linieneigenschaft zugewiesen. Zum Beispiel: "DWD-MOS-Mix": ["#DEC000", "--"]. "--" ist nicht die einzige Linieneigenschaft. Es gibt auch noch "-" (durchgezogen), "-:" (Strich und Punkt) und ":" (gepunktet). Man kann die Farbcodes auch ändern. DWD-MOS-Mix und MSwr-MOS-Mix haben dicke Linien. Auch das kann in 'config.py' mittels der Zahlencodierung von 1 (sehr dünn) bis 4 (sehr dick) eingestellt werden.
