@@ -182,7 +182,7 @@ Die Werte auf der Abzisse können ebenso in 'graphics.py'. Dazu muss "%Y%m%d" zu
 
 # Tabelle Quotientendifferenzen
 
-Ich habe so wie Klaus selber eine Tabelle erstellt. Hierbei wird dd12 in allen 5 Städten ausgewertet.
+Ich habe so wie Klaus selber eine Tabelle erstellt. Hierbei wird dd12 in allen 5 Städten in den Jahren 2023 und 2024 ausgewertet.
 
 | Städte   | DWD-EZ-MOS 22.12.2023 | DWD-EZ-MOS 20.12.2024 | MSwr-EZ-MOS 22.12.2023 | MSwr-EZ-MOS 20.12.2024 | Diff. 2023 | Diff 2024|
 |----------|-----------------------|-----------------------|------------------------|------------------------|------------|----------|
@@ -192,3 +192,17 @@ Ich habe so wie Klaus selber eine Tabelle erstellt. Hierbei wird dd12 in allen 5
 | Zürich   | 1.66                  | 1.7                   | 1.74                   | 1.64                   | -0.08      | 0.06     |
 | Innsbruck| 4.0                   | 4.0                   | 5.53                   | 5.34                   | -1.53      | -1.34    |
 | Leipzig  | 1.26                  | 1.01                  | 1.24                   | 1.12                   | 0.02       | -0.11    |
+
+### Quotienten Modell im Jahr 2023/Modell im Jahr 2023 bzw. Modell im Jahr 2024/Modell im Jahr 2024
+
+alle: 0,57 und 0,57
+Berlin: 1,06 und 1,02
+Wien: 0,19 und 0,19
+Zürich: 0,95 und 1,04
+Innsbruck: 0,72 und 0,75
+Leipzig: 1,02 und 0,9
+
+Nur in Berlin war MSwr-EZ-MOS in beiden Jahren, in Zürich im Jahr 2024 und in Leipzig im Jahr 2023 leicht besser als DWD-EZ-MOS. 
+In allen anderen Fällen war DWD-EZ-MOS deutlich besser. Vor allem Wien sticht mit der fünffachen Anzahl an gemittelten 
+Fehlerpunkten besonders hervor.
+
