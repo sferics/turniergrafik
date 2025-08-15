@@ -171,9 +171,24 @@ https://app.nuclino.com/mswr/Task-board/Turniergrafik-Programm-Dokumentation-7ec
 ## Einzelne Teilnehmer anzeigen lassen
 In 'graphics.py' wird in der Funktion erstelleGrafik eine Rekurion durchgeführt werden, wenn jeder Auswertungsteilnehmer, definiert in config.py, einzeln betrachtet werden soll. Die Rekursion wird mit cfg.auswertungsteilnehmer_multi = False (cfg heißt config) gestoppt. erstelleGrafik wird rekursiv für jeden Teilnehmer einzeln aufgerufen. Wenn der Teilnehmer in keinem der beiden Dictionaries (langfrist_player_date_points und kurzfrist_player_date_points) vorhanden ist, wird eine Fehlermeldung erzeugt. Im else-Teil wird der Plot generiert. Das bedeutet: Beide Teile sind wichtig.
 
-In 'config.py' bekommt jeder Teilnehmer einen Farbcode und eine Linieneigenschaft zugewiesen. Zum Beispiel: "DWD-MOS-Mix": ["#DEC000", "--"]. "--" ist nicht die einzige Linieneigenschaft. Es gibt auch noch "-" (durchgezogen), "-:" (Strich und Punkt) und ":" (gepunktet). Man kann die Farbcodes auch ändern. DWD-MOS-Mix und MSwr-MOS-Mix haben dicke Linien. Auch das kann in 'config.py' mittels der Zahlencodierung von 1 (sehr dünn) bis 4 (sehr dick) eingestellt werden.
+In 'config.py' bekommt jeder Teilnehmer einen Farbcode und eine Linieneigenschaft zugewiesen. Zum Beispiel: "DWD-MOS-Mix": ["#DEC000", "--"]. "--" ist nicht die einzige Linieneigenschaft. Es gibt auch noch "-" (durchgezogen), "-:" (Strich und Punkt) und ":" (gepunktet). Man kann die Farbcodes auch ändern. DWD-MOS-Mix und MSwr-MOS-Mix haben dicke Linien. Auch das kann in 'config.py' mittels der Zahlencodierung von 1 (sehr dünn) bis 4 (sehr dick) eingestellt werden. 
+
+## jeden Parameter einzeln anzeigen lassen
+
+Wenn man jeden einzelnen Parameter analysieren will, funktioniert es analog mit der Rekursion.
 
 ## Abzisse anpassen
 Die Werte auf der Abzisse können ebenso in 'graphics.py'. Dazu muss "%Y%m%d" zu "%d%b%y" umgewandelt werden. Im linken Plot sind die Werte konsistent, rechts noch nicht ganz. Vermutlich muss dasselbe nochmal für die rechte Seite durchgeführt werden.
 
 # Tabelle Quotientendifferenzen
+
+Ich habe so wie Klaus selber eine Tabelle erstellt. Hierbei wird dd12 in allen 5 Städten ausgewertet.
+
+| Städte   | DWD-EZ-MOS 22.12.2023 | DWD-EZ-MOS 20.12.2024 | MSwr-EZ-MOS 22.12.2023 | MSwr-EZ-MOS 20.12.2024 | Diff. 2023 | Diff 2024|
+|----------|-----------------------|-----------------------|------------------------|------------------------|------------|----------|
+| alle     | 1.91                  | 1.9                   | 3.35                   | 3.32                   | -1.44      | -1.42    |
+| Berlin   | 1.29                  | 1.24                  | 1.22                   | 1.22                   | 0.07       | 0.02     |
+| Wien     | 1.35                  | 1.39                  | 7.22                   | 7.3                    | -5.87      | -5.91    |  !!!!
+| Zürich   | 1.66                  | 1.7                   | 1.74                   | 1.64                   | -0.08      | 0.06     |
+| Innsbruck| 4.0                   | 4.0                   | 5.53                   | 5.34                   | -1.53      | -1.34    |
+| Leipzig  | 1.26                  | 1.01                  | 1.24                   | 1.12                   | 0.02       | -0.11    |
