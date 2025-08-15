@@ -334,7 +334,7 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
                     if erster_teilnehmer:
                         if plotname == "linker_plot":
                             xlabel_terminliste[plotname] \
-                            .append(turniertag.strftime("%Y"))
+                            .append(turniertag.strftime("%d%b%y"))
                         else:
                             xlabel_terminliste[plotname] \
                             .append(turniertag.strftime("%d%b%y"))
