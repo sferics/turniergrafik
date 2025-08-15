@@ -175,3 +175,5 @@ In 'config.py' bekommt jeder Teilnehmer einen Farbcode und eine Linieneigenschaf
 
 ## Abzisse anpassen
 Die Werte auf der Abzisse können ebenso in 'graphics.py'. Dazu muss "%Y%m%d" zu "%d%b%y" umgewandelt werden. Im linken Plot sind die Werte konsistent, rechts noch nicht ganz. Vermutlich muss dasselbe nochmal für die rechte Seite durchgeführt werden.
+
+# Tabelle Quotientendifferenzen
