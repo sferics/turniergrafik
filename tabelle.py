@@ -1,100 +1,208 @@
 import matplotlib.pyplot as plt
 import os
 
+# ------------------------------
+# Datei einlesen und Werte extrahieren
+# ------------------------------
+
+# Dateipfad zur Textdatei mit den Modellwerten
 dateipfad = '2025-08-16_SatSun_allCities_allElements_MSwr-MOS-Mix_MSwr-EZ-MOS_MSwr-GFS-MOS_DWD-MOS-Mix_DWD-MOS-Mix-test_DWD-EZ-MOS_DWD-ICON-MOS_MOS-Mix_weeks.txt'
-# geht für weeks und years
+
+# Funktion zum Einlesen der Werte für ein bestimmtes Modell
 def lade_modell_werte(dateipfad, modell_prefix):
-    with open(dateipfad, 'r', encoding='utf-8') as f:
-        daten = f.readline().strip().split()  # erste Zeile = Datumsangaben
-        for zeile in f:
+    with open(dateipfad, 'r', encoding='utf-8') as f:     
+        # Öffnet die Datei im Lesemodus ("r") und mit UTF-8 Zeichenkodierung
+
+        daten = f.readline().strip().split()  
+        # Liest die erste Zeile (= enthält die Datumsangaben), 
+        # entfernt Leerzeichen und teilt die Werte in eine Liste
+
+        for zeile in f:   # Jede weitere Zeile durchgehen
             zeile = zeile.strip()
-            if zeile.startswith(modell_prefix):
+            if zeile.startswith(modell_prefix):  
+                # Nur die Zeilen nehmen, die mit dem Modellnamen anfangen, z.B. "DWD-EZ-MOS"
+
                 werte_teile = zeile[len(modell_prefix):].strip().split()
+                # Modellname vorne abschneiden, Rest in Zahlenwerte zerlegen
+
                 if len(werte_teile) != len(daten):
                     raise ValueError(f"Anzahl der Werte ({len(werte_teile)}) stimmt nicht mit Anzahl der Daten ({len(daten)}) überein")
+                # Sicherheitsprüfung: Anzahl der Werte = Anzahl der Datumsangaben
+
                 return {datum: float(wert) for datum, wert in zip(daten, werte_teile)}, daten
+                # Rückgabe als Wörterbuch (in Python Dictionary): 
+                # 1) Ein Wörterbuch: jedem Datum wird der entsprechende Zahlenwert zugeordnet
+                # 2) Die komplette Liste der Daten
+                
 
-# Werte laden
+# ------------------------------
+# Werte für die beiden Modelle laden
+# ------------------------------
+
 werte_dwd, alle_daten = lade_modell_werte(dateipfad, 'DWD-EZ-MOS')
-werte_mswr, _ = lade_modell_werte(dateipfad, 'MSwr-EZ-MOS')
+# Wir speichern hier BEIDE Rückgaben: 
+# - "werte_dwd" = Werte für DWD-EZ-MOS
+# - "alle_daten" = die Datums-Liste
 
+werte_mswr, _ = lade_modell_werte(dateipfad, 'MSwr-EZ-MOS')
+# Hier speichern wir NUR die Werte ("werte_mswr") für MSwr-EZ-MOS.
+# Die zweite Rückgabe (die Datenliste) wird nicht gebraucht, 
+# deshalb nehmen wir "_" als Platzhalter -> das heißt: "Ignorieren".
+
+
+# ------------------------------
 # Summen berechnen
+# ------------------------------
+
 gesamt_summe_dwd = sum(werte_dwd.values())
 gesamt_summe_mswr = sum(werte_mswr.values())
 
-print("Gesamtsumme DWD-EZ-MOS:", sum(werte_dwd.values()))
-print("Gesamtsumme MSwr-EZ-MOS:", sum(werte_mswr.values()))
+print("Gesamtsumme DWD-EZ-MOS:", gesamt_summe_dwd)
+print("Gesamtsumme MSwr-EZ-MOS:", gesamt_summe_mswr)
 
 
-# Differenzen und Quotienten
+# ------------------------------
+# Differenzen und Quotienten berechnen
+# ------------------------------
+
 differenzen = {datum: werte_dwd[datum] - werte_mswr[datum] for datum in alle_daten}
+# Differenz = DWD-Wert - MSwr-Wert
+
 quotienten = {datum: werte_dwd[datum] / werte_mswr[datum] for datum in alle_daten}
+# Quotient = DWD-Wert geteilt durch MSwr-Wert
 
 
+# ------------------------------
+# Tabelle in der Konsole anzeigen
+# ------------------------------
 
-# --- Tabelle in Konsole ausgeben ---
+# Kopfzeile (Spaltenüberschriften) für die Ausgabe in der Konsole definieren
+# f"" bedeutet "formatierter Text", damit wir Spaltenbreiten einstellen können
 header = f"{'Datum':<12} {'DWD-EZ-MOS':>12} {'Summe MSwr':>12} {'Differenz':>12} {'Quotient':>12}"
+
+# Kopfzeile in der Konsole ausgeben
 print(header)
+
+# Eine Linie (----) unter der Kopfzeile, damit es wie eine Tabelle aussieht
 print('-' * len(header))
+
+
+# ------------------------------
+# Einzelne Tageswerte in die Tabelle schreiben (Konsole)
+# ------------------------------
+
+# Wir gehen nacheinander jedes Datum in der Liste "alle_daten" durch
 for datum in alle_daten:
+    # Ein Datum wie "20250816" wird in Jahr, Monat, Tag zerlegt
     jahr, monat, tag = datum[:4], datum[4:6], datum[6:8]
-    datum_formatiert = f"{tag}.{monat}.{jahr}"
+
+    # Datum hübsch formatieren -> aus "20250816" wird "16.08.2025"
+    datum_formatiert = f"{tag}.{monat}.{jahr}"   
+
+    # Für jedes Datum die Werte von beiden Modellen ausgeben:
+    # - DWD-Modell
+    # - MSwr-Modell
+    # - die Differenz
+    # - den Quotienten
+    # Alles schön in Spalten ausgerichtet
     print(f"{datum_formatiert:<12} "
           f"{werte_dwd[datum]:>12.2f} "
           f"{werte_mswr[datum]:>12.2f} "
           f"{differenzen[datum]:>12.2f} "
           f"{quotienten[datum]:>12.3f}")
 
-# Gesamtsumme in Konsole ausgeben
+
+# ------------------------------
+# Gesamtsummen in der Konsole ausgeben
+# ------------------------------
+
+# Trennlinie wie vorher
 print('-' * len(header))
+
+# Letzte Zeile mit den Summen beider Modelle
+# In den Spalten "Differenz" und "Quotient" bleibt es leer
 print(f"{'Gesamt':<12} "
       f"{gesamt_summe_dwd:>12.2f} "
       f"{gesamt_summe_mswr:>12.2f} "
       f"{'':>12} "
       f"{'':>12}")
 
-# --- Daten für PNG-Tabelle vorbereiten ---
+
+# ------------------------------
+# Daten für PNG-Tabelle vorbereiten
+# ------------------------------
+
+# Hier bauen wir die Tabelle Zeile für Zeile als "Liste von Listen" auf
 tabellen_daten = []
+
+# Wieder durch alle Tage gehen
 for datum in alle_daten:
     jahr, monat, tag = datum[:4], datum[4:6], datum[6:8]
     datum_formatiert = f"{tag}.{monat}.{jahr}"
     tabellen_daten.append([
         datum_formatiert,
-        f"{werte_dwd[datum]:>10.2f}",
-        f"{werte_mswr[datum]:>10.2f}",
-        f"{differenzen[datum]:>10.2f}",
-        f"{quotienten[datum]:>10.3f}"
+        f"{werte_dwd[datum]:>10.2f}",   # Wert vom DWD-Modell
+        f"{werte_mswr[datum]:>10.2f}",  # Wert vom MSwr-Modell
+        f"{differenzen[datum]:>10.2f}", # Differenz
+        f"{quotienten[datum]:>10.3f}"   # Quotient
     ])
 
-# Gesamtsumme als letzte Zeile hinzufügen
+# Am Ende die Gesamtsummen als eigene Zeile hinzufügen
 tabellen_daten.append([
     "Gesamt",
     f"{gesamt_summe_dwd:>10.2f}",
     f"{gesamt_summe_mswr:>10.2f}",
-    "",
-    ""
+    "",   # leer lassen
+    ""    # leer lassen
 ])
 
-# --- Spaltenüberschriften ---
+# Überschriften für die Spalten
 spalten = ["Datum", "DWD-EZ-MOS", "MSwr-EZ-MOS", "Differenz", "Quotient"]
 
-# --- Abmessungen automatisch anpassen ---
+
+# ------------------------------
+# Tabelle als Bild (PNG) speichern
+# ------------------------------
+
+
+# Ein "Figure" (fig) und eine "Axes" (ax) erzeugen.
+# - fig ist das gesamte Bild (Leinwand).
+# - ax ist ein einzelner Zeichenbereich (quasi ein Kästchen auf der Leinwand).
 fig, ax = plt.subplots(figsize=(12, max(len(tabellen_daten)*0.5, 2)))
+
+# Die Achsen (Skalen, Zahlen am Rand) werden hier ausgeschaltet,
+# weil wir keine Kurve oder Punkte zeichnen wollen, sondern nur eine Tabelle.
 ax.axis('off')
 
-# --- Tabelle erstellen ---
-tabelle = ax.table(cellText=tabellen_daten,
-                   colLabels=spalten,
-                   cellLoc='center',
-                   loc='center',
-                   colColours=['#f2f2f2']*len(spalten))  # helle Kopfzeilenfarbe
+# Jetzt kommt die Tabelle:
+# Wir hängen die Tabelle an den Achsenbereich (ax) an.
+# Warum an "ax"?  
+# → Weil in Matplotlib alles in sogenannte "Axes" hineingezeichnet wird.
+# Eine Figur (fig) kann mehrere Achsenbereiche (ax) enthalten.
+# Tabellen, Diagramme, Plots – all das "lebt" in einem ax.
+# Ohne Angabe von ax wüsste Matplotlib nicht, *wohin* es die Tabelle zeichnen soll -> eine Fehlermeldung folgt dann im Terminal.
+tabelle = ax.table(cellText=tabellen_daten,   # Tabelleninhalt (Zellen)
+                   colLabels=spalten,         # Spaltenüberschriften
+                   cellLoc='center',          # Text in den Zellen zentrieren
+                   loc='center',              # Tabelle in der Mitte der Achse platzieren
+                   colColours=['#f2f2f2']*len(spalten))  # Kopfzeile grau einfärben
 
-# --- Schriftgröße und Spaltenbreite anpassen ---
-tabelle.auto_set_font_size(False)
-tabelle.set_fontsize(10)
-tabelle.auto_set_column_width(col=list(range(len(spalten))))
 
-# --- Speichern ---
+# Tabelle als Bild speichern
 plt.savefig("tabelle_mosse.png", dpi=300, bbox_inches='tight')
+
+# plt.close() macht das aktuelle Bild "zu".
+# Warum? 
+#   Wenn man viele Plots oder Tabellen erstellt, bleiben diese intern im Speicher.
+#   Ohne close() würde Matplotlib alle Bilder "offen halten".
+#   Das braucht unnötig Speicher und kann Programme verlangsamen.
+# Mit plt.close() sagt man: "Fertig! Dieses Bild ist gespeichert, 
+#   jetzt kann Matplotlib es aus dem Speicher löschen.
 plt.close()
+
+# Kontrollausgabe für den Nutzer:
 print("Tabelle als 'tabelle_mosse.png' gespeichert.")
+
+
+# Info für den Nutzer in der Konsole
+print("Tabelle als 'tabelle_mosse.png' gespeichert.")  
