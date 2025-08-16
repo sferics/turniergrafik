@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import os
 
 dateipfad = '2025-08-16_SatSun_allCities_allElements_MSwr-MOS-Mix_MSwr-EZ-MOS_MSwr-GFS-MOS_DWD-MOS-Mix_DWD-MOS-Mix-test_DWD-EZ-MOS_DWD-ICON-MOS_MOS-Mix_weeks.txt'
-
+# geht für weeks und years
 def lade_modell_werte(dateipfad, modell_prefix):
     with open(dateipfad, 'r', encoding='utf-8') as f:
         daten = f.readline().strip().split()  # erste Zeile = Datumsangaben
