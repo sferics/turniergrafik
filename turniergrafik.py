@@ -197,7 +197,7 @@ def short_term_mean(points, dates, mean_weaks, max_nan_ratio, cities=5):
             mean = np.nan
 
         # i*7, da in Wochen gezaehlt wurde und Tage gesucht sind
-        date = max(dates) - i*7
+        date = max(dates) - i*(7-1)     # Dann passt die x-Achse wieder und das Enddatum stimmt mit dem linken Plot überein.
 
         # Datum fuer Mittelungszeitraum aus Liste ausschneiden
         # Haenge den Mittelwert und das Datum des letzten Tages
