@@ -196,38 +196,6 @@ for muster in dateipfade:
 
 
 # ------------------------------
-# Daten für PNG-Tabelle vorbereiten
-# ------------------------------
-
-# Hier bauen wir die Tabelle Zeile für Zeile als "Liste von Listen" auf
-tabellen_daten = []
-
-# Wieder durch alle Tage gehen
-for datum in alle_daten:
-    jahr, monat, tag = datum[:4], datum[4:6], datum[6:8]
-    datum_formatiert = f"{tag}.{monat}.{jahr}"
-    tabellen_daten.append([
-        datum_formatiert,
-        f"{werte_dwd[datum]:>10.2f}",   # Wert vom DWD-Modell
-        f"{werte_mswr[datum]:>10.2f}",  # Wert vom MSwr-Modell
-        f"{differenzen[datum]:>10.2f}", # Differenz
-        f"{quotienten[datum]:>10.3f}"   # Quotient
-    ])
-
-# Am Ende die Gesamtsummen als eigene Zeile hinzufügen
-tabellen_daten.append([
-    "Gesamt",
-    f"{gesamt_summe_dwd:>10.2f}",
-    f"{gesamt_summe_mswr:>10.2f}",
-    "",   # leer lassen
-    ""    # leer lassen
-])
-
-# Überschriften für die Spalten
-spalten = ["Datum", "DWD-EZ-MOS", "MSwr-EZ-MOS", "Differenz", "Quotient"]
-
-
-# ------------------------------
 # Tabelle als Bild (PNG) speichern
 # ------------------------------
 
