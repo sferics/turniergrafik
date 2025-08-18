@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import os
-
+import time         # für die Laufzeit später
 # ------------------------------
 # Datei einlesen und Werte extrahieren
 # ------------------------------
