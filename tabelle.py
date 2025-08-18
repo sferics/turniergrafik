@@ -104,6 +104,15 @@ for muster in dateipfade:
         print(f"Keine Dateien gefunden für Muster: {muster}")
         continue  # überspringt den Rest dieser Schleife 
         # und geht zum nächsten Muster
+    # Gehe jede gefundene Datei einzeln durch
+    for dateipfad in gefundene_dateien:
+        print(f"\n=== Datei: {dateipfad} ===\n")
+
+        # Hier speichern wir später die Werte aller Modelle 
+        # für diese Datei in ein Wörterbuch.
+        werte_modelle = {}
+        alle_daten = None  # einmalig die Liste der Datumsangaben speichern
+        
 
 # ------------------------------
 # Alle Dateien durchgehen
