@@ -91,7 +91,7 @@ def lade_modell_werte(dateipfad, modell_prefix):
                 # 2) Die komplette Liste der Daten
                 
 # ------------------------------
-# Alle Muster-Dateien durchgehen
+# Alle Muster-Dateien durchgehen und Tabelle erstellen
 # ------------------------------
 # Gehe alle Muster in den Dateipfaden durch, die wir durchsuchen wollen
 for muster in dateipfade:
@@ -194,20 +194,6 @@ for muster in dateipfade:
             colColours=['#f2f2f2']*5              # Hintergrundfarbe der Spalten
         )
 
-# ------------------------------
-# Alle Dateien durchgehen
-# ------------------------------
-for dateipfad in dateipfade:
-    print(f"\n=== Datei: {dateipfad} ===\n")
-    
-    # Werte für alle Modelle speichern
-    werte_modelle = {}
-    alle_daten = None
-    for modell in modelle:
-        werte, daten = lade_modell_werte(dateipfad, modell)
-        werte_modelle[modell] = werte
-        if alle_daten is None:
-            alle_daten = daten  # einmalig die Datums-Liste speichern
 
 
 # ------------------------------
