@@ -21,6 +21,33 @@ def finde_dateien(muster):
     teile = name_muster.split("*")
     #    Leere Liste vorbereiten, um alle passenden Dateien zu speichern
     dateien = []
+    #    Gehe alle Dateien im Ordner durch
+    for fname in os.listdir(ordner):
+        #    Prüfe nur Textdateien
+        if fname.endswith(".txt"):      # Wenn Endung ".txt"
+
+            #    Startposition für die Suche im Dateinamen
+            pos = 0
+            #    Flag, das merkt, ob alle Teile passen
+            ok = True
+
+            #  Prüfe, ob alle festen Teile des Musters in der richtigen Reihenfolge im Dateinamen vorkommen
+            for teil in teile:
+                #  Suche das Teil ab der Position pos
+                idx = fname.find(teil, pos)
+                #  Wenn das Teil nicht gefunden wird -> Datei passt nicht
+                if idx == -1:
+                    ok = False
+                    break
+                #  Wenn gefunden -> Position weiter nach hinten setzen, um Reihenfolge zu beachten
+                pos = idx + len(teil)
+
+            #   Wenn alle Teile gefunden wurden -> Datei merken
+            if ok:
+                dateien.append(os.path.join(ordner, fname))
+
+    #  Gib am Ende die Liste aller passenden Dateien zurück
+    return dateien
 # ------------------------------
 # Datei einlesen und Werte extrahieren
 # ------------------------------
