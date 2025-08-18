@@ -95,6 +95,8 @@ def lade_modell_werte(dateipfad, modell_prefix):
 # ------------------------------
 # Gehe alle Muster in den Dateipfaden durch, die wir durchsuchen wollen
 for muster in dateipfade:
+    # Finde alle Dateien, die zu diesem Muster passen
+    gefundene_dateien = finde_dateien(muster)
 
 # ------------------------------
 # Alle Dateien durchgehen
