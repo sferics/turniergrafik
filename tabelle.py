@@ -183,7 +183,16 @@ for muster in dateipfade:
             ""
         ])
 
-
+        # Erstelle die Tabelle
+        fig, ax = plt.subplots(figsize=(12, max(len(tabellen_daten)*0.5, 2)))
+        ax.axis('off')  # Achsen ausblenden
+        tabelle = ax.table(
+            cellText=tabellen_daten,               # Daten für die Zellen
+            colLabels=['Datum'] + modelle + ['Differenz','Quotient'],  # Spaltenüberschriften
+            cellLoc='center',                      # Text in der Mitte der Zelle
+            loc='center',                          # Tabelle in der Mitte platzieren
+            colColours=['#f2f2f2']*5              # Hintergrundfarbe der Spalten
+        )
 
 # ------------------------------
 # Alle Dateien durchgehen
