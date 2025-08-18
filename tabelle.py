@@ -90,6 +90,11 @@ def lade_modell_werte(dateipfad, modell_prefix):
                 # 1) Ein Wörterbuch: jedem Datum wird der entsprechende Zahlenwert zugeordnet
                 # 2) Die komplette Liste der Daten
                 
+# ------------------------------
+# Alle Muster-Dateien durchgehen
+# ------------------------------
+# Gehe alle Muster in den Dateipfaden durch, die wir durchsuchen wollen
+for muster in dateipfade:
 
 # ------------------------------
 # Alle Dateien durchgehen
