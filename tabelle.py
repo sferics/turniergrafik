@@ -49,16 +49,14 @@ def finde_dateien(muster):
     #  Gib am Ende die Liste aller passenden Dateien zurück
     return dateien
 # ------------------------------
-# Datei einlesen und Werte extrahieren
+# Liste der Muster-Dateien und Modelle
 # ------------------------------
-
-# Dateipfad zur Textdatei mit den Modellwerten
-
+# Dateipfade angeben. Es sind mehrere, aber durch "*" werden alle anderen txt Dateien mit gelistet. Das funktioniert wie im Terminal.
 dateipfade = [
-    '2025-08-18_SatSun_Wien_dd12_MSwr-MOS-Mix_MSwr-EZ-MOS_MSwr-GFS-MOS_DWD-MOS-Mix_DWD-MOS-Mix-test_DWD-EZ-MOS_DWD-ICON-MOS_MOS-Mix_weeks.txt',
-    '2025-08-18_SatSun_Wien_dd12_MSwr-MOS-Mix_MSwr-EZ-MOS_MSwr-GFS-MOS_DWD-MOS-Mix_DWD-MOS-Mix-test_DWD-EZ-MOS_DWD-ICON-MOS_MOS-Mix_years.txt'  # weitere Dateien hier einfügen
+    '2025-08-18_*_Wien_dd12_MSwr-MOS-Mix_MSwr-EZ-MOS_MSwr-GFS-MOS_DWD-MOS-Mix_DWD-MOS-Mix-test_DWD-EZ-MOS_DWD-ICON-MOS_MOS-Mix_*.txt',
+    # weitere Dateien hier
 ]
-
+# Beide zu betrachtenden Modelle werden als Liste definiert.
 modelle = ['DWD-EZ-MOS', 'MSwr-EZ-MOS']
 
 # Funktion zum Einlesen der Werte für ein bestimmtes Modell
