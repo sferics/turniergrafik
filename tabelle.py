@@ -6,6 +6,15 @@ start = time.time()
 #-------------------------------
 # Funktion, die Dateien mit * findet
 #-------------------------------
+
+def finde_dateien(muster):
+    #   Bestimme den ordner, in dem gesucht werden soll
+    #   os.path.dirname gibt den Pad zum Ordner zurück. 
+    #   Dann muss man den nicht mehr implementieren.
+    #   Wenn kein Ordner im Muster steht, wird "." benutzt, also der aktuelle Ordner
+    ordner = os.path.dirname(muster) or "."
+    #   Nimm nur "2025-08-18:*_Wien_*.txt"
+    name_muster = os.path.basename(muster)
 # ------------------------------
 # Datei einlesen und Werte extrahieren
 # ------------------------------
