@@ -1,6 +1,11 @@
 import matplotlib.pyplot as plt
 import os
 import time         # für die Laufzeit später
+
+start = time.time()
+#-------------------------------
+# Funktion, die Dateien mit * findet
+#-------------------------------
 # ------------------------------
 # Datei einlesen und Werte extrahieren
 # ------------------------------
