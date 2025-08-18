@@ -15,6 +15,10 @@ def finde_dateien(muster):
     ordner = os.path.dirname(muster) or "."
     #   Nimm nur "2025-08-18:*_Wien_*.txt"
     name_muster = os.path.basename(muster)
+    #    Zerlege das Muster an jedem Sternchen "*"
+    #    Beispiel: "2025-08-18_*_Wien_*.txt" -> ["2025-08-18_", "_Wien_", ".txt"]
+    #    Alles zwischen den Sternchen wird "egal" – nur die festen Teile werden überprüft
+    teile = name_muster.split("*")
 # ------------------------------
 # Datei einlesen und Werte extrahieren
 # ------------------------------
