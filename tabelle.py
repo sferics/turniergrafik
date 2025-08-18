@@ -341,21 +341,3 @@ tabelle = ax.table(cellText=tabellen_daten,   # Tabelleninhalt (Zellen)
                    colColours=['#f2f2f2']*len(spalten))  # Kopfzeile grau einfärben
 
 
-# Tabelle als Bild speichern
-plt.savefig("tabelle_mosse.png", dpi=300, bbox_inches='tight')
-
-# plt.close() macht das aktuelle Bild "zu".
-# Warum? 
-#   Wenn man viele Plots oder Tabellen erstellt, bleiben diese intern im Speicher.
-#   Ohne close() würde Matplotlib alle Bilder "offen halten".
-#   Das braucht unnötig Speicher und kann Programme verlangsamen.
-# Mit plt.close() sagt man: "Fertig! Dieses Bild ist gespeichert, 
-#   jetzt kann Matplotlib es aus dem Speicher löschen.
-plt.close()
-
-# Kontrollausgabe für den Nutzer:
-print("Tabelle als 'tabelle_mosse.png' gespeichert.")
-
-
-# Info für den Nutzer in der Konsole
-print("Tabelle als 'tabelle_mosse.png' gespeichert.")  
