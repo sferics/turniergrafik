@@ -174,7 +174,16 @@ for muster in dateipfade:
                 f"{quotienten[datum]:>10.3f}"
             ])
 
-        
+        # Gesamtsummen auch als letzte Zeile hinzufügen
+        tabellen_daten.append([
+            "Gesamt",
+            f"{gesamt_summen[modelle[0]]:>10.2f}",
+            f"{gesamt_summen[modelle[1]]:>10.2f}",
+            "",
+            ""
+        ])
+
+
 
 # ------------------------------
 # Alle Dateien durchgehen
