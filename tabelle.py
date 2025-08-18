@@ -195,15 +195,6 @@ for muster in dateipfade:
         )
 
 
-
-# ------------------------------
-# Summen berechnen
-# ------------------------------
-gesamt_summen = {modell: sum(werte.values()) for modell, werte in werte_modelle.items()}
-for modell, summe in gesamt_summen.items():
-    print(f"Gesamtsumme {modell}: {summe:.2f}")
-
-
 # ------------------------------
 # Differenzen und Quotienten (zwischen den beiden Modellen)
 # ------------------------------
