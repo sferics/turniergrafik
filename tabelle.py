@@ -98,6 +98,13 @@ for muster in dateipfade:
     # Finde alle Dateien, die zu diesem Muster passen
     gefundene_dateien = finde_dateien(muster)
 
+    # Wenn keine Datei gefunden wurde, gib eine Meldung aus 
+    # und gehe zum nächsten Muster
+    if not gefundene_dateien:
+        print(f"Keine Dateien gefunden für Muster: {muster}")
+        continue  # überspringt den Rest dieser Schleife 
+        # und geht zum nächsten Muster
+
 # ------------------------------
 # Alle Dateien durchgehen
 # ------------------------------
