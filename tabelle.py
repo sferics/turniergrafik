@@ -66,14 +66,10 @@ for modell, summe in gesamt_summen.items():
 
 
 # ------------------------------
-# Differenzen und Quotienten berechnen
+# Differenzen und Quotienten (zwischen den beiden Modellen)
 # ------------------------------
-
-differenzen = {datum: werte_dwd[datum] - werte_mswr[datum] for datum in alle_daten}
-# Differenz = DWD-Wert - MSwr-Wert
-
-quotienten = {datum: werte_dwd[datum] / werte_mswr[datum] for datum in alle_daten}
-# Quotient = DWD-Wert geteilt durch MSwr-Wert
+differenzen = {datum: werte_modelle[modelle[0]][datum] - werte_modelle[modelle[1]][datum] for datum in alle_daten}
+quotienten = {datum: werte_modelle[modelle[0]][datum] / werte_modelle[modelle[1]][datum] for datum in alle_daten}
 
 
 # ------------------------------
