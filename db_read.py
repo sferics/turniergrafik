@@ -126,7 +126,7 @@ class db:
             sys.exit(1)
         
         # users aus der Konfiguration laden
-        users = set(cfg.auswertungsteilnehmer) | set(cfg.punkteersetzung_ersatz) | set(cfg.teilnehmerumbenennung.values())
+        users = set(cfg.auswertungsteilnehmer) | set(cfg.punkteersetzung_spieler) | set(cfg.teilnehmerumbenennung.values())
         # Usernamen und User-IDs initialisieren
         self.user_ids  = self.get_user_ids(users)
          

@@ -414,7 +414,7 @@ def get_player_mean(pointlist,
     
     # Wenn die Punkteliste einzelne None-Werte enthaelt, dann
     # ersetze diese entweder durch Null oder wenn
-    # punkteersetzung_elementweise == True fuehre eine Ersetzung durch
+    # punkteersetzung_elemente == True fuehre eine Ersetzung durch
     elif None in pointlist:
         #TODO Wenn wir ein nested Dictionary haben, dann
         # prufe, ob der Spieler einen Ersatzspieler hat,
@@ -424,6 +424,7 @@ def get_player_mean(pointlist,
         # wenn die Punkteliste None-Werte enthaelt, dann
         # ersetze diese durch die Werte des Ersatzspielers
         if cfg.punkteersetzung_elemente:
+            # Wenn die Punkteliste elementweise ersetzt werden soll
             if cfg.punkteersetzung_elementweise:
                 print(cfg.punkteersetzung_elemente_spieler)
                 print("Noch nicht implementiert!")
