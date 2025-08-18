@@ -196,22 +196,6 @@ for muster in dateipfade:
 
 
 # ------------------------------
-# Gesamtsummen in der Konsole ausgeben
-# ------------------------------
-
-# Trennlinie wie vorher
-print('-' * len(header))
-
-# Letzte Zeile mit den Summen beider Modelle
-# In den Spalten "Differenz" und "Quotient" bleibt es leer
-print(f"{'Gesamt':<12} "
-      f"{gesamt_summe_dwd:>12.2f} "
-      f"{gesamt_summe_mswr:>12.2f} "
-      f"{'':>12} "
-      f"{'':>12}")
-
-
-# ------------------------------
 # Daten für PNG-Tabelle vorbereiten
 # ------------------------------
 
