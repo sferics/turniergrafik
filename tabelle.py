@@ -123,6 +123,12 @@ for muster in dateipfade:
 
             if alle_daten is None:
                 alle_daten = daten
+
+        # Berechne die Summe aller Werte für jedes Modell
+        gesamt_summen = {modell: sum(werte.values()) for modell, werte in werte_modelle.items()}
+        # Drucke die Gesamtsummen in die Konsole
+        for modell, summe in gesamt_summen.items():
+            print(f"Gesamtsumme {modell}: {summe:.2f}")
                 
         
 
