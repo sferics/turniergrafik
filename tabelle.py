@@ -19,6 +19,8 @@ def finde_dateien(muster):
     #    Beispiel: "2025-08-18_*_Wien_*.txt" -> ["2025-08-18_", "_Wien_", ".txt"]
     #    Alles zwischen den Sternchen wird "egal" – nur die festen Teile werden überprüft
     teile = name_muster.split("*")
+    #    Leere Liste vorbereiten, um alle passenden Dateien zu speichern
+    dateien = []
 # ------------------------------
 # Datei einlesen und Werte extrahieren
 # ------------------------------
