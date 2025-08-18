@@ -340,4 +340,18 @@ tabelle = ax.table(cellText=tabellen_daten,   # Tabelleninhalt (Zellen)
                    loc='center',              # Tabelle in der Mitte der Achse platzieren
                    colColours=['#f2f2f2']*len(spalten))  # Kopfzeile grau einfärben
 
+# Schriftgröße anpassen und Tabelle etwas vergrößern
+        tabelle.auto_set_font_size(False)
+        tabelle.set_fontsize(10)
+        tabelle.scale(1, 1.5)
+
+        # Speicher den Dateinamen für das PNG-Bild
+        png_name = os.path.splitext(os.path.basename(dateipfad))[0] + '_tabelle.png'
+        # Speichere die Tabelle als PNG
+        plt.savefig(png_name, bbox_inches='tight')
+        plt.close()
+        print(f"Tabelle als PNG gespeichert: {png_name}\n")
+end = time.time()
+print(f"Laufzeit: {end - start:.2f} Sekunden")
+
 
