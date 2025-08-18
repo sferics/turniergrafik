@@ -120,6 +120,10 @@ for muster in dateipfade:
             # Speichere die Werte in einem Dictionary, das nach Modellnamen sortiert ist
             werte_modelle[modell] = werte
             # Speichere einmalig die Datums-Liste
+
+            if alle_daten is None:
+                alle_daten = daten
+                
         
 
 # ------------------------------
