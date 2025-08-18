@@ -56,14 +56,19 @@ dateipfade = [
     '2025-08-18_*_Wien_dd12_MSwr-MOS-Mix_MSwr-EZ-MOS_MSwr-GFS-MOS_DWD-MOS-Mix_DWD-MOS-Mix-test_DWD-EZ-MOS_DWD-ICON-MOS_MOS-Mix_*.txt',
     # weitere Dateien hier
 ]
+
 # Beide zu betrachtenden Modelle werden als Liste definiert.
 modelle = ['DWD-EZ-MOS', 'MSwr-EZ-MOS']
 
-# Funktion zum Einlesen der Werte für ein bestimmtes Modell
+# ------------------------------
+# Funktion zum Einlesen der Werte für ein Modell
+# ------------------------------
 def lade_modell_werte(dateipfad, modell_prefix):
-    with open(dateipfad, 'r', encoding='utf-8') as f:     
-        # Öffnet die Datei im Lesemodus ("r") und mit UTF-8 Zeichenkodierung
-
+    #  Öffne die Datei, die unter "dateipfad" angegeben ist, zum Lesen
+    #    'utf-8' sorgt dafür, dass Umlaute und Sonderzeichen korrekt gelesen werden.
+    #    Bei Linux ist es utf8.
+    #    "with" sorgt dafür, dass die Datei am Ende automatisch geschlossen wird
+    with open(dateipfad, 'r', encoding='utf-8') as f:
         daten = f.readline().strip().split()  
         # Liest die erste Zeile (= enthält die Datumsangaben), 
         # entfernt Leerzeichen und teilt die Werte in eine Liste
