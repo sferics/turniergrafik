@@ -307,7 +307,7 @@ def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
         return long_term_means
     
     # geht in Schritten mit der definierten Zeitspannengroesse durch die Tage
-    for i in range(0, len(points)+1, mean_time_span ):
+        for i in range(0, len(points), mean_time_span ):
         
         # "schneidet" immer gleich grosse Stuecke heraus
         points_span = points[i:i+mean_time_span]
@@ -322,17 +322,17 @@ def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
         if (np.isnan(points_span).sum() / mean_time_span) < max_nan_ratio:
             # bilde mittelwert (arithmetisch) ohne NaNs
             mean = np.nanmean(points_span)
-
+#
         else:
             # wenn der Prozentsatz an NaNs ueberschritten wurde, gib Nan aus
             mean = np.nan
 
         # 7*x, da in Wochen gezaehlt wurde und Tage gesucht sind
-        #end_date = begin_date + 7*i + 7*mean_time_span #TODO CHECKME!
+        #end_date = dates[ cities * (ii+1) * mean_time_span ] #TODO CHECKME!
         
         # Datum fuer Mittelungszeitraum aus Liste ausschneiden
         #print(mean_time_span)
-        end_date = dates[ cities * (ii+1) * mean_time_span ]
+        end_date = dates[ cities * (ii) * mean_time_span ]
         #print( "end_date", end_date )
         ii += 1
         
@@ -341,7 +341,6 @@ def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
         long_term_means.append( (end_date, mean) )
     
     return long_term_means
-
 
 def get_player_mean(pointlist,
                     auswertungstage,
