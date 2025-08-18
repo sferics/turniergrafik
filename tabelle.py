@@ -129,6 +129,13 @@ for muster in dateipfade:
         # Drucke die Gesamtsummen in die Konsole
         for modell, summe in gesamt_summen.items():
             print(f"Gesamtsumme {modell}: {summe:.2f}")
+
+        # Berechne für jedes Datum die Differenz zwischen Modell1 und Modell2
+        differenzen = {datum: werte_modelle[modelle[0]][datum] - werte_modelle[modelle[1]][datum] for datum in alle_daten}
+        
+        # Berechne für jedes Datum den Quotienten (Teilen von Modell1 durch Modell2)
+        quotienten = {datum: werte_modelle[modelle[0]][datum] / werte_modelle[modelle[1]][datum] for datum in alle_daten}
+        
                 
         
 
