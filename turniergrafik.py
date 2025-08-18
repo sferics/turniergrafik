@@ -196,8 +196,10 @@ def short_term_mean(points, dates, mean_weaks, max_nan_ratio, cities=5):
         else:
             mean = np.nan
 
-        # i*7, da in Wochen gezaehlt wurde und Tage gesucht sind
-        date = max(dates) - i*7
+        # von max(dates) ziehen wir (i-1)*7 Tage ab,
+        # da in Wochen gezaehlt wurde und Tage gesucht sind
+        # (wir ziehen eine Woche ab, damit das Enddatum stimmt)
+        date = max(dates) - (i-1)*7
 
         # Datum fuer Mittelungszeitraum aus Liste ausschneiden
         # Haenge den Mittelwert und das Datum des letzten Tages
