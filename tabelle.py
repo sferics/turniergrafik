@@ -196,13 +196,6 @@ for muster in dateipfade:
 
 
 # ------------------------------
-# Differenzen und Quotienten (zwischen den beiden Modellen)
-# ------------------------------
-differenzen = {datum: werte_modelle[modelle[0]][datum] - werte_modelle[modelle[1]][datum] for datum in alle_daten}
-quotienten = {datum: werte_modelle[modelle[0]][datum] / werte_modelle[modelle[1]][datum] for datum in alle_daten}
-
-
-# ------------------------------
 # Tabelle in der Konsole anzeigen
 # ------------------------------
 
