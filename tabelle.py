@@ -195,33 +195,6 @@ for muster in dateipfade:
         )
 
 
-# ------------------------------
-# Tabelle als Bild (PNG) speichern
-# ------------------------------
-
-
-# Ein "Figure" (fig) und eine "Axes" (ax) erzeugen.
-# - fig ist das gesamte Bild (Leinwand).
-# - ax ist ein einzelner Zeichenbereich (quasi ein Kästchen auf der Leinwand).
-fig, ax = plt.subplots(figsize=(12, max(len(tabellen_daten)*0.5, 2)))
-
-# Die Achsen (Skalen, Zahlen am Rand) werden hier ausgeschaltet,
-# weil wir keine Kurve oder Punkte zeichnen wollen, sondern nur eine Tabelle.
-ax.axis('off')
-
-# Jetzt kommt die Tabelle:
-# Wir hängen die Tabelle an den Achsenbereich (ax) an.
-# Warum an "ax"?  
-# → Weil in Matplotlib alles in sogenannte "Axes" hineingezeichnet wird.
-# Eine Figur (fig) kann mehrere Achsenbereiche (ax) enthalten.
-# Tabellen, Diagramme, Plots – all das "lebt" in einem ax.
-# Ohne Angabe von ax wüsste Matplotlib nicht, *wohin* es die Tabelle zeichnen soll -> eine Fehlermeldung folgt dann im Terminal.
-tabelle = ax.table(cellText=tabellen_daten,   # Tabelleninhalt (Zellen)
-                   colLabels=spalten,         # Spaltenüberschriften
-                   cellLoc='center',          # Text in den Zellen zentrieren
-                   loc='center',              # Tabelle in der Mitte der Achse platzieren
-                   colColours=['#f2f2f2']*len(spalten))  # Kopfzeile grau einfärben
-
 # Schriftgröße anpassen und Tabelle etwas vergrößern
         tabelle.auto_set_font_size(False)
         tabelle.set_fontsize(10)
