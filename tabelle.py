@@ -6,7 +6,13 @@ import os
 # ------------------------------
 
 # Dateipfad zur Textdatei mit den Modellwerten
-dateipfad = '2025-08-16_SatSun_allCities_allElements_MSwr-MOS-Mix_MSwr-EZ-MOS_MSwr-GFS-MOS_DWD-MOS-Mix_DWD-MOS-Mix-test_DWD-EZ-MOS_DWD-ICON-MOS_MOS-Mix_weeks.txt'
+
+dateipfade = [
+    '2025-08-18_SatSun_Wien_dd12_MSwr-MOS-Mix_MSwr-EZ-MOS_MSwr-GFS-MOS_DWD-MOS-Mix_DWD-MOS-Mix-test_DWD-EZ-MOS_DWD-ICON-MOS_MOS-Mix_weeks.txt',
+    '2025-08-18_SatSun_Wien_dd12_MSwr-MOS-Mix_MSwr-EZ-MOS_MSwr-GFS-MOS_DWD-MOS-Mix_DWD-MOS-Mix-test_DWD-EZ-MOS_DWD-ICON-MOS_MOS-Mix_years.txt'  # weitere Dateien hier einfügen
+]
+
+modelle = ['DWD-EZ-MOS', 'MSwr-EZ-MOS']
 
 # Funktion zum Einlesen der Werte für ein bestimmtes Modell
 def lade_modell_werte(dateipfad, modell_prefix):
@@ -36,18 +42,19 @@ def lade_modell_werte(dateipfad, modell_prefix):
                 
 
 # ------------------------------
-# Werte für die beiden Modelle laden
+# Alle Dateien durchgehen
 # ------------------------------
-
-werte_dwd, alle_daten = lade_modell_werte(dateipfad, 'DWD-EZ-MOS')
-# Wir speichern hier BEIDE Rückgaben: 
-# - "werte_dwd" = Werte für DWD-EZ-MOS
-# - "alle_daten" = die Datums-Liste
-
-werte_mswr, _ = lade_modell_werte(dateipfad, 'MSwr-EZ-MOS')
-# Hier speichern wir NUR die Werte ("werte_mswr") für MSwr-EZ-MOS.
-# Die zweite Rückgabe (die Datenliste) wird nicht gebraucht, 
-# deshalb nehmen wir "_" als Platzhalter -> das heißt: "Ignorieren".
+for dateipfad in dateipfade:
+    print(f"\n=== Datei: {dateipfad} ===\n")
+    
+    # Werte für alle Modelle speichern
+    werte_modelle = {}
+    alle_daten = None
+    for modell in modelle:
+        werte, daten = lade_modell_werte(dateipfad, modell)
+        werte_modelle[modell] = werte
+        if alle_daten is None:
+            alle_daten = daten  # einmalig die Datums-Liste speichern
 
 
 # ------------------------------
