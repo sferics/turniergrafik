@@ -139,7 +139,18 @@ for muster in dateipfade:
         # Drucke eine schön formatierte Tabelle in der Konsole
         header = f"{'Datum':<12} {modelle[0]:>12} {modelle[1]:>12} {'Differenz':>12} {'Quotient':>12}"
         print(header)
-        print('-' * len(header))        
+        print('-' * len(header))    
+
+        for datum in alle_daten:
+            # Datum schön formatieren: YYYYMMDD -> DD.MM.YYYY
+            jahr, monat, tag = datum[:4], datum[4:6], datum[6:8]
+            datum_formatiert = f"{tag}.{monat}.{jahr}"
+            # Drucke die Werte, Differenz und Quotienten für dieses Datum
+            print(f"{datum_formatiert:<12} "
+                  f"{werte_modelle[modelle[0]][datum]:>12.2f} "
+                  f"{werte_modelle[modelle[1]][datum]:>12.2f} "
+                  f"{differenzen[datum]:>12.2f} "
+                  f"{quotienten[datum]:>12.3f}")
         
 
 # ------------------------------
