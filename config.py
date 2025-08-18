@@ -175,8 +175,8 @@ auswertungstage = ["Sa", "So"] #für beide Tage
 auswertungsteilnehmer = ["MSwr-MOS-Mix","MSwr-EZ-MOS","MSwr-GFS-MOS","DWD-MOS-Mix","DWD-MOS-Mix-test","DWD-EZ-MOS","DWD-ICON-MOS","MOS-Mix"]
 #auswertungsteilnehmer = ["MSwr-MOS-Mix","MSwr-EZ-MOS","MSwr-GFS-MOS","DWD-MOS-Mix","DWD-EZ-MOS","DWD-ICON-MOS","MOS-Mix"]
 
-# fuer mehrere Grafiken mit unterschiedlichen Teilnehmern
-auswertungsteilnehmer_multi = ["MSwr-MOS-Mix","MSwr-EZ-MOS","MSwr-GFS-MOS","DWD-MOS-Mix","DWD-EZ-MOS","DWD-ICON-MOS","MOS-Mix"]
+# ertelle separate Grafiken, fuer jeden Teilnehmer eine
+auswertungsteilnehmer_multi = True
 
 ## Elemente für die Auswertung
 # mögliche Werte:
