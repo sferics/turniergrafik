@@ -615,7 +615,7 @@ if __name__ == "__main__":
     # Alte und neue Auswertungselemente setzen
     cfg.auswertungselemente_alt   = params if params else cfg.auswertungselemente_alt
     cfg.auswertungselemente_neu   = params if params else cfg.auswertungselemente_neu
-    cfg.auswertungselemente       = cfg.auswertungselemente_neu[:] if end >= 19363 else cfg.auswertungselemente_alt[:]
+    cfg.auswertungselemente       = cfg.auswertungselemente_neu[:] if end >= 19351 else cfg.auswertungselemente_alt[:]        # Die Daten gibt es ab 16. September 2022
     
     # Die Städte können entweder als IDs, Kürzel oder Namen angegeben werden.
     if cities:
@@ -652,7 +652,7 @@ if __name__ == "__main__":
         # Ausgabe der Tagesindizes
         if verbose: print(i)
         
-        if i < 19363:
+        if i < 19351:
             #TODO funktioniert nur, wenn alle Elemente gewaehlt wurden. Was tun bei spezifischen Elementen?
             cfg.auswertungselemente = cfg.auswertungselemente_alt[:]
             cfg.elemente_archiv     = cfg.elemente_archiv_alt[:]
