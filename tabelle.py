@@ -196,21 +196,6 @@ for muster in dateipfade:
 
 
 # ------------------------------
-# Tabelle in der Konsole anzeigen
-# ------------------------------
-
-# Kopfzeile (Spaltenüberschriften) für die Ausgabe in der Konsole definieren
-# f"" bedeutet "formatierter Text", damit wir Spaltenbreiten einstellen können
-header = f"{'Datum':<12} {'DWD-EZ-MOS':>12} {'Summe MSwr':>12} {'Differenz':>12} {'Quotient':>12}"
-
-# Kopfzeile in der Konsole ausgeben
-print(header)
-
-# Eine Linie (----) unter der Kopfzeile, damit es wie eine Tabelle aussieht
-print('-' * len(header))
-
-
-# ------------------------------
 # Einzelne Tageswerte in die Tabelle schreiben (Konsole)
 # ------------------------------
 
