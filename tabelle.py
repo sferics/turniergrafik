@@ -196,31 +196,6 @@ for muster in dateipfade:
 
 
 # ------------------------------
-# Einzelne Tageswerte in die Tabelle schreiben (Konsole)
-# ------------------------------
-
-# Wir gehen nacheinander jedes Datum in der Liste "alle_daten" durch
-for datum in alle_daten:
-    # Ein Datum wie "20250816" wird in Jahr, Monat, Tag zerlegt
-    jahr, monat, tag = datum[:4], datum[4:6], datum[6:8]
-
-    # Datum hübsch formatieren -> aus "20250816" wird "16.08.2025"
-    datum_formatiert = f"{tag}.{monat}.{jahr}"   
-
-    # Für jedes Datum die Werte von beiden Modellen ausgeben:
-    # - DWD-Modell
-    # - MSwr-Modell
-    # - die Differenz
-    # - den Quotienten
-    # Alles schön in Spalten ausgerichtet
-    print(f"{datum_formatiert:<12} "
-          f"{werte_dwd[datum]:>12.2f} "
-          f"{werte_mswr[datum]:>12.2f} "
-          f"{differenzen[datum]:>12.2f} "
-          f"{quotienten[datum]:>12.3f}")
-
-
-# ------------------------------
 # Gesamtsummen in der Konsole ausgeben
 # ------------------------------
 
