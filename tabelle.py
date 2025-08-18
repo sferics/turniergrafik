@@ -160,6 +160,20 @@ for muster in dateipfade:
               f"{'':>12} "
               f"{'':>12}")
 
+        # Jetzt die Tabelle auch als Bild (PNG) speichern
+        tabellen_daten = []
+        for datum in alle_daten:
+            jahr, monat, tag = datum[:4], datum[4:6], datum[6:8]
+            datum_formatiert = f"{tag}.{monat}.{jahr}"
+            # Jede Zeile in einer Liste speichern: Datum, Modellwerte, Differenz, Quotient
+            tabellen_daten.append([
+                datum_formatiert,
+                f"{werte_modelle[modelle[0]][datum]:>10.2f}",
+                f"{werte_modelle[modelle[1]][datum]:>10.2f}",
+                f"{differenzen[datum]:>10.2f}",
+                f"{quotienten[datum]:>10.3f}"
+            ])
+
         
 
 # ------------------------------
