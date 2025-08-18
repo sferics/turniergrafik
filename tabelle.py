@@ -60,12 +60,9 @@ for dateipfad in dateipfade:
 # ------------------------------
 # Summen berechnen
 # ------------------------------
-
-gesamt_summe_dwd = sum(werte_dwd.values())
-gesamt_summe_mswr = sum(werte_mswr.values())
-
-print("Gesamtsumme DWD-EZ-MOS:", gesamt_summe_dwd)
-print("Gesamtsumme MSwr-EZ-MOS:", gesamt_summe_mswr)
+gesamt_summen = {modell: sum(werte.values()) for modell, werte in werte_modelle.items()}
+for modell, summe in gesamt_summen.items():
+    print(f"Gesamtsumme {modell}: {summe:.2f}")
 
 
 # ------------------------------
