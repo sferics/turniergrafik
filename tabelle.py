@@ -136,7 +136,10 @@ for muster in dateipfade:
         # Berechne für jedes Datum den Quotienten (Teilen von Modell1 durch Modell2)
         quotienten = {datum: werte_modelle[modelle[0]][datum] / werte_modelle[modelle[1]][datum] for datum in alle_daten}
         
-                
+        # Drucke eine schön formatierte Tabelle in der Konsole
+        header = f"{'Datum':<12} {modelle[0]:>12} {modelle[1]:>12} {'Differenz':>12} {'Quotient':>12}"
+        print(header)
+        print('-' * len(header))        
         
 
 # ------------------------------
