@@ -112,6 +112,14 @@ for muster in dateipfade:
         # für diese Datei in ein Wörterbuch.
         werte_modelle = {}
         alle_daten = None  # einmalig die Liste der Datumsangaben speichern
+
+        # Gehe alle Modelle durch
+        for modell in modelle:
+            # Lade die Werte für dieses Modell aus der Datei
+            werte, daten = lade_modell_werte(dateipfad, modell)
+            # Speichere die Werte in einem Dictionary, das nach Modellnamen sortiert ist
+            werte_modelle[modell] = werte
+            # Speichere einmalig die Datums-Liste
         
 
 # ------------------------------
