@@ -220,25 +220,13 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
     """
     # Setze die Locale für die Datums- und Zeitformatierung
     locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
-    
-    if cfg.auswertungsteilnehmer_multi:
-        for teilnehmer in cfg.auswertungsteilnehmer:
-            # Betrachte nur einen Teilnehmer, wenn multi ausgewertet wird
-            cfg.auswertungsteilnehmer = [teilnehmer]
-            cfg.auswertungsteilnehmer_multi = False
-            
-            # Rufe die Funktion zur Erstellung der Grafik auf
-            erstelleGrafik(langfrist_player_date_points,
-                           kurzfrist_player_date_points,
-                           cfg=cfg)
-    else:
         # Erstelle eine neue Figur mit den angegebenen Abmessungen
-        fig = plt.figure(figsize=(11.69,8.27))
+    fig = plt.figure(figsize=(11.69,8.27))
         
         # Erstelle ein GridSpec-Objekt für die Anordnung der Subplots
-        gs = matplotlib.gridspec.GridSpec(1, 2, width_ratios=[7, 4])
+    gs = matplotlib.gridspec.GridSpec(1, 2, width_ratios=[7, 4])
         # Setze den Abstand zwischen den Subplots
-        gs.update(wspace=0.12)
+    gs.update(wspace=0.12)
         
         # Erstelle die Subplots für den linken und rechten Plot
         # TODO ugly..
