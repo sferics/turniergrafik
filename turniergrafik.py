@@ -585,7 +585,7 @@ if __name__ == "__main__":
     for option in options:
         ps.add_argument("-"+option[0], "--"+option, type=str, help="Set "+option)
     args = ps.parse_args()
-    
+     
     # Wenn verbose als Argument angegeben wurde, dann setze verbose auf True
     # um mehr Informationen auszugeben
     if args.verbose:
@@ -614,10 +614,14 @@ if __name__ == "__main__":
     # Anfangs- und Endtermin zum jeweiligen Tagesindex konvertieren
     begin, end = get_friday_range(date_2_index(cfg.starttermin)-1,
                                   date_2_index(cfg.endtermin))
+    
+    # Datum, an dem die Elemente gewechselt wurden in Tagesindex umwandeln
+    tdate_neue_elemente = date_2_index(cfg.datum_neue_elemente)
+    
     # Alte und neue Auswertungselemente setzen
     cfg.auswertungselemente_alt   = params if params else cfg.auswertungselemente_alt
     cfg.auswertungselemente_neu   = params if params else cfg.auswertungselemente_neu
-    cfg.auswertungselemente       = cfg.auswertungselemente_neu[:] if end >= 19363 else cfg.auswertungselemente_alt[:]
+    cfg.auswertungselemente       = cfg.auswertungselemente_neu[:] if end >= tdate_neue_elemente else cfg.auswertungselemente_alt[:]
     
     # Die Städte können entweder als IDs, Kürzel oder Namen angegeben werden.
     if cities:
@@ -654,7 +658,7 @@ if __name__ == "__main__":
         # Ausgabe der Tagesindizes
         if verbose: print(i)
         
-        if i < 19363:
+        if i < tdate_neue_elemente:
             #TODO funktioniert nur, wenn alle Elemente gewaehlt wurden. Was tun bei spezifischen Elementen?
             cfg.auswertungselemente = cfg.auswertungselemente_alt[:]
             cfg.elemente_archiv     = cfg.elemente_archiv_alt[:]

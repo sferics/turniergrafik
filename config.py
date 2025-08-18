@@ -63,6 +63,8 @@ elemente_max_punkte_alt     = [6.0, 5.0, 9.0, 6.0, 4.0, 10.0, 10.0, 10.0, 10.0, 
 elemente_max_punkte_neu     = [9, 9, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9]
 
 ## Termin
+datum_neue_elemente = "02.09.2022" # ab wann die neuen Elemente gelten
+
 # Freitagsdaten, die zusätzlich zu den Wochenenden, zu denen keine Archivdaten
 # zur Verfügung stehen, nicht in die Auswertung eingehen sollen
 # (staedteabhaengig), stadt bzw. key ist als ID dargestellt (stadt_zu_id)
@@ -150,9 +152,9 @@ mos_teilnehmer = list(mos_namen_starttermine.keys())
 #starttermin  = "01.09.2016"
 #starttermin  = "19.09.2016"
 #starttermin  = "19.06.2017"
-starttermin    = "01.01.2023"
+starttermin   = datum_neue_elemente # ab diesem Datum werden die neuen Elemente ausgewertet
 #starttermin  = "26.07.2025"
-endtermin    = "08.08.2025"
+endtermin     = "15.08.2025"
 
 ## Auswertungstage (Auswertungszeitraum wäre irreführend, denn das ist es
 # gerade nicht): Soll jeweils das ganze Wochenende oder sollen nur die
