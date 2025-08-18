@@ -23,7 +23,7 @@ from matplotlib.cbook import get_sample_data
 
 # Ermöglicht das Wechseln der Ordner
 import os
-
+# Systemfunktionen
 import sys
 
 from operator import itemgetter
@@ -381,7 +381,7 @@ def get_player_mean(pointlist,
             # Wenn cfg.punkteersetzung_spieler == True, dann
             # versuche den Ersatzspieler zu finden und dessen Punkteliste
             # zu verwenden
-            ersatzspieler = find_replacement_players(cfg.punkteersetzung_ersatz, Player)
+            ersatzspieler = find_replacement_players(cfg.punkteersetzung_spieler, Player)
             
             for e in ersatzspieler:
                 try:
@@ -414,7 +414,7 @@ def get_player_mean(pointlist,
     
     # Wenn die Punkteliste einzelne None-Werte enthaelt, dann
     # ersetze diese entweder durch Null oder wenn
-    # punkteersetzung_params == True fuehre eine Ersetzung durch
+    # punkteersetzung_elementweise == True fuehre eine Ersetzung durch
     elif None in pointlist:
         #TODO Wenn wir ein nested Dictionary haben, dann
         # prufe, ob der Spieler einen Ersatzspieler hat,
@@ -423,26 +423,34 @@ def get_player_mean(pointlist,
         
         # wenn die Punkteliste None-Werte enthaelt, dann
         # ersetze diese durch die Werte des Ersatzspielers
-        if cfg.punkteersetzung_params:
-            ersatzspieler = find_replacement_players(cfg.punkteersetzung_ersatz, Player)
-            for e in ersatzspieler:
-                try:
-                    # Punkteliste des Ersatzspielers aus Datei einlesen
-                    pointlist_ersatz = npzfile[e]
-                except KeyError:
-                    if verbose:
-                        print("Ersatzspieler nicht gefunden:", e)
-                    continue
-                # Wenn der Ersatzspieler gefunden wurde, dann
-                # ersetze die None-Werte in der Punkteliste des Spielers
-                pointlist_neu = []
-                for i, v in enumerate(pointlist):
-                    if v is None:
-                        pointlist_neu.append(pointlist_ersatz[i])
-                    else:
-                        pointlist_neu.append(v)
-                pointlist = np.array(pointlist_neu)
-                break
+        if cfg.punkteersetzung_elemente:
+            if cfg.punkteersetzung_elementweise:
+                print(cfg.punkteersetzung_elemente_spieler)
+                print("Noch nicht implementiert!")
+                sys.exit()
+                # TODO hier die Punkteliste des Ersatzspielers
+                # bei einzelnen Elementen ersetzen
+            # Im Fall das alle Elemente durch den gleichen Ersatzspieler ersetzt werden sollen
+            else:
+                ersatzspieler = find_replacement_players(cfg.punkteersetzung_spieler, Player)
+                for e in ersatzspieler:
+                    try:
+                        # Punkteliste des Ersatzspielers aus Datei einlesen
+                        pointlist_ersatz = npzfile[e]
+                    except KeyError:
+                        if verbose:
+                            print("Ersatzspieler nicht gefunden:", e)
+                        continue
+                    # Wenn der Ersatzspieler gefunden wurde, dann
+                    # ersetze die None-Werte in der Punkteliste des Spielers
+                    pointlist_neu = []
+                    for i, v in enumerate(pointlist):
+                        if v is None:
+                            pointlist_neu.append(pointlist_ersatz[i])
+                        else:
+                            pointlist_neu.append(v)
+                    pointlist = np.array(pointlist_neu)
+                    break
     
     # TODO Wenn immer noch None-Werte in der Punkteliste sind, nehme den
     # den Mittelwert der Punkteliste aller Spieler, die an diesem Tag
@@ -561,7 +569,7 @@ def find_replacement_players(UserValueLists, Player):
     # Wenn der Spieler nicht gefunden wurde, dann versuche Ersatzspieler
     # in der Konfiguration zu finden
     try:
-        ersatzspieler = cfg.punkteersetzung_ersatz[Player]
+        ersatzspieler = cfg.punkteersetzung_spieler[Player]
     except KeyError:
         if verbose:
             print("Keine Ersatzspieler gefunden fuer:", Player)
@@ -762,7 +770,7 @@ if __name__ == "__main__":
                             faulty_dates.add(i)
                             #Ersatzspieler
                             try:
-                                ersatz_name = cfg.punkteersetzung_ersatz[Player]
+                                ersatz_name = cfg.punkteersetzung_spieler[Player]
                                 player_point_list = npzfile[ersatz_name]
                             
                             except (KeyError, ValueError):

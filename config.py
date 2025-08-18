@@ -233,22 +233,31 @@ datenluecken_langfrist = 0.2
 datenluecken_kurzfrist = 0.75
 
 #----------------------------------------------------------------------------#
-## Ersetzung Datenlücken bei einzelnen Tagen oder Parametern
+## Ersetzung Datenlücken bei einzelnen Tagen oder Elementen
 
 # Sollen Datenlücken bei einzelnen Tagen ersetzt werden?
 # True fuehrt zu Ersetzung, False zu keiner Ersetzung
-punkteersetzung_spieler = True # True oder False
+punkteersetzung = True # True oder False
 
-# Sollen Datenlücken bei einzelnen Parametern ersetzt werden?
+# Sollen Datenlücken bei einzelnen Elementen ersetzt werden?
 # True fuehrt zu Ersetzung, False zu keiner Ersetzung
-# Bei fehlenden einzelnen Parametern fuehrt False zu
+# Bei fehlenden einzelnen Elementen fuehrt False zu
 # einer Ersetzung von fehlenden Punkten durch 0
-punkteersetzung_params = True # True oder False
+punkteersetzung_elemente = True # True oder False
+
+# Sollen die Punkte elementweise ersetzt werden?
+punkteersetzung_elementweise = True # True oder False
+
+# Wenn ja, benutze dieses Dictionary, um fuer jedes Element
+# einzelne Teilnehmer festlegen zu koennen. Ist ein Element
+# nicht im Dictionary, wird der Standardwert aus punkteersetzung_ersatz
+# (dem Dictionary unten) verwendet.
+punkteersetzung_elemente_spieler = {"fx24": ["MOS-Max"]}
 
 # Welche Spieler sollen zur Ersetzung verwendet werden?
 # Ist der Name nicht in der Liste, wird der Standardwert
 # (0) verwendet. TODO Mittelwert von allen Teilnehmern?
-punkteersetzung_ersatz = {"GRP_MOS": ["MOS-Mix"],
+punkteersetzung_spieler = {"GRP_MOS": ["MOS-Mix"],
                           "MOS-Mix": ["GRP_MOS"],
                           "MSwr-MOS-Mix": ["MSwr-EZ-MOS", "MSwr-GFS-MOS"],
                           "MSwr-EZ-MOS": ["MSwr-GFS-MOS"],
