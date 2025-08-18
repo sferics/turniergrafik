@@ -151,6 +151,15 @@ for muster in dateipfade:
                   f"{werte_modelle[modelle[1]][datum]:>12.2f} "
                   f"{differenzen[datum]:>12.2f} "
                   f"{quotienten[datum]:>12.3f}")
+
+        print('-' * len(header))
+        # Gesamtsummen unten in der Tabelle
+        print(f"{'Gesamt':<12} "
+              f"{gesamt_summen[modelle[0]]:>12.2f} "
+              f"{gesamt_summen[modelle[1]]:>12.2f} "
+              f"{'':>12} "
+              f"{'':>12}")
+
         
 
 # ------------------------------
