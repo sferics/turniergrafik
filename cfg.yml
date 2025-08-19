@@ -1,0 +1,172 @@
+# ############################################################################
+# ######### Grundlegende Konfiguration ########################################
+# ############################################################################
+
+# Sektion für Datenbank-Zugangsdaten
+database:
+  username: "readonly"
+  password: "WPWTr34donly"
+  host:     "wetterturnier.de"
+  database: "wpwt"
+  port:     3306
+
+# Sektion für Städte-Stammdaten
+staedte:
+  stadtnamen:    ["Berlin", "Wien", "Zürich", "Innsbruck", "Leipzig"]
+  stadt_zu_id:
+    "Berlin":    1
+    "Wien":      2
+    "Zürich":    3
+    "Innsbruck": 4
+    "Leipzig":   5
+  id_zu_kuerzel:
+    1: "BER"
+    2: "VIE"
+    3: "ZUR"
+    4: "IBK"
+    5: "LEI"
+
+# Sektion für Archiv und URL
+archiv_und_url:
+  archive_dir_name: "archiv"
+  url_template:     "https://wetterturnier.de/archiv/wert_{stadt_kuerzel}/wert{termin}.txt"
+
+# Sektion für Wetterelemente
+elemente:
+  elemente_archiv_alt:    ["N", "Sd", "dd", "ff", "fx", "Wv", "Wn", "PPP", "TTm", "TTn", "TTd", "RR"]
+  elemente_archiv_neu:    ["Sd1", "Sd24", "dd12", "ff12", "fx24", "PPP12", "Tmin", "T12", "Tmax", "Td12", "RR1", "RR24"]
+  elemente_einheiten_alt: ["", "%", "grad", "kn", "kn", "", "", "hPa", "°C", "°C", "°C", "mm"]
+  elemente_einheiten_neu: ["min", "%", "grad", "m/s", "m/s", "hPa", "°C", "°C", "°C", "°C", "mm", "mm"]
+  elemente_max_punkte_alt: [6.0, 5.0, 9.0, 6.0, 4.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0]
+  elemente_max_punkte_neu: [9, 9, 8, 8, 8, 8, 8, 8, 8, 8, 9, 9]
+  datum_neue_elemente:    "02.09.2022"
+
+# Sektion für zu ignorierende Termine
+termine:
+  zu_ignorierende_termine:
+    1: ["21.10.2005", "21.03.2008", "24.12.2004", "25.03.2005", "30.12.2005", "14.04.2006", "29.12.2006", "03.10.2014"]
+    3: ["24.05.2013", "31.05.2013", "14.06.2013", "12.07.2013", "29.12.2006"]
+    4: ["02.08.2013", "16.07.2004"]
+    5: ["02.08.2013", "04.09.2009"]
+    2: ["05.04.2013", "31.12.2004"]
+  zu_ignorierende_termine_allgemein: ["07.04.2023"]
+
+# Sektion für Teilnehmer
+teilnehmer:
+  teilnehmerumbenennung:
+    "MM-UKMO-MOS":    "Eugenia"
+    "MM-MOS":         "EmJay"
+    "MM-MOS-Mix":     "Enova"
+    "MM-EZ-MOS":      "Echinacin"
+    "MM-GFS-MOS":     "Egeria"
+    "DWD-ICON-MOS":   "GME-MOS"
+    "DWD-EZ-MOS":     "EZ-MOS"
+    "DWD-MOS-Mix":    "DWD-MOSMixEZGME"
+    "MSwr-GFS-MOS":   "MeteoService-GFS-MOS"
+    "MSwr-MOS-Mix":   "MSwr-MOSMixGFSHIR"
+    "MOS-Mix":        "GRP_MOS"
+  mos_namen_starttermine:
+    "DWD-ICON-MOS":       "03.03.2000"
+    "DWD-EZ-MOS":         "04.06.2004"
+    "DWD-MOS-Mix":        "05.12.2003"
+    "MOS-T":              "03.09.2010"
+    "MSwr-GFS-MOS":       "30.01.2004"
+    "MSwr-MOS-Mix":       "21.03.2014"
+    "MOS-Mix":            "03.03.2000"
+    "Ms.Os":              "03.03.2000"
+    "MSwr-EZ-MOS":        "19.06.2015"
+    "Grisuji-GFS-L1-MOS": "24.11.2017"
+    "Grisuji-GFS-L2-MOS": "24.11.2017"
+    "Grisuji-EZ-L1-MOS":  "09.11.2018"
+
+# ############################################################################
+# ######### Spezifische Konfiguration ########################################
+# ############################################################################
+
+# Sektion für die spezifische Auswertung
+auswertung:
+  starttermin:                         "02.09.2022"
+  endtermin:                           "15.08.2025"
+  auswertungstage:                     ["Sa", "So"]
+  auswertungsteilnehmer:               ["MSwr-MOS-Mix", "MSwr-EZ-MOS", "MSwr-GFS-MOS", "DWD-MOS-Mix", "DWD-MOS-Mix-test", "DWD-EZ-MOS", "DWD-ICON-MOS", "MOS-Mix"]
+  auswertungsteilnehmer_multi:         true
+  auswertungselemente_alt:             ["N", "Sd", "dd", "ff", "fx", "Wv", "Wn", "PPP", "TTm", "TTn", "TTd", "RR"]
+  auswertungselemente_neu:             ["Sd1", "Sd24", "dd12", "ff12", "fx24", "PPP12", "Tmin", "T12", "Tmax", "Td12", "RR1", "RR24"]
+  auswertungsstaedte:                  ["Berlin", "Wien", "Zürich", "Innsbruck", "Leipzig"]
+  auswertungsmittelungszeitraum:       25
+  mindestanzahl_wochen_jahresmittelung: 25
+  mittelungszeitspannen:               [50, 20, 10, 5, 2, 1]
+  datenluecken_langfrist:              0.2
+  datenluecken_kurzfrist:              0.75
+  punkteersetzung:                     true
+  punkteersetzung_elemente:            true
+  punkteersetzung_elementweise:        false
+  punkteersetzung_elemente_spieler:
+    "fx24": ["MOS-Max"]
+  punkteersetzung_spieler:
+    "GRP_MOS":          ["MOS-Mix"]
+    "MOS-Mix":          ["GRP_MOS"]
+    "MSwr-MOS-Mix":     ["MSwr-EZ-MOS", "MSwr-GFS-MOS"]
+    "MSwr-EZ-MOS":      ["MSwr-GFS-MOS"]
+    "MSwr-GFS-MOS":     ["MSwr-EZ-MOS"]
+    "DWD-MOS-Mix":      ["DWD-EZ-MOS", "DWD-ICON-MOS"]
+    "DWD-EZ-MOS":       ["DWD-ICON-MOS"]
+    "DWD-ICON-MOS":     ["DWD-EZ-MOS"]
+    "DWD-MOS-Mix-test": ["DWD-MOS-Mix"]
+  punkteersetzung_mindestprozentzahl: 50
+
+# ############################################################################
+# ######### Grafikeinstellungen ##############################################
+# ############################################################################
+
+# Sektion für Grafikeinstellungen
+grafik:
+  sprache:             "de"
+  beschriftungen:
+    "en":
+      "titel":        "MOS AUTOMATS COMPARISON"
+      "titel_links":  "Recent Years"
+      "titel_rechts": "Recent Year"
+      "achse_links":  "Lost points per individual forecast\n(per day, city and element)"
+      "achse_rechts": "Lower values: Better"
+    "de":
+      "titel":        "VERGLEICH MOS-SYSTEME"
+      "titel_links":  "Letzte Jahre"
+      "titel_rechts": "Letzte Wochen"
+      "achse_links":  "Verlorene Punkte pro individueller Vorhersage\n(pro Tag, Stadt und Element)"
+      "achse_rechts": "Niedrigere Werte: Besser"
+  grafik_spaltenanzahl: 4
+  teilnehmerlinien_dickgedruckt: ["DWD-MOS-Mix", "MSwr-MOS-Mix", "Ms.Os"]
+  liniendicke:
+    "linker_plot":  { "normal": 2, "dick": 4 }
+    "rechter_plot": { "normal": 1, "dick": 3 }
+  linieneigenschaften:
+    "MOS-T":              ["#9CC349", "--"]
+    "MM-UKMO-MOS":        ["#E076C0", "-"]
+    "MM-MOS":             ["#F03FBB", "--"]
+    "MM-EZ-MOS":          ["#FFB49B", "-"]
+    "MM-GFS-MOS":         ["#A5007C", "-"]
+    "DWD-ICON-MOS":       ["#FFE813", "-"]
+    "DWD-EZ-MOS":         ["#5B1400", "-"]
+    "DWD-MOS-Mix":        ["#DEC000", "--"]
+    "DWD-MOS-Mix-test":   ["#EDB000", "--"]
+    "MSwr-GFS-MOS":       ["#00B7FF", "-"]
+    "MSwr-MOS-Mix":       ["#000000", "--"]
+    "MOS-Mix":            ["#007C11", "--"]
+    "GRP_MOS":            ["#007C11", "--"]
+    "MSwr-HIR-MOS":       ["#3FCBA8", "-"]
+    "Ms.Os":              ["#DF0000", "--"]
+    "MSwr-EZ-MOS":        ["#0700C5", "-"]
+    "MM-MOS-Mix":         ["#FF3939", "--"]
+    "Moses":              ["#EF6800", "-."]
+    "Petrus":             ["#FFBE4C", "-."]
+    "Georg":              ["#0068EF", "-."]
+    "Schneegewitter":     ["#6800EF", "--"]
+    "Pfingstochse":       ["#68EF00", "-."]
+    "WB-Berlin":          ["#0000FF", "-."]
+    "Grisuji-GFS-L1-MOS": ["#81F781", "-"]
+    "Grisuji-GFS-L2-MOS": ["#00FF80", "-"]
+    "Grisuji-EZ-L1-MOS":  ["#00FF90", "-"]
+  marker:               "D"
+  marker_groesse:       12
+  skalenfaktor:         0

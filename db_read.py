@@ -9,7 +9,7 @@ from datetime import date
 from datetime import datetime as dt
 import numpy as np
 import mariadb
-import config as cfg
+import config_loader as cfg
 
 """
 import logging
@@ -331,7 +331,7 @@ class ArchiveParse:
                     # Wenn die Liste nur Nones enthaelt, wird der User aus der Liste geloescht
                     del UserTables[user_name]
 
-        print(UserTables)
+        #print(UserTables)
 
         # Gebe die User-Tabellen zurueck
         return UserTables

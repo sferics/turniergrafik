@@ -32,7 +32,7 @@ import os
 ### Konfiguration
 
 # Variablen aus config.py mit cfg.variable aufrufbar
-import config as cfg
+import config_loader as cfg
 
 from turniergrafik import index_2_date, kuerzel_zu_id
 
@@ -361,7 +361,7 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
                     if erster_teilnehmer:
                         if plotname == "linker_plot":
                             xlabel_terminliste[plotname] \
-                            .append(turniertag.strftime("%Y"))
+                            .append(turniertag.strftime("%d%b%y"))
                         else:
                             xlabel_terminliste[plotname] \
                             .append(turniertag.strftime("%d%b%y"))

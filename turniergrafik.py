@@ -32,7 +32,7 @@ from operator import itemgetter
 #import ajax_print
 import db_read
 import graphics
-import config as cfg
+import config_loader as cfg
 
 #----------------------------------------------------------------------------#
 # Setzen des Startzeitpuntes zur Messung der Laufzeit des Programms
@@ -793,14 +793,14 @@ if __name__ == "__main__":
                         faulty_dates.add(i)
                         import traceback
                         traceback.print_exc()
-                        print(FileName)
+                        print(f"Fehler beim Einlesen von '{Player}' am Tag {i}: {e}")
                         missing += 1
                         player_point_list = [np.nan] * 24
                         #sys.exit("%s nicht gefunden - kein Ersatz!" % Player)
                         # add NaN to list
                         UserValueLists[Player].append( np.nan )
                         UserValueLists[Player].append( i-1 )
-
+                        
                         # delete all files of this tdate
                         from pathlib import Path
                         for p in Path(cfg.archive_dir_name).glob("?_{i}.nz"):

@@ -31,7 +31,7 @@ from operator import itemgetter
 import db_read
 import graphics
 # Ermöglicht das Einlesen von Konfigurationsdateien
-import config as cfg
+import config_loader as cfg
 
 #----------------------------------------------------------------------------#
 # Setzen des Startzeitpuntes zur Messung der Laufzeit des Programms
