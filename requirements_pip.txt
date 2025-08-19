@@ -1,12 +1,22 @@
-contourpy==1.3.3
-cycler==0.12.1
-fonttools==4.59.0
-kiwisolver==1.4.8
+Brotli @ file:///croot/brotli-split_1736182456865/work
+contourpy @ file:///croot/contourpy_1732540045555/work
+cycler @ file:///tmp/build/80754af9/cycler_1637851556182/work
+fonttools @ file:///croot/fonttools_1737039080035/work
+kiwisolver @ file:///croot/kiwisolver_1737039087198/work
 mariadb==1.1.13
-matplotlib==3.10.5
-numpy==2.3.2
-packaging==25.0
-pillow==11.3.0
-pyparsing==3.2.3
-python-dateutil==2.9.0.post0
-six==1.17.0
+matplotlib==3.10.0
+mkl-service==2.4.0
+mkl_fft @ file:///io/mkl313/mkl_fft_1730824109137/work
+mkl_random @ file:///io/mkl313/mkl_random_1730823916628/work
+numpy @ file:///croot/numpy_and_numpy_base_1750883793662/work/dist/numpy-2.3.1-cp311-cp311-linux_x86_64.whl#sha256=c8bcc7beca4cb3ebc0a7c134fc9b65c59470bf940fe31737dc591c1db5e173e2
+packaging @ file:///croot/packaging_1753775359799/work
+pillow @ file:///croot/pillow_1752524526621/work
+pyparsing @ file:///croot/pyparsing_1731445506121/work
+PyQt6==6.7.1
+PyQt6_sip @ file:///croot/pyqt-split_1753427276959/work/pyqt_sip
+python-dateutil @ file:///croot/python-dateutil_1716495738603/work
+PyYAML @ file:///croot/pyyaml_1728657952215/work
+sip @ file:///croot/sip_1738856193618/work
+six @ file:///croot/six_1744271502820/work
+tornado @ file:///croot/tornado_1748956929273/work
+unicodedata2 @ file:///croot/unicodedata2_1736541023050/work
