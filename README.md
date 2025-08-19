@@ -27,7 +27,7 @@ Alternativ kann das Programm auch mit Conda [https://www.anaconda.com/docs/getti
 Nach der Installation von Miniconda (empfohlen) oder Anaconda wird eine Conda-Umgebung mit den notwendigen Paketen erstellt.
 
 ```bash
-# Installieren von Conda (falls noch nicht installiert)
+# Installieren von Miniconda (falls noch nicht installiert)
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh | bash
 # Erstelle einer Conda-Umgebung
 conda create -n turniergrafik python=3.11
