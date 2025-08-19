@@ -100,7 +100,7 @@ auswertung:
   datenluecken_kurzfrist:              0.75
   punkteersetzung:                     true
   punkteersetzung_elemente:            true
-  punkteersetzung_elementweise:        true
+  punkteersetzung_elementweise:        false
   punkteersetzung_elemente_spieler:
     fx24: [MOS-Max]
   punkteersetzung_spieler:
