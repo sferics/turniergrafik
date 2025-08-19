@@ -14,6 +14,7 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements_pip.txt
 ```
+
 Stattdessen kann auch nur das Kommando `pip install requirements_pip.txt`
 verwendet werden, um die Abhängigkeiten zu installieren.
 Dann wird das Programm in der aktuellen Umgebung installiert, was aber
@@ -22,10 +23,17 @@ führen kann. Daher wird die Verwendung einer virtuellen Umgebung
 empfohlen, um die Abhängigkeiten isoliert zu halten.
 
 ## Installation mit Conda
-Alternativ kann das Programm auch mit Conda installiert werden. Dazu wird eine Conda-Umgebung mit den notwendigen Paketen erstellt.
+Alternativ kann das Programm auch mit Conda [https://www.anaconda.com/docs/getting-started/miniconda/install] installiert werden.
+Nach der Installation von Miniconda (empfohlen) oder Anaconda wird eine Conda-Umgebung mit den notwendigen Paketen erstellt.
+
 ```bash
+# Installieren von Conda (falls noch nicht installiert)
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh | bash
+# Erstelle einer Conda-Umgebung
 conda create -n turniergrafik python=3.11
+# Aktiviere die Conda-Umgebung
 conda activate turniergrafik
+# Installiere die Abhängigkeiten aus der requirements_conda.txt
 conda install --file requirements_conda.txt
 ```
 
@@ -38,6 +46,7 @@ Paketmanager installiert werden. Für Windows und macOS kann es
 von der offiziellen Python-Website heruntergeladen und installiert werden.
 Für die Installation von Python 3.11 auf Ubuntu kann der folgende Befehl
 verwendet werden:
+
 ```bash
 sudo apt install python3.11
 # Optional: Installation von pip (Python-Paketverwaltung) und venv (virtuelle Umgebung)
@@ -82,6 +91,21 @@ geladen werden, oder sie kann bei Bedarf angefordert werden.
 
 ```bash
 python3 turniergrafik.py
+```
+
+WICHTIG! Falls eine virtuelle Umgebung verwendet wird, muss diese
+zuerst vor dem jeweils Start des Programms aktiviert werden.
+Wenn ein neues Terminal geöffnet wird, muss die virtuelle Umgebung
+doch erneut aktiviert werden, da sie nur für die Dauer des Terminalfensters aktiv bleibt.
+
+```bash
+source venv/bin/activate
+```
+Analog, falls Conda zur Installation benutzt wurde, muss vor (jedem)
+ersten Start die entsprechende Environment geladen werden:
+
+```bash
+conda activate turniergrafik
 ```
 
 ## Kommandzeilen-Argumente
