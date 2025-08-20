@@ -23,11 +23,12 @@ führen kann. Daher wird die Verwendung einer virtuellen Umgebung
 empfohlen, um die Abhängigkeiten isoliert zu halten.
 
 ## Installation mit Conda
-Alternativ kann das Programm auch mit Conda [https://www.anaconda.com/docs/getting-started/miniconda/install] installiert werden.
+
+Alternativ kann das Programm auch mit Conda ([Link für alle Betriebssysteme](https://www.anaconda.com/docs/getting-started/miniconda/install)) installiert werden.
 Nach der Installation von Miniconda (empfohlen) oder Anaconda wird eine Conda-Umgebung mit den notwendigen Paketen erstellt.
 
 ```bash
-# Installieren von Miniconda (falls noch nicht installiert)
+# Installieren von Miniconda in Linux (falls noch nicht installiert)
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh | bash
 # Erstelle einer Conda-Umgebung
 conda create -n turniergrafik python=3.11
@@ -85,7 +86,7 @@ geladen werden, oder sie kann bei Bedarf angefordert werden.
    neu geladen werden. Diese Datei liegt aktuell nicht im Repository, da sie
    zu gross ist. Sie kann aber bei Bedarf angefordert werden.
 
--> Zum starten des Programms einfach die Datei 'turniergrafik.py' ausfuehren.
+-> Zum Starten des Programms einfach die Datei 'turniergrafik.py' ausführen.
    Dies kann entweder durch einen Doppelklick auf die Datei oder durch
    Eingabe des Befehls in einem Terminal geschehen:
 
@@ -93,7 +94,7 @@ geladen werden, oder sie kann bei Bedarf angefordert werden.
 python3 turniergrafik.py
 ```
 
-WICHTIG! Falls eine virtuelle Umgebung verwendet wird, muss diese
+**WICHTIG!** Falls eine virtuelle Umgebung verwendet wird, muss diese
 zuerst vor dem jeweils Start des Programms aktiviert werden.
 Wenn ein neues Terminal geöffnet wird, muss die virtuelle Umgebung
 doch erneut aktiviert werden, da sie nur für die Dauer des Terminalfensters aktiv bleibt.
