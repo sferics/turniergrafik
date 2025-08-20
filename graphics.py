@@ -66,7 +66,7 @@ def gibDateinamen(laufindex = 0, cfg=cfg):
     else:
         stadtinfo = ""
         for stadt in cfg.auswertungsstaedte:
-            stadtinfo += stadtname(stadt)
+            stadtinfo += stadtname(stadt, cfg)
     
     # Info über die ausgewerteten Tage (Sa, So oder beide)
     taginfo = ""
@@ -545,7 +545,7 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
         else:
             staedte_plot = ""
             for stadt in auswertungsstaedte:
-                staedte_plot += stadtname(stadt)+", "
+                staedte_plot += stadtname(stadt, cfg)+", "
             if staedte_plot.endswith(", "):
                 staedte_plot = staedte_plot[:-2]
 
@@ -564,26 +564,52 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
             if elemente_plot.endswith(", "):
                 elemente_plot = elemente_plot[:-2]
         
+        # Wenn nur ein Tag ausgewertet wird, wird "Tag" oder "Day"
+        # verwendet, je nach Sprache
+        if len(auswertungstage) == 1:
+            if sprache == "en":
+                t = ""
+            else:
+                t = ""
+        else:
+            if sprache == "en":
+                t = "s"
+            else:
+                t = "e"
+       
+        # Wenn nur eine Stadt ausgewertet wird, wird "City" oder "Stadt"  
+        # verwendet, je nach Sprache
+        if len(auswertungsstaedte) == 1:
+            if sprache == "en":
+                c = "City"
+            else:
+                c = "Stadt"
+        else:
+            if sprache == "en":
+                c = "Cities"
+            else:
+                c = "Städte"
+        
         # Wenn nur ein Element ausgewertet wird, wird kein "s" oder "e" angehängt
         # (für die Pluralform)
         if len(auswertungselemente) == 1:
-            s = ""
+            e = ""
         else:
             if sprache == "en":
-                s = "s"
+                e = "s"
             else:
-                s = "e"
-        
+                e = "e"
+
         # Füge die Informationen über den Plot unten in die Grafik ein
         if sprache == "en":
             # Wenn die Sprache Englisch ist, wird "Averaged over" verwendet
             plt.figtext(.01,.01,
-                        f"Averaged over – Days: {auswertungstage_plot} – Cities: {staedte_plot} – Element{s}: {elemente_plot}",
+                        f"Averaged over – Day{t}: {auswertungstage_plot} – {c}: {staedte_plot} – Element{e}: {elemente_plot}",
                         fontsize=11)
         else:
             # Wenn die Sprache Deutsch ist, wird "Gemittelt über" verwendet
             plt.figtext(.01,.01,
-                        f"Gemittelt über – Tage: {auswertungstage_plot} – Städte: {staedte_plot} – Element{s}: {elemente_plot}",
+                        f"Gemittelt über – Tag{t}: {auswertungstage_plot} – {c}: {staedte_plot} – Element{e}: {elemente_plot}",
                         fontsize=11)
 
         ### Speichervorgang ###

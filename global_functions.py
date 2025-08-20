@@ -111,6 +111,28 @@ def get_friday_range(begin, end):
         raise ValueError("Der Start- oder End-Wert sind fehlerhaft.")
 
 
+def kuerzel_zu_id(cfg):
+    """
+    Erstellt ein Dictionary, das die 3-stelligen Kürzel der Städte
+    den entsprechenden IDs zuordnet.
+
+    :param cfg: Konfiguration, die die Zuordnungen enthält
+
+    :return: Dictionary mit Kürzeln als Keys und IDs als Values
+    """
+    return {v: k for k, v in cfg.id_zu_kuerzel.items()}
+
+def id_zu_stadt(cfg):
+    """
+    Erstellt ein Dictionary, das die IDs der Städte
+    den entsprechenden Namen zuordnet.
+
+    :param cfg: Konfiguration, die die Zuordnungen enthält
+
+    :return: Dictionary mit IDs als Keys und Stadtnamen als Values
+    """
+    return {i: j for j, i in cfg.stadt_zu_id.items()}
+
 def stadtname(stadt, cfg):
     """
     Liefert den Namen der Stadt, die in der Konfiguration
@@ -121,11 +143,11 @@ def stadtname(stadt, cfg):
     :return: Name der Stadt (String)
     """
     # Wenn die Stadt eine ID ist, wird der Name direkt aus cfg.stadtnamen geholt
-    if type(stadt) == int:
-        return cfg.stadtnamen[stadt]
+    if isinstance(stadt, int) or len(stadt) == 1:
+        return id_zu_stadt(cfg)[int(stadt)]
     # Wenn die Stadt ein 3-stelliges Kürzel ist, wird die ID aus kuerzel_zu_id geholt
     elif len(stadt) == 3:
-        return cfg.stadtnamen[kuerzel_zu_id[stadt] - 1 ]
+        return cfg.stadtnamen[kuerzel_zu_id(cfg)[stadt] - 1 ]
     # Wenn die Stadt ein String ist, wird die ID aus stadt_zu_id geholt
     return cfg.stadtnamen[ cfg.stadt_zu_id[stadt] - 1 ]
 
@@ -141,16 +163,8 @@ def city_to_id(city, cfg):
     return: ID der Stadt
     :rtype: int
     """
-    # Konvertierung von Kürzeln in IDs
-    # (z.B. "BER" -> 1, "HAM" -> 2, ...)
-    kuerzel = cfg.id_zu_kuerzel.values()
-    ids     = cfg.id_zu_kuerzel.keys()
-    kuerzel_zu_id = {}
-    for k, i in zip(kuerzel, ids):
-        kuerzel_zu_id[k] = i
-
     try: return int(city)
     except ValueError:
         if len(city) == 3:
-            return kuerzel_zu_id[city]
+            return kuerzel_zu_id(cfg)[city]
         else: return cfg.stadt_zu_id[city]
