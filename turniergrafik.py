@@ -531,7 +531,7 @@ if __name__ == "__main__":
     # Die Städte können entweder als IDs, Kürzel oder Namen angegeben werden.
     if cities:
         for i, c in enumerate(cities):
-            cities[i] = stadtname[c, cfg]
+            cities[i] = stadtname(c, cfg)
     
     # Konfiguration der Auswertungselemente, Staedte, Tage und Teilnehmer
     cfg.auswertungsstaedte    = cities if cities else cfg.auswertungsstaedte
