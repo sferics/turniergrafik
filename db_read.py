@@ -23,6 +23,10 @@ requests_log.propagate = True
 # zum Profilen:
 # python -m cProfile db_read.py
 
+from global_functions import date_2_index
+# Datum der neuen Elemente in der Datenbank als Tag-Index
+tdate_neue_elemente = date_2_index(cfg.datum_neue_elemente)
+
 
 #----------------------------------------------------------------------------#
 import time
@@ -188,8 +192,8 @@ class ArchiveParse:
         """
         Initialisierung der Klasse, die die Daten aus der Datenbank ausliest
         """
-        # Wenn TDate groesser oder gleich 19363 ist, werden die neuen Parameter-IDs verwendet,
-        if TDate >= 19363:
+        # Wenn TDate neuer oder gleich dem Datum der neuen Elemente ist,
+        if TDate >= tdate_neue_elemente:
             # dann wird die Stadt-ID in einen String umgewandelt
             param_ids = db.param_ids_new.values()
         else:

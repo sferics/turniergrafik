@@ -93,7 +93,9 @@ auswertung:
   auswertungselemente_alt:              [N, Sd, dd, ff, fx, Wv, Wn, PPP, TTm, TTn, TTd, RR]
   auswertungselemente_neu:              [Sd1, Sd24, dd12, ff12, fx24, PPP12, Tmin, T12, Tmax, Td12, RR1, RR24]
   auswertungsstaedte:                   [Berlin, Wien, Zürich, Innsbruck, Leipzig]
-  auswertungsmittelungszeitraum:        25
+  auswertungsmittelungszeitraum:        50
+  mindestanzahl_wochen_definiert:       true
+  mindestanzahl_wochen:                 40
   mindestanzahl_wochen_jahresmittelung: 25
   mittelungszeitspannen:                [50, 20, 10, 5, 2, 1]
   datenluecken_langfrist:               0.2

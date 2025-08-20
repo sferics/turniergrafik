@@ -34,26 +34,7 @@ import os
 # Variablen aus config.py mit cfg.variable aufrufbar
 import config_loader as cfg
 
-from turniergrafik import index_2_date, kuerzel_zu_id
-
-#TODO move to turniergrafik.py and re-use, remove from here
-def stadtname(stadt):
-    """
-    Liefert den Namen der Stadt, die in der Konfiguration
-    hinterlegt ist, zurück.
-    
-    :param stadt: entweder eine Stadt-ID (int) oder ein 3-stelliges Kürzel
-    
-    :return: Name der Stadt (String)
-    """
-    # Wenn die Stadt eine ID ist, wird der Name direkt aus cfg.stadtnamen geholt
-    if type(stadt) == int:
-        return cfg.stadtnamen[stadt]
-    # Wenn die Stadt ein 3-stelliges Kürzel ist, wird die ID aus kuerzel_zu_id geholt
-    elif len(stadt) == 3:
-        return cfg.stadtnamen[kuerzel_zu_id[stadt] - 1 ]
-    # Wenn die Stadt ein String ist, wird die ID aus stadt_zu_id geholt
-    return cfg.stadtnamen[ cfg.stadt_zu_id[stadt] - 1 ]
+from global_functions import stadtname, index_2_date
 
 
 #TODO cfg.xxx lieber als Argumente von erstelleGrafik() (sonst 'verschleiert')
