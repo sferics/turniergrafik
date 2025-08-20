@@ -44,12 +44,12 @@ elemente:
 # Sektion für zu ignorierende Termine
 termine:
   zu_ignorierende_termine:
-    1: ["21.10.2005", "21.03.2008", "24.12.2004", "25.03.2005", "30.12.2005", "14.04.2006", "29.12.2006", "03.10.2014"]
-    3: ["24.05.2013", "31.05.2013", "14.06.2013", "12.07.2013", "29.12.2006"]
-    4: ["02.08.2013", "16.07.2004"]
-    5: ["02.08.2013", "04.09.2009"]
-    2: ["05.04.2013", "31.12.2004"]
-  zu_ignorierende_termine_allgemein: ["07.04.2023"]
+    1: [21.10.2005, 21.03.2008, 24.12.2004, 25.03.2005, 30.12.2005, 14.04.2006, 29.12.2006, 03.10.2014]
+    3: [24.05.2013, 31.05.2013, 14.06.2013, 12.07.2013, 29.12.2006]
+    4: [02.08.2013, 16.07.2004]
+    5: [02.08.2013, 04.09.2009]
+    2: [05.04.2013, 31.12.2004]
+  zu_ignorierende_termine_allgemein: [07.04.2023]
 
 # Sektion für Teilnehmer
 teilnehmer:
@@ -89,9 +89,10 @@ auswertung:
   endtermin:                            15.08.2025
   auswertungstage:                      [Sa, So]
   auswertungsteilnehmer:                [MSwr-MOS-Mix, MSwr-EZ-MOS, MSwr-GFS-MOS, DWD-MOS-Mix, DWD-MOS-Mix-test, DWD-EZ-MOS, DWD-ICON-MOS, MOS-Mix]
-  auswertungsteilnehmer_multi:          true
+  auswertungsteilnehmer_multi:          false
   auswertungselemente_alt:              [N, Sd, dd, ff, fx, Wv, Wn, PPP, TTm, TTn, TTd, RR]
-  auswertungselemente_neu:              [Sd1, Sd24, dd12, ff12, fx24, PPP12, Tmin, T12, Tmax, Td12, RR1, RR24]
+    #auswertungselemente_neu:             [Sd1, Sd24, dd12, ff12, fx24, PPP12, Tmin, T12, Tmax, Td12, RR1, RR24]
+  auswertungselemente_neu:              [Sd1, Sd24, ff12, fx24, PPP12, Tmin, T12, Tmax, Td12, RR1, RR24]
   auswertungsstaedte:                   [Berlin, Wien, Zürich, Innsbruck, Leipzig]
   auswertungsmittelungszeitraum:        50
   mindestanzahl_wochen_definiert:       true
@@ -131,7 +132,7 @@ grafik:
       titel_rechts: Recent Year
       achse_links:  |
         Lost points per individual forecast
-        (per day, city and element)
+        (per day, city, and element)
       achse_rechts: "Lower values: Better"
     de:
       titel:        VERGLEICH MOS-SYSTEME
