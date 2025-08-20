@@ -130,7 +130,7 @@ grafik:
       achse_links:  |
         Lost points per individual forecast
         (per day, city and element)
-      achse_rechts: Lower values: Better
+      achse_rechts: "Lower values: Better"
     de:
       titel:        VERGLEICH MOS-SYSTEME
       titel_links:  Letzte Jahre
@@ -138,7 +138,7 @@ grafik:
       achse_links:  |
         Verlorene Punkte pro individueller Vorhersage
         (pro Tag, Stadt und Element)
-      achse_rechts: Niedrigere Werte: Besser
+      achse_rechts: "Niedrigere Werte: Besser"
   grafik_spaltenanzahl: 4
   teilnehmerlinien_dickgedruckt: [DWD-MOS-Mix, MSwr-MOS-Mix, Ms.Os]
   liniendicke:
