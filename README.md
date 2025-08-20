@@ -76,8 +76,15 @@ conda install --file requirements_conda.txt
 Das Programm ist so konzipiert, dass es die Daten der letzten Jahre
 automatisch aus dem 'archiv'-Ordner im Programmordner lädt. Dieser Ordner
 sollte die Daten der letzten Jahre enthalten, die in der Datei
-`archiv.tar.xz` gepackt sind. Diese Datei kann aus dem Repository
+`archiv.zip` gepackt sind. Diese Datei kann aus dem Repository
 geladen werden, oder sie kann bei Bedarf angefordert werden.
+
+```bash
+# Entpacken der archiv.zip-Datei in den Programmordner
+unzip archiv.zip -d archiv/
+# archiv.zip neu packen, falls neue Daten hinzugefügt wurden
+zip -r archiv.zip archiv/
+```
 
 ## Erzeugen der Turniergrafiken
 -> Vor dem (allerersten) Start bzw. im Falle dessen, dass kein 'archiv'-Ordner
