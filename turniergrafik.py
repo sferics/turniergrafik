@@ -526,7 +526,7 @@ if __name__ == "__main__":
     # Alte und neue Auswertungselemente setzen
     cfg.auswertungselemente_alt   = params if params else cfg.auswertungselemente_alt
     cfg.auswertungselemente_neu   = params if params else cfg.auswertungselemente_neu
-    cfg.auswertungselemente       = cfg.auswertungselemente_neu[:] if end >= tdate_neue_elemente else cfg.auswertungselemente_alt[:]
+    cfg.auswertungselemente       = cfg.auswertungselemente_neu[:] if begin >= tdate_neue_elemente else cfg.auswertungselemente_alt[:]
     
     # Die Städte können entweder als IDs, Kürzel oder Namen angegeben werden.
     if cities:
