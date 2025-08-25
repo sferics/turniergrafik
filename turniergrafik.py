@@ -218,23 +218,25 @@ def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
         if max(range(0, anzahl_punkte+1, mean_time_span)) < anzahl_punkte:
             anzahl_punkte += mean_time_span
     
+    mean_time_span_original = copy(mean_time_span)
+
     # geht in Schritten mit der definierten Zeitspannengroesse durch die Tage
-    for i in range(0, anzahl_punkte+1, mean_time_span ):
+    for i in range(0, anzahl_punkte+1, mean_time_span_original):
         
-        # Wenn die Anzahl der Punkte kleiner ist als die
-        # Zeitspanne, die fuer die Mittelung benoetigt wird
-        if i+mean_time_span >= len(points):
+        mean_time_span = copy(mean_time_span_original)
+
+        # Wenn die Anzahl der verbleibenden Punkte kleiner ist als die
+        # Zeitspanne, die für die Mittelung benötigt wird
+        if len(points) - i < mean_time_span:
             # Wenn eine Mindestanzahl an Wochen definiert ist,
             # dann wird diese verwendet, um die Anzahl der Punkte zu
-            # vergleichen, die fuer die Berechnung des Mittelwerts
-            # benoetigt werden.
+            # vergleichen, die für die Berechnung des Mittelwerts
+            # benötigt werden.
             if cfg.mindestanzahl_wochen_definiert:
-                # Wenn i plus die Mindestanzahl an Wochen
-                # kleiner ist als die Anzahl der Punkte, dann
-                # wird mean_time_span auf die Differenz zwischen
-                # der Anzahl der Punkte und i gesetzt, um die
-                # Mittelung auf die verbleibenden Punkte zu beschraenken
-                if i + cfg.mindestanzahl_wochen < len(points):
+                # Wenn noch genug Punkte für die Mindestanzahl an Wochen
+                # vorhanden sind, dann wird die Mittelungszeitspanne
+                # angepasst, damit der Mittelwert berechnet werden kann
+                if len(points) - i >= cfg.mindestanzahl_wochen:
                     mean_time_span = len(points) - i
                 # Sonst wird die Schleife abgebrochen
                 else: break
@@ -244,22 +246,31 @@ def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
             else: break
         
         # "schneidet" immer gleich grosse Stuecke heraus
+        # außer am Ende, wo der Rest verworfen wird
+        # (nur falls mindestanzahl_wochen_definiert == True)
         points_span = points[i:i+mean_time_span]
-    
+        
+        if verbose:
+            print("points")
+            print(points)
+            print("points_span")
+            print(points_span)
+
         # gib Nan als Summe aus, wenn ein bestimmter Prozentsatz
         # (cfg.anteil_datenverfuegbarkeit) an NaNs ueberschritten wurde
         if (np.isnan(points_span).sum() / mean_time_span) < max_nan_ratio:
             # bilde mittelwert (arithmetisch) ohne NaNs
             mean = np.nanmean(points_span)
-
         else:
             # wenn der Prozentsatz an NaNs ueberschritten wurde, gib Nan aus
             mean = np.nan
-
-        # Datum fuer Mittelungszeitraum aus Liste ausschneiden
-        end_date = dates[ cities * (ii) * mean_time_span ] + 7
-        #end_date = dates[ ii * (mean_time_span * cities) ]
-        ii += 1
+        
+        # Datum fuer Mittelungszeitraum ermitteln
+        if len(points) - i <= mean_time_span:
+            end_date = max(dates)
+        else:
+            end_date = dates[ ii * mean_time_span * cities ] 
+            ii += 1
         
         # Haenge den Mittelwert und das Datum des letzten Tages
         # des Mittelungszeitraums an die Liste an

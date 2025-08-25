@@ -341,8 +341,12 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
                     # identisch)
                     if erster_teilnehmer:
                         if plotname == "linker_plot":
+                            if cfg.auswertungsmittelungszeitraum == "a":
+                                fmt = "%Y"
+                            else:
+                                fmt = "%d%b%y"
                             xlabel_terminliste[plotname] \
-                            .append(turniertag.strftime("%d%b%y"))
+                            .append(turniertag.strftime(fmt))
                         else:
                             xlabel_terminliste[plotname] \
                             .append(turniertag.strftime("%d%b%y"))

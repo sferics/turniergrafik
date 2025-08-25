@@ -33,7 +33,7 @@ archiv_und_url:
 
 # Sektion für Wetterelemente
 elemente:
-  elemente_archiv_alt:     [N, Sd, dd, ff, fx, Wv, Wn, PPP, TTm, TTn, TTd, RR]
+  elemente_archiv_alt:     &alle_elemente_alt [N, Sd, dd, ff, fx, Wv, Wn, PPP, TTm, TTn, TTd, RR]
   elemente_archiv_neu:     &alle_elemente_neu [Sd1, Sd24, dd12, ff12, fx24, PPP12, Tmin, T12, Tmax, Td12, RR1, RR24]
   elemente_einheiten_alt:  ["", "%", grad, kn, kn, "", "", hPa, "°C", "°C", "°C", mm]
   elemente_einheiten_neu:  [min, "%", grad, m/s, m/s, hPa, "°C", "°C", "°C", "°C", mm, mm]
@@ -86,16 +86,17 @@ teilnehmer:
 # Sektion für die spezifische Auswertung
 auswertung:
   starttermin:                          02.09.2022
-  endtermin:                            22.08.2025
+  endtermin:                            08.08.2025
   auswertungstage:                      [Sa, So]
-  auswertungsteilnehmer:                [MSwr-MOS-Mix, MSwr-EZ-MOS, MSwr-GFS-MOS, DWD-MOS-Mix, DWD-EZ-MOS, DWD-ICON-MOS, MOS-Mix]
-  auswertungsteilnehmer_multi:          false
-  auswertungselemente_alt:              [N, Sd, dd, ff, fx, Wv, Wn, PPP, TTm, TTn, TTd, RR]
+    #auswertungsteilnehmer:                [MSwr-MOS-Mix, MSwr-EZ-MOS, MSwr-GFS-MOS, DWD-MOS-Mix, DWD-EZ-MOS, DWD-ICON-MOS, MOS-Mix]
+  auswertungsteilnehmer:                [DWD-EZ-MOS, MSwr-EZ-MOS]
+  auswertungsteilnehmer_multi:          true
+  auswertungselemente_alt:              *alle_elemente_alt
   auswertungselemente_neu:              *alle_elemente_neu
     #auswertungselemente_neu:              [Sd1, Sd24, ff12, fx24, PPP12, Tmin, T12, Tmax, Td12, RR1, RR24]
     #elemente_multi:                       true
   auswertungsstaedte:                   [Berlin, Wien, Zürich, Innsbruck, Leipzig]
-  auswertungsmittelungszeitraum:        50
+  auswertungsmittelungszeitraum:        a
   mindestanzahl_wochen_definiert:       true
   mindestanzahl_wochen:                 40
   mindestanzahl_wochen_jahresmittelung: 25
