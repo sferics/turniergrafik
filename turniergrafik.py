@@ -23,7 +23,7 @@ from matplotlib.cbook import get_sample_data
 
 # Ermöglicht das Wechseln der Ordner
 import os
-
+# Systemfunktionen
 import sys
 
 from operator import itemgetter
@@ -32,7 +32,9 @@ from operator import itemgetter
 #import ajax_print
 import db_read
 import graphics
-import config as cfg
+import config_loader as cfg
+
+from global_functions import index_2_year, date_2_index, index_2_date, get_friday_range, stadtname, city_to_id
 
 #----------------------------------------------------------------------------#
 # Setzen des Startzeitpuntes zur Messung der Laufzeit des Programms
@@ -43,101 +45,6 @@ missing_list = []
 
 #----------------------------------------------------------------------------#
 
-def date_2_index(input_date):
-    """
-    Tag-Index (der wievielte Tag, seit dem 02.01.1970) aus einem gegebenen
-    Datum berechnen    
-    Beispiele:
-    Tag 1:     Freitag, 02.01.1970
-    Tag 8:     Freitag, 09.01.1970
-    Tag 17837: Freitag, 02.11.2018
-
-    :param input_date: Datum als String im Format "dd.mm.yyyy" oder
-
-    :return: Tagesindex (der wievielte Tag, seit dem 02.01.1970)
-    """
-
-    if type(input_date) is str:
-        # String in ein Datum umwandeln
-        day_x = dt.strptime(input_date, "%d.%m.%Y").date()
-    elif type(input_date) is date:
-        # wenn ein Datum uebergeben wurde, dann direkt verwenden
-        day_x = copy(input_date)
-
-    # wenn das Datum leer gelassen wurde, nimm das aktuelle Datum
-    else:
-        day_x = dt.now().date()
-
-        # pruefen ob der heutige tag sich zwischen Freitag und Montag befindet
-        # dann muss der Freitag der letzten Woche als letzter Auswertungstag
-        # gewaehlt werden, da der aktuelle noch nicht ausgewertet worden ist
-        # Wochentags-Indizes: Monday := 0, Sunday := 6
-        if day_x.weekday() >= 4 and day_x.weekday() != 0:
-
-            # vier Tage abziehen um auf jeden Fall vor dem Freitag zu landen
-            day_x -= timedelta(days = 4)
-
-    day_1 = date(1970, 1, 2)
-
-    # pruefen, ob das Datum zu frueh angesetzt wurde
-    if day_x > day_1:
-
-        days_delta = day_x - day_1 #FIXME ?? + timedelta(days = 1)
-
-        return days_delta.days
-
-    else:
-        raise ValueError("Der Starttermin ist nicht valide.")
-
-
-def index_2_date(input_index):
-    """
-    Datum aus dem Tagesindex (der wievielte Tag, seit dem 02.01.1970)
-    berechnen (Beispiele -> siehe date_2_index())
-
-    :param input_index: Tagesindex (der wievielte Tag, seit dem 02.01.1970)
-
-    :return: Datum des Tagesindex
-    """
-    # pruefen, ob der Tagesindex gueltig ist
-    if input_index > 0:
-
-        # zur Berechnung des Datums muss nur der Tagesindex bzw. die Anzahl an
-        # Tagen seit dem 02.01.1970 auf eben dieses Datum addiert werden
-        return date(1970, 1, 2) + timedelta(days = input_index)
-
-    else:
-        raise ValueError("Der Tagesindex ist nicht korrekt.")
-
-
-def get_friday_range(begin, end):
-    """
-    Bestimmt die Grenzen der zu bearbeitenden Freitags-Indizes
-    (der wievielte Tag, seit dem 02.01.1970 etc. ..)
-    
-    :param begin: Start-Index (der wievielte Tag, seit dem 02.01.1970)
-    :param end: End-Index (der wievielte Tag, seit dem 02.01.1970)
-
-    :return: Tupel mit den Start- und End-Indizes der Freitage
-    """
-
-    if begin > 0 and end > begin:
-
-        # rundet den Starttag auf den naechsten Freitag auf
-        # (Jeder 7. Tag ist ein Freitag, da die Zaehlung mit Freitag beginnt)
-        begin += 7 - (begin % 7)
-
-        # rundet den Endtag auf den naechsten Freitag ab
-        end -= - 7 + (end % 7)
-
-        # end+1, da range exklusive dem Ende zaehlt
-        #return begin+1, end+1
-        return begin, end
-
-    else:
-        raise ValueError("Der Start- oder End-Wert sind fehlerhaft.")
-
-#FIXME
 def old_2_new_players(players, rename_dict):
     """
     Ersetzt in einer Teilnehmerliste alle alten durch neuere Teilnehmernamen
@@ -196,8 +103,10 @@ def short_term_mean(points, dates, mean_weaks, max_nan_ratio, cities=5):
         else:
             mean = np.nan
 
-        # i*7, da in Wochen gezaehlt wurde und Tage gesucht sind
-        date = max(dates) - i*(7-1)     # Dann passt die x-Achse wieder und das Enddatum stimmt mit dem linken Plot überein.
+        # von max(dates) ziehen wir (i-1)*7 Tage ab,
+        # da in Wochen gezaehlt wurde und Tage gesucht sind
+        # (wir ziehen eine Woche ab, damit das Enddatum stimmt)
+        date = max(dates) - (i-1)*7
 
         # Datum fuer Mittelungszeitraum aus Liste ausschneiden
         # Haenge den Mittelwert und das Datum des letzten Tages
@@ -206,19 +115,6 @@ def short_term_mean(points, dates, mean_weaks, max_nan_ratio, cities=5):
 
     #print(len(mean_date_list))
     return mean_date_list
-
-def index_2_year(date_index):
-    """
-    Gibt das Jahr des Tagesindex zurueck
-    
-    :param date_index: Tagesindex (der wievielte Tag, seit dem 02.01.1970)
-    
-    :return: Jahr des Tagesindex
-    """
-    if date_index > 0:
-        return index_2_date(date_index).year
-    else:
-        raise ValueError("Der Tagesindex ist nicht korrekt.")
 
 
 def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
@@ -240,8 +136,7 @@ def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
     """
 
     long_term_means = []
-    ii = 0
-
+    
     # Wenn Jahre individuell ausgewertet werden sollen
     if mean_time_span == "a":
         # Berechne für jedes Jahr die Mittelungszeitspanne individuell
@@ -306,34 +201,64 @@ def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
         
         return long_term_means
     
+    # Else kann hier weggelassen werden, da die Funktion nur
+    # aufgerufen wird, wenn mean_time_span != "a"
+    
+    # Laufvariable fuer die Anzahl der Mittelungszeitraeume
+    ii = 1
+    
+    anzahl_punkte = len(points)
+    # Wenn eine Mindestanzahl an Wochen definiert ist,
+    # dann wird diese verwendet, um die Anzahl der Punkte zu
+    # vergleichen, die fuer die Berechnung des Mittelwerts
+    # benoetigt werden. Ansonsten wird der Mittelwert
+    # immer dann berechnet, wenn die Anzahl der Punkte
+    # groesser ist als mean_time_span
+    if cfg.mindestanzahl_wochen_definiert:
+        if max(range(0, anzahl_punkte+1, mean_time_span)) < anzahl_punkte:
+            anzahl_punkte += mean_time_span
+    
     # geht in Schritten mit der definierten Zeitspannengroesse durch die Tage
-        for i in range(0, len(points), mean_time_span ):
+    for i in range(0, anzahl_punkte+1, mean_time_span ):
+        
+        # Wenn die Anzahl der Punkte kleiner ist als die
+        # Zeitspanne, die fuer die Mittelung benoetigt wird
+        if i+mean_time_span >= len(points):
+            # Wenn eine Mindestanzahl an Wochen definiert ist,
+            # dann wird diese verwendet, um die Anzahl der Punkte zu
+            # vergleichen, die fuer die Berechnung des Mittelwerts
+            # benoetigt werden.
+            if cfg.mindestanzahl_wochen_definiert:
+                # Wenn i plus die Mindestanzahl an Wochen
+                # kleiner ist als die Anzahl der Punkte, dann
+                # wird mean_time_span auf die Differenz zwischen
+                # der Anzahl der Punkte und i gesetzt, um die
+                # Mittelung auf die verbleibenden Punkte zu beschraenken
+                if i + cfg.mindestanzahl_wochen < len(points):
+                    mean_time_span = len(points) - i
+                # Sonst wird die Schleife abgebrochen
+                else: break
+            # Wenn keine Mindestanzahl an Wochen definiert ist,
+            # dann wird die Schleife abgebrochen, da nicht genug
+            # Punkte fuer die Mittelung vorhanden sind
+            else: break
         
         # "schneidet" immer gleich grosse Stuecke heraus
         points_span = points[i:i+mean_time_span]
-
-        # falls der letzte Teil kleiner als die gewaehlte Zeitspanne ist
-        # faellt er weg
-        if len(points_span) < mean_time_span:
-            break
-
+    
         # gib Nan als Summe aus, wenn ein bestimmter Prozentsatz
         # (cfg.anteil_datenverfuegbarkeit) an NaNs ueberschritten wurde
         if (np.isnan(points_span).sum() / mean_time_span) < max_nan_ratio:
             # bilde mittelwert (arithmetisch) ohne NaNs
             mean = np.nanmean(points_span)
-#
+
         else:
             # wenn der Prozentsatz an NaNs ueberschritten wurde, gib Nan aus
             mean = np.nan
 
-        # 7*x, da in Wochen gezaehlt wurde und Tage gesucht sind
-        #end_date = dates[ cities * (ii+1) * mean_time_span ] #TODO CHECKME!
-        
         # Datum fuer Mittelungszeitraum aus Liste ausschneiden
-        #print(mean_time_span)
-        end_date = dates[ cities * (ii) * mean_time_span ]
-        #print( "end_date", end_date )
+        end_date = dates[ cities * (ii) * mean_time_span ] + 7
+        #end_date = dates[ ii * (mean_time_span * cities) ]
         ii += 1
         
         # Haenge den Mittelwert und das Datum des letzten Tages
@@ -341,6 +266,7 @@ def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
         long_term_means.append( (end_date, mean) )
     
     return long_term_means
+
 
 def get_player_mean(pointlist,
                     auswertungstage,
@@ -378,7 +304,7 @@ def get_player_mean(pointlist,
             # Wenn cfg.punkteersetzung_spieler == True, dann
             # versuche den Ersatzspieler zu finden und dessen Punkteliste
             # zu verwenden
-            ersatzspieler = find_replacement_players(cfg.punkteersetzung_ersatz, Player)
+            ersatzspieler = find_replacement_players(cfg.punkteersetzung_spieler, Player)
             
             for e in ersatzspieler:
                 try:
@@ -411,7 +337,7 @@ def get_player_mean(pointlist,
     
     # Wenn die Punkteliste einzelne None-Werte enthaelt, dann
     # ersetze diese entweder durch Null oder wenn
-    # punkteersetzung_params == True fuehre eine Ersetzung durch
+    # punkteersetzung_elemente == True fuehre eine Ersetzung durch
     elif None in pointlist:
         #TODO Wenn wir ein nested Dictionary haben, dann
         # prufe, ob der Spieler einen Ersatzspieler hat,
@@ -420,26 +346,35 @@ def get_player_mean(pointlist,
         
         # wenn die Punkteliste None-Werte enthaelt, dann
         # ersetze diese durch die Werte des Ersatzspielers
-        if cfg.punkteersetzung_params:
-            ersatzspieler = find_replacement_players(cfg.punkteersetzung_ersatz, Player)
-            for e in ersatzspieler:
-                try:
-                    # Punkteliste des Ersatzspielers aus Datei einlesen
-                    pointlist_ersatz = npzfile[e]
-                except KeyError:
-                    if verbose:
-                        print("Ersatzspieler nicht gefunden:", e)
-                    continue
-                # Wenn der Ersatzspieler gefunden wurde, dann
-                # ersetze die None-Werte in der Punkteliste des Spielers
-                pointlist_neu = []
-                for i, v in enumerate(pointlist):
-                    if v is None:
-                        pointlist_neu.append(pointlist_ersatz[i])
-                    else:
-                        pointlist_neu.append(v)
-                pointlist = np.array(pointlist_neu)
-                break
+        if cfg.punkteersetzung_elemente:
+            # Wenn die Punkteliste elementweise ersetzt werden soll
+            if cfg.punkteersetzung_elementweise:
+                print(cfg.punkteersetzung_elemente_spieler)
+                print("Noch nicht implementiert!")
+                sys.exit()
+                # TODO hier die Punkteliste des Ersatzspielers
+                # bei einzelnen Elementen ersetzen
+            # Im Fall das alle Elemente durch den gleichen Ersatzspieler ersetzt werden sollen
+            else:
+                ersatzspieler = find_replacement_players(cfg.punkteersetzung_spieler, Player)
+                for e in ersatzspieler:
+                    try:
+                        # Punkteliste des Ersatzspielers aus Datei einlesen
+                        pointlist_ersatz = npzfile[e]
+                    except KeyError:
+                        if verbose:
+                            print("Ersatzspieler nicht gefunden:", e)
+                        continue
+                    # Wenn der Ersatzspieler gefunden wurde, dann
+                    # ersetze die None-Werte in der Punkteliste des Spielers
+                    pointlist_neu = []
+                    for i, v in enumerate(pointlist):
+                        if v is None:
+                            pointlist_neu.append(pointlist_ersatz[i])
+                        else:
+                            pointlist_neu.append(v)
+                    pointlist = np.array(pointlist_neu)
+                    break
     
     # TODO Wenn immer noch None-Werte in der Punkteliste sind, nehme den
     # den Mittelwert der Punkteliste aller Spieler, die an diesem Tag
@@ -523,33 +458,6 @@ def get_player_mean(pointlist,
     return np.nanmean(PointsLost)
 
 
-# Konvertierung von Kürzeln in IDs
-# (z.B. "BER" -> 1, "HAM" -> 2, ...)
-kuerzel = cfg.id_zu_kuerzel.values()
-ids     = cfg.id_zu_kuerzel.keys()
-kuerzel_zu_id = {}
-for k, i in zip(kuerzel, ids):
-    kuerzel_zu_id[k] = i
-
-
-def city_to_id(city):
-    """
-    Konvertiert eine Stadt in eine ID, die in der Datenbank verwendet wird.
-    Wenn die Stadt eine ID ist, wird sie direkt zurueckgegeben.
-    Wenn die Stadt ein Kuerzel ist, wird es in eine ID umgewandelt.
-    Wenn die Stadt ein Name ist, wird der Name in eine ID umgewandelt.
-
-    param city: Stadtname, Kuerzel oder ID
-    return: ID der Stadt
-    :rtype: int
-    """
-    try: return int(city)
-    except ValueError:
-        if len(city) == 3:
-            return kuerzel_zu_id[city]
-        else: return cfg.stadt_zu_id[city]
-
-
 def find_replacement_players(UserValueLists, Player):
     """
     Findet Ersatzspieler fuer einen Spieler, der in der
@@ -558,7 +466,7 @@ def find_replacement_players(UserValueLists, Player):
     # Wenn der Spieler nicht gefunden wurde, dann versuche Ersatzspieler
     # in der Konfiguration zu finden
     try:
-        ersatzspieler = cfg.punkteersetzung_ersatz[Player]
+        ersatzspieler = cfg.punkteersetzung_spieler[Player]
     except KeyError:
         if verbose:
             print("Keine Ersatzspieler gefunden fuer:", Player)
@@ -582,7 +490,7 @@ if __name__ == "__main__":
     for option in options:
         ps.add_argument("-"+option[0], "--"+option, type=str, help="Set "+option)
     args = ps.parse_args()
-    
+     
     # Wenn verbose als Argument angegeben wurde, dann setze verbose auf True
     # um mehr Informationen auszugeben
     if args.verbose:
@@ -611,21 +519,19 @@ if __name__ == "__main__":
     # Anfangs- und Endtermin zum jeweiligen Tagesindex konvertieren
     begin, end = get_friday_range(date_2_index(cfg.starttermin)-1,
                                   date_2_index(cfg.endtermin))
+    
+    # Datum, an dem die Elemente gewechselt wurden in Tagesindex umwandeln
+    tdate_neue_elemente = date_2_index(cfg.datum_neue_elemente)
+    
     # Alte und neue Auswertungselemente setzen
     cfg.auswertungselemente_alt   = params if params else cfg.auswertungselemente_alt
     cfg.auswertungselemente_neu   = params if params else cfg.auswertungselemente_neu
-    cfg.auswertungselemente       = cfg.auswertungselemente_neu[:] if end >= 19351 else cfg.auswertungselemente_alt[:]        # Die Daten gibt es ab 16. September 2022
+    cfg.auswertungselemente       = cfg.auswertungselemente_neu[:] if begin >= tdate_neue_elemente else cfg.auswertungselemente_alt[:]
     
     # Die Städte können entweder als IDs, Kürzel oder Namen angegeben werden.
     if cities:
         for i, c in enumerate(cities):
-            match len(c):
-                case 1: # ID zu Stadtnamen konvertieren
-                    cities[i] = cfg.id_zu_stadt[int(c)]
-                case 3: # Kuerzel zu Stadtnamen konvertieren
-                    cities[i] = cfg.id_zu_stadt[cfg.kuerzel_zu_id[c]]
-                case _: # Stadtnamen bleiben unveraendert
-                    pass
+            cities[i] = stadtname(c, cfg)
     
     # Konfiguration der Auswertungselemente, Staedte, Tage und Teilnehmer
     cfg.auswertungsstaedte    = cities if cities else cfg.auswertungsstaedte
@@ -651,7 +557,7 @@ if __name__ == "__main__":
         # Ausgabe der Tagesindizes
         if verbose: print(i)
         
-        if i < 19351:
+        if i < tdate_neue_elemente:
             #TODO funktioniert nur, wenn alle Elemente gewaehlt wurden. Was tun bei spezifischen Elementen?
             cfg.auswertungselemente = cfg.auswertungselemente_alt[:]
             cfg.elemente_archiv     = cfg.elemente_archiv_alt[:]
@@ -692,7 +598,7 @@ if __name__ == "__main__":
         for city in cfg.auswertungsstaedte:
             
             # Stadt in ID konvertieren
-            city_id = city_to_id(city)
+            city_id = city_to_id(city, cfg)
             
             # zu ignorierende Termine der entsprechenden Stadt in IDs umwandeln
             # (wird fuer jede Stadt einmal neu berechnet)
@@ -755,7 +661,7 @@ if __name__ == "__main__":
                             faulty_dates.add(i)
                             #Ersatzspieler
                             try:
-                                ersatz_name = cfg.punkteersetzung_ersatz[Player]
+                                ersatz_name = cfg.punkteersetzung_spieler[Player]
                                 player_point_list = npzfile[ersatz_name]
                             
                             except (KeyError, ValueError):
@@ -777,14 +683,14 @@ if __name__ == "__main__":
                         faulty_dates.add(i)
                         import traceback
                         traceback.print_exc()
-                        print(FileName)
+                        print(f"Fehler beim Einlesen von '{Player}' am Tag {i}: {e}")
                         missing += 1
                         player_point_list = [np.nan] * 24
                         #sys.exit("%s nicht gefunden - kein Ersatz!" % Player)
                         # add NaN to list
                         UserValueLists[Player].append( np.nan )
                         UserValueLists[Player].append( i-1 )
-
+                        
                         # delete all files of this tdate
                         from pathlib import Path
                         for p in Path(cfg.archive_dir_name).glob("?_{i}.nz"):
@@ -939,24 +845,47 @@ if __name__ == "__main__":
 
         #print( "short term" )
         #print( short_term_data[0] )
+        # Spielerliste
+        players = [p for p, _ in long_term_data]
+
+        # Funktion, um Tabellen zu drucken
+        #------------------------------------------------------------------------#
+print ("Benoetigte Laufzeit fuer Einlesen und Tagesmitteln: {0} Sekunden"
+       .format(time.time() - startTime))
+#------------------------------------------------------------------------#
+
+# Kurzfrist- und Langfrist-Listen initialisieren
+# Typ: [(string Player, [(datetime Date, float LostPoints)])]
+long_term_data = []
+short_term_data = []
+
+for player in UserValueLists.keys():
+
+    # Die Liste enthält abwechselnd Punktzahl und das zugehoerige Datum.
+    # Wir schneiden beides nun aus um sie von einander zu trennen.
+    userpoints = np.array(UserValueLists[player][::2])
+    userdates  = UserValueLists[player][1::2]
+
+    # Die Listen bestehen nun aus mehreren Staedten hintereinander
+    # ([BER|VIE|ZUR|IBK|LEI]) und es muss noch ueber die Staedte gemittelt
+    # werden.
+    userpoints = np.nanmean( \
+        userpoints.reshape(-1, len(cfg.auswertungsstaedte)), axis=1)
+
+    # Langfrist und Kurzfristberechnungen
+    cities = len(cfg.auswertungsstaedte)
+
+    long_term_data.append((player, long_term_mean(userpoints, userdates,
+                                        cfg.auswertungsmittelungszeitraum,
+                                        cfg.datenluecken_langfrist,
+                                        cities)))
     
-    if verbose:
-        #------------------------------------------------------------------------#
-        print ("Benoetigte Laufzeit der Rechnungen ohne Grafik: {0} Sekunden"
-               .format(time.time() - startTime))
-        #------------------------------------------------------------------------#
-
-        # Grafik erstellen
-        graphics.erstelleGrafik(long_term_data, short_term_data, cfg)
-
-        #------------------------------------------------------------------------#
-        # Ausgabe der Laufzeit des Programms
-        print ("Benoetigte Laufzeit des Scriptes: {0} Sekunden"
-               .format(time.time() - startTime))
-        #------------------------------------------------------------------------#
-        
-        #print("Turniere mit fehlenden Spielern")
-        #print( missing_list )
-
-        print("Turniertage mit fehlenden Spielern / Tipps:")
-        print( sorted(faulty_dates) )
+    short_term_data.append((player, short_term_mean(userpoints, userdates,
+                                        cfg.mittelungszeitspannen,
+                                        cfg.datenluecken_kurzfrist,
+                                        cities)))
+    
+    #------------------------------------------------------------------------#
+    # Funktion, um Tabellen zu drucken
+    # Spieler, die angezeigt werden sollen
+    # Falls params gesetzt, nur diese Spieler anzeigen
