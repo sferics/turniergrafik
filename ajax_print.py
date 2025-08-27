@@ -14,7 +14,7 @@ import numpy as np
 
 import threading
 
-import config as cfg
+import config_loader as cfg
 
 """
 import logging
