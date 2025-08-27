@@ -1041,3 +1041,23 @@ for player in UserValueLists.keys():
         selected_params=cfg.auswertungselemente_neu,
                 selected_day=cfg.auswertungstage
     )
+    
+    #------------------------------------------------------------------------#
+    print ("Benoetigte Laufzeit der Rechnungen ohne Grafik: {0} Sekunden"
+           .format(time.time() - startTime))
+    #------------------------------------------------------------------------#
+
+    # Grafik erstellen
+    graphics.erstelleGrafik(long_term_data, short_term_data, cfg)
+
+    #------------------------------------------------------------------------#
+    # Ausgabe der Laufzeit des Programms
+    print ("Benoetigte Laufzeit des Scriptes: {0} Sekunden"
+           .format(time.time() - startTime))
+    #------------------------------------------------------------------------#
+    
+    #print("Turniere mit fehlenden Spielern")
+    #print( missing_list )
+
+    print("Turniertage mit fehlenden Spielern / Tipps:")
+    print( sorted(faulty_dates) )
