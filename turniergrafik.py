@@ -889,3 +889,155 @@ for player in UserValueLists.keys():
     # Funktion, um Tabellen zu drucken
     # Spieler, die angezeigt werden sollen
     # Falls params gesetzt, nur diese Spieler anzeigen
+    def drucke_tabelle_png_mit_summe_und_diff_text(
+        data, title, langfrist=False,
+        filename="tabelle.png",
+        sum_indices=[1,4],
+        selected_cities=None,
+        selected_params=None,
+        selected_day=None):
+        """
+        Druckt Tabelle in der Konsole UND speichert sie als PNG.
+        Zeigt als Text unterhalb der Tabelle:
+        - Summe nur der ausgewählten Spieler,
+        - Differenz und Quotient der Summen der beiden Spieler.
+        - Zusätzlich die gewählten Städte und Parameter
+        """
+
+        print("\n" + title)
+        if not data:
+            print("   (Keine Daten vorhanden)")
+            return
+
+        # Spielerliste
+        players = [p for p, _ in data]
+
+        # Alle Datumswerte sammeln
+        all_dates = sorted({d for _, lst in data for d, _ in lst})
+        if not all_dates:
+            print("   (Keine Datumswerte gefunden)")
+            return
+
+        # Breiten für Konsolenausgabe
+        datum_width = max(
+            15,
+            max(len(index_2_date(d).strftime("%d.%m.%Y") if not isinstance(d, str) else str(d)) for d in all_dates)
+        )
+        points_width = 18
+
+        # Konsolen-Kopfzeile
+        print(f"{'Datum':<{datum_width}}", end="")
+        for player in players:
+            print(f"{player:>{points_width}}", end=" ")
+        print()
+        print(" " * datum_width, end="")
+        for _ in players:
+            print("-" * points_width, end=" ")
+        print()
+
+        # Summen vorbereiten für ausgewählte Spieler
+        sums = {players[i]: 0 for i in sum_indices if i < len(players)}
+
+        # Konsolen-Ausgabe Zeilen
+        for d in all_dates:
+            date_str = d if isinstance(d, str) else (
+                index_2_date(d).strftime("%b %Y") if langfrist else index_2_date(d).strftime("%d.%m.%Y")
+            )
+            print(f"{date_str:<{datum_width}}", end="")
+            for i, player in enumerate(players):
+                lst = next(lst for p, lst in data if p == player)
+                points = next((p for date, p in lst if date == d), float('nan'))
+                if i in sum_indices and not np.isnan(points):
+                    sums[player] += points
+                print(f"{np.round(points,1) if not np.isnan(points) else 'NaN':>{points_width}}", end=" ")
+            print()
+        print("\n")  # Abstand vor Summentext
+
+        # -----------------------------
+        # PNG-Ausgabe vorbereiten
+        table_data = []
+        for d in all_dates:
+            date_str = d if isinstance(d, str) else (
+                index_2_date(d).strftime("%b %Y") if langfrist else index_2_date(d).strftime("%d.%m.%Y")
+            )
+            row = [date_str]
+            for player in players:
+                lst = next(lst for p, lst in data if p == player)
+                points = next((p for date, p in lst if date == d), float('nan'))
+                row.append(np.round(points,1) if not np.isnan(points) else "NaN")
+            table_data.append(row)
+
+        col_labels = ["Datum"] + players
+
+        fig, ax = plt.subplots(figsize=(len(col_labels)*2, (len(all_dates)+1)*0.6))
+        ax.axis('off')
+
+        # Tabelle plotten
+        table = ax.table(cellText=table_data,
+                         colLabels=col_labels,
+                         cellLoc='center',
+                         loc='center')
+
+        table.auto_set_font_size(False)
+        table.set_fontsize(10)
+        table.auto_set_column_width(col=list(range(len(col_labels))))
+
+        # Differenz und Quotient aus Summen
+        if len(sum_indices) >= 2 and all(i < len(players) for i in sum_indices[:2]):
+            p1_sum = sums[players[sum_indices[0]]]
+            p2_sum = sums[players[sum_indices[1]]]
+            diff_sum = p1_sum - p2_sum
+            quot_sum = p1_sum / p2_sum if p2_sum != 0 else np.nan
+        else:
+            diff_sum = quot_sum = np.nan
+
+        # Summentext inkl. Differenz und Quotient + Städte + Parameter
+        city_text = f"Städte: {', '.join(selected_cities)}" if selected_cities else ""
+        param_text = f"Parameter: {', '.join(selected_params)}" if selected_params else ""
+        day_text = f"Tag: {', '.join(selected_day)}" if selected_day else ""
+
+        sum_text = " | ".join(filter(None, [
+            "Summen: " + ", ".join(f"{player} = {np.round(sums[player],1)}" for player in sums),
+            f"Differenz (Summe(MSwr-EZ-MOS) - Summe(DWD-EZ-MOS)) = {np.round(diff_sum,1) if not np.isnan(diff_sum) else 'NaN'}",
+            f"Quotient = {np.round(quot_sum,2) if not np.isnan(quot_sum) else 'NaN'}",
+            city_text,
+            param_text
+        ]))
+
+        plt.figtext(0.1, 0.01, sum_text, fontsize=10, ha='left')
+
+        # Titel
+        full_title = title
+        if selected_cities:
+            full_title += " | Städte: " + ", ".join(selected_cities)
+        if selected_params:
+            full_title += " | Parameter: " + ", ".join(selected_params)
+        if selected_day:
+            full_title += " | Tage: " + ", ".join(selected_day)
+        plt.title(full_title)
+
+        plt.savefig(filename, bbox_inches='tight')
+        plt.close()
+
+
+    # -----------------------------
+    # Funktionsaufrufe für Kurz- und Langfrist
+    drucke_tabelle_png_mit_summe_und_diff_text(
+        short_term_data,
+        "rechte Grafik Tabelle",
+        langfrist=False,
+        filename="kurzfrist.png",
+        selected_cities=cfg.auswertungsstaedte,
+        selected_params=cfg.auswertungselemente_neu,
+        selected_day=cfg.auswertungstage
+    )
+
+    drucke_tabelle_png_mit_summe_und_diff_text(
+        long_term_data,
+        "linke Grafik Tabelle",
+        langfrist=True,
+        filename="langfrist.png",
+        selected_cities=cfg.auswertungsstaedte,
+        selected_params=cfg.auswertungselemente_neu,
+                selected_day=cfg.auswertungstage
+    )
