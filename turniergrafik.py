@@ -991,7 +991,17 @@ for player in UserValueLists.keys():
             param_text,
             day_text
         ]))
+        # -----------------------------
+        # Dynamischer Dateiname ohne re, inkl. Tag
+        def make_safe_name(parts):
+            safe_parts = []
+            for p in parts:
+                p = p.replace(" ", "_")  # Leerzeichen ersetzen
+                p = "".join(c for c in p if c.isalnum() or c == "_")  # nur alphanumerisch + Unterstrich
+                safe_parts.append(p)
+            return "_".join(safe_parts)
 
+        name_parts = []
         # -----------------------------
         # PNG-Ausgabe
         table_data = []
