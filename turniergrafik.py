@@ -1002,6 +1002,20 @@ for player in UserValueLists.keys():
             return "_".join(safe_parts)
 
         name_parts = []
+        if selected_cities:
+            name_parts += selected_cities
+        if selected_params:
+            name_parts += selected_params
+        if selected_day:
+            name_parts += selected_day  # Tag hinzufügen
+
+        base_name = filename.replace(".png","")
+        if name_parts:
+            dynamic_filename = f"{base_name}_{make_safe_name(name_parts)}.png"
+        else:
+            dynamic_filename = filename
+        dynamic_txt_filename = dynamic_filename.replace(".png", ".txt")
+                
         # -----------------------------
         # PNG-Ausgabe
         table_data = []
