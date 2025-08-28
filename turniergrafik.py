@@ -911,9 +911,6 @@ for player in UserValueLists.keys():
     # Spieler, die angezeigt werden sollen
     # Falls params gesetzt, nur diese Spieler anzeigen
     
-
-
-
     def drucke_tabelle_png_mit_summe_und_diff_text(
             data, title, langfrist=False,
             filename="tabelle.png",
