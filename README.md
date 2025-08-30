@@ -79,10 +79,11 @@ bzw. requirements_conda.txt geöffnet werden und der komplette
 Text kopiert werden. Dann wird folgender Befehl ausgefuehrt:
 ```bash
 # Für pip
-pip install alle Module
+pip install Module
 # Für conda
 conda install -forge alle Module
 ```
+
 # Probleme mit mariadb
 Bei der Installation der Module kann mariadb eine Fehlermeldung
 auslösen. Mit which mariadb_config nachschauen, wo mariadb liegt.
