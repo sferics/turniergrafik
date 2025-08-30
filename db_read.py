@@ -23,6 +23,10 @@ requests_log.propagate = True
 # zum Profilen:
 # python -m cProfile db_read.py
 
+from global_functions import date_2_index
+# Datum der neuen Elemente in der Datenbank als Tag-Index
+tdate_neue_elemente = date_2_index(cfg.datum_neue_elemente)
+
 
 #----------------------------------------------------------------------------#
 import time
