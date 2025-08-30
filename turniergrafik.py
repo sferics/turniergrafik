@@ -1064,16 +1064,16 @@ for player in UserValueLists.keys():
 
     # -----------------------------
     # Beispielaufrufe für Kurz- und Langfrist-Daten
-    drucke_tabelle_png_mit_summe_und_diff_text(
-        short_term_data,
-        "Rechte Grafik Tabelle",
-        langfrist=False,
-        filename="kurzfrist.png",
-        sum_indices=[1,4],
-        selected_cities=cfg.auswertungsstaedte,
-        selected_params=cfg.auswertungselemente_neu,
-        selected_day=cfg.auswertungstage
-    )
+   # drucke_tabelle_png_mit_summe_und_diff_text(
+   #     short_term_data,
+   #     "Rechte Grafik Tabelle",
+   #     langfrist=False,
+   #     filename="kurzfrist.png",
+   #     sum_indices=[1,4],
+   #     selected_cities=cfg.auswertungsstaedte,
+   #     selected_params=cfg.auswertungselemente_neu,
+   #     selected_day=cfg.auswertungstage
+   # )
 
     drucke_tabelle_png_mit_summe_und_diff_text(
         long_term_data,
