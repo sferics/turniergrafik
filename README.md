@@ -175,32 +175,12 @@ In 'config.py' bekommt jeder Teilnehmer einen Farbcode und eine Linieneigenschaf
 
 ## jeden Parameter einzeln anzeigen lassen
 
-Wenn man jeden einzelnen Parameter analysieren will, funktioniert es analog mit der Rekursion.
+Wenn man jeden einzelnen Parameter analysieren will, muss man jeden einzelnen Parameter in python turniergrafik.py -v -p Parameter eingeben.  
 
 ## Abzisse anpassen
 Die Werte auf der Abzisse können ebenso in 'graphics.py'. Dazu muss "%Y%m%d" zu "%d%b%y" umgewandelt werden. Im linken Plot sind die Werte konsistent, rechts noch nicht ganz. Vermutlich muss dasselbe nochmal für die rechte Seite durchgeführt werden.
 
-# Tabelle Quotientendifferenzen
 
-Ich habe so wie Klaus selber eine Tabelle erstellt. Hierbei wird dd12 in allen 5 Städten in den Jahren 2023 und 2024 ausgewertet.
-
-| Städte   | DWD-EZ-MOS 22.12.2023 | DWD-EZ-MOS 20.12.2024 | MSwr-EZ-MOS 22.12.2023 | MSwr-EZ-MOS 20.12.2024 | Diff. 2023 | Diff 2024|
-|----------|-----------------------|-----------------------|------------------------|------------------------|------------|----------|
-| alle     | 1.91                  | 1.9                   | 3.35                   | 3.32                   | -1.44      | -1.42    |
-| Berlin   | 1.29                  | 1.24                  | 1.22                   | 1.22                   | 0.07       | 0.02     |
-| Wien     | 1.35                  | 1.39                  | 7.22                   | 7.3                    | -5.87      | -5.91    |  !!!!
-| Zürich   | 1.66                  | 1.7                   | 1.74                   | 1.64                   | -0.08      | 0.06     |
-| Innsbruck| 4.0                   | 4.0                   | 5.53                   | 5.34                   | -1.53      | -1.34    |
-| Leipzig  | 1.26                  | 1.01                  | 1.24                   | 1.12                   | 0.02       | -0.11    |
-
-### Quotienten Modell im Jahr 2023/Modell im Jahr 2023 bzw. Modell im Jahr 2024/Modell im Jahr 2024
-
-alle: 0,57 und 0,57
-Berlin: 1,06 und 1,02
-Wien: 0,19 und 0,19
-Zürich: 0,95 und 1,04
-Innsbruck: 0,72 und 0,75
-Leipzig: 1,02 und 0,9
 
 Nur in Berlin war MSwr-EZ-MOS in beiden Jahren, in Zürich im Jahr 2024 und in Leipzig im Jahr 2023 leicht besser als DWD-EZ-MOS. 
 In allen anderen Fällen war DWD-EZ-MOS deutlich besser. Vor allem Wien sticht mit der fünffachen Anzahl an gemittelten 
