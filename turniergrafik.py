@@ -876,3 +876,7 @@ if __name__ == "__main__":
 
     print("Turniertage mit fehlenden Spielern / Tipps:")
     print( sorted(faulty_dates) )
+
+ 
+
+
