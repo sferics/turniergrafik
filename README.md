@@ -178,11 +178,7 @@ In 'config.py' bekommt jeder Teilnehmer einen Farbcode und eine Linieneigenschaf
 Wenn man jeden einzelnen Parameter analysieren will, muss man jeden einzelnen Parameter in python turniergrafik.py -v -p Parameter eingeben.  
 
 ## Abzisse anpassen
-Die Werte auf der Abzisse können ebenso in 'graphics.py'. Dazu muss "%Y%m%d" zu "%d%b%y" umgewandelt werden. Im linken Plot sind die Werte konsistent, rechts noch nicht ganz. Vermutlich muss dasselbe nochmal für die rechte Seite durchgeführt werden.
+Die Werte auf der Abzisse können ebenso in 'graphics.py'. Dazu muss "%Y%m%d" zu "%d%b%y" umgewandelt werden. Im linken Plot sind die Werte konsistent, rechts mittlerweile auch. 
 
 
-
-Nur in Berlin war MSwr-EZ-MOS in beiden Jahren, in Zürich im Jahr 2024 und in Leipzig im Jahr 2023 leicht besser als DWD-EZ-MOS. 
-In allen anderen Fällen war DWD-EZ-MOS deutlich besser. Vor allem Wien sticht mit der fünffachen Anzahl an gemittelten 
-Fehlerpunkten besonders hervor.
 
