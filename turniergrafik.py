@@ -971,7 +971,7 @@ for player in UserValueLists.keys():
         print("\n")
 
         # Differenz & Quotient
-        if len(sum_indices) >= 2 and all(i < len(players) for i in sum_indices[:2]):
+        if len(sum_indices) >= 2:
             p1_sum = sums[players[sum_indices[0]]]
             p2_sum = sums[players[sum_indices[1]]]
             diff_sum = p1_sum - p2_sum
