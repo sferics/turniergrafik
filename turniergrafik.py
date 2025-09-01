@@ -915,9 +915,9 @@ for player in UserValueLists.keys():
             data, title, langfrist=False,
             filename="tabelle.png",
             sum_indices=[1,4],
-            selected_cities=None,
-            selected_params=None,
-            selected_day=None):
+            selected_cities,
+            selected_params,
+            selected_day):
         """
         Druckt Tabelle in der Konsole UND speichert sie als PNG UND als TXT.
         Zeigt als Text unterhalb der Tabelle:
