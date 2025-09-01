@@ -950,9 +950,12 @@ for player in UserValueLists.keys():
             print("-" * points_width, end=" ")
         print()
 
+        # Nur die Spieler auswählen, die in sum_indices stehen
+        players = [players[i] for i in sum_indices if i < len(players)]
+
         # Summen vorbereiten
         sums = {players[i]: 0 for i in sum_indices if i < len(players)}
-
+        # players[i] sollen nur die EZ-MOSse sein
         # Zeilen ausgeben
         for d in all_dates:
             date_obj = index_2_date(d)
