@@ -975,7 +975,7 @@ for player in UserValueLists.keys():
             p1_sum = sums[players[sum_indices[0]]]
             p2_sum = sums[players[sum_indices[1]]]
             diff_sum = p1_sum - p2_sum
-            quot_sum = p1_sum / p2_sum if p2_sum != 0 else np.nan
+            quot_sum = p1_sum / p2_sum * 100 if p2_sum != 0 else np.nan
         else:
             diff_sum = quot_sum = np.nan
 
@@ -986,7 +986,7 @@ for player in UserValueLists.keys():
         sum_text = " | ".join(filter(None, [
             "Summen: " + ", ".join(f"{player} = {np.round(sums[player],1)}" for player in sums),
             f"Differenz = {np.round(diff_sum,1) if not np.isnan(diff_sum) else 'NaN'}",
-            f"Quotient = {np.round(quot_sum,2) if not np.isnan(quot_sum) else 'NaN'}",
+            f"Quotient = {quot_sum*100:.1f}%" if not np.isnan(quot_sum) else 'Quotient = NaN',
             city_text,
             param_text,
             day_text
