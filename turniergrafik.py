@@ -913,7 +913,7 @@ for player in UserValueLists.keys():
     
     def drucke_tabelle_png_mit_summe_und_diff_text(
             data, title, langfrist=False,
-            filename="tabelle.png",
+            filename,
             sum_indices=[1,4],
             selected_cities,
             selected_params,
