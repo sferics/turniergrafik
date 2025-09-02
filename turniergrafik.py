@@ -907,186 +907,49 @@ for player in UserValueLists.keys():
     print("Turniertage mit fehlenden Spielern / Tipps:")
     print( sorted(faulty_dates) )
 
+# Alle txt-Dateien mit 2025-09-02_*years.txt einlesen. Mit glob wird jede txt-Datei dieser Form gefunden.
+files = glob.glob("2025-09-02_*years.txt") 
+results = []
 
-    #------------------------------------------------------------------------#
-    # Funktion, um Tabellen zu drucken
-    # Spieler, die angezeigt werden sollen
-    # Falls params gesetzt, nur diese Spieler anzeigen
+for f in files:
+    df = pd.read_csv(f, sep=r"\s+", engine="python", index_col=0)
+    df = df.T.reset_index().rename(columns={"index":"Datum"})              # Datum soll raus.
     
-    def drucke_tabelle_png_mit_summe_und_diff_text(
-            data, title, langfrist=False,
-            filename,
-            sum_indices=[1,4],
-            selected_cities,
-            selected_params,
-            selected_day):
-        """
-        Druckt Tabelle in der Konsole UND speichert sie als PNG UND als TXT.
-        Zeigt als Text unterhalb der Tabelle:
-        - Summe nur der ausgewählten Spieler,
-        - Differenz und Quotient der Summen der beiden Spieler.
-        - Zusätzlich die gewählten Städte, Parameter und Tage
-        """
+    # Nur die gewünschten Modelle
+    df_sel = df[["Datum", "MSwr-EZ-MOS", "DWD-EZ-MOS"]].copy()
+    
+    
+    # Summen, Differenz, Quotient
+    df_sum = df_sel[["MSwr-EZ-MOS", "DWD-EZ-MOS"]].sum().to_frame().T       # .T heißt transponieren.
+    df_sum["Differenz"] = df_sum["MSwr-EZ-MOS"] - df_sum["DWD-EZ-MOS"]
+    df_sum["Quotient"] = df_sum["MSwr-EZ-MOS"] / df_sum["DWD-EZ-MOS"] * 100
+    
+    # Zusatzinfo
+    var_name = os.path.basename(f).split("_")[3]       # Trennzeichen an der Position 4 bei den später gespeicherten Dateien
+    city = os.path.basename(f).split("_")[2]           # Trennzeichen an der Position 3 bei den später gespeicherten Dateien
+    df_sum["Variable"] = var_name
+    df_sum["Stadt"] = city
+    
+    # Spalten neu anordnen: Stadt, Tage, Variable zuerst
+    # Tage aus cfg 
+    tage_str = ", ".join(cfg.auswertungstage) if isinstance(cfg.auswertungstage, list) else cfg.auswertungstage
+    df_sum["Tage"] = tage_str
 
-        print("\n" + title)
-        if not data:
-            print("   (Keine Daten vorhanden)")
-            return
+    # Spalten neu anordnen
+    cols_order = ["Stadt", "Tage", "Variable", "MSwr-EZ-MOS", "DWD-EZ-MOS", "Diff", "Quo"]
+    df_sum = df_sum[cols_order]
+    results.append(df_sum)
 
-        players = [p for p, _ in data]
-        all_dates = sorted({d for _, lst in data for d, _ in lst})
-        if not all_dates:
-            print("   (Keine Datumswerte gefunden)")
-            return
+# Alles zusammenfassen
+df_final = pd.concat(results, ignore_index=True)
 
-        datum_width = max(15, max(len(index_2_date(d).strftime("%d.%m.%Y")) for d in all_dates))
-        points_width = 18
+# Nach der ersten Spalte "Stadt" alphabetisch sortieren
+df_final = df_final.sort_values(by="Stadt").reset_index(drop=True)
 
-        # Konsolen-Kopf
-        print(f"{'Datum':<{datum_width}}", end="")
-        for player in players:
-            print(f"{player:>{points_width}}", end=" ")
-        print()
-        print(" " * datum_width, end="")
-        for _ in players:
-            print("-" * points_width, end=" ")
-        print()
+# TXT speichern
+df_final.to_csv("grafik_werte.txt", index=False, sep=" ")
 
-        # Nur die Spieler auswählen, die in sum_indices stehen
-        players = [players[i] for i in sum_indices if i < len(players)]
+# Excel speichern
+df_final.to_excel("grafik_werte.xlsx", index=False)
 
-        # Summen vorbereiten
-        sums = {players[i]: 0 for i in sum_indices if i < len(players)}
-        # players[i] sollen nur die EZ-MOSse sein
-        # Zeilen ausgeben
-        for d in all_dates:
-            date_obj = index_2_date(d)
-            date_str = date_obj.strftime("%b %Y") if langfrist else date_obj.strftime("%d.%m.%Y")
-            print(f"{date_str:<{datum_width}}", end="")
-            for i, player in enumerate(players):
-                lst = next(lst for p, lst in data if p == player)
-                points = next((p for date, p in lst if date == d), float('nan'))
-                if i in sum_indices and not np.isnan(points):
-                    sums[player] += points
-                print(f"{np.round(points,1) if not np.isnan(points) else 'NaN':>{points_width}}", end=" ")
-            print()
-        print("\n")
-
-        # Differenz & Quotient
-        if len(sum_indices) >= 2:
-            p1_sum = sums[players[sum_indices[0]]]
-            p2_sum = sums[players[sum_indices[1]]]
-            diff_sum = p1_sum - p2_sum
-            quot_sum = p1_sum / p2_sum * 100 if p2_sum != 0 else np.nan
-        else:
-            diff_sum = quot_sum = np.nan
-
-        city_text = f"Städte: {', '.join(selected_cities)}" if selected_cities else ""
-        param_text = f"Parameter: {', '.join(selected_params)}" if selected_params else ""
-        day_text = f"Tag: {', '.join(selected_day)}" if selected_day else ""
-
-        sum_text = " | ".join(filter(None, [
-            "Summen: " + ", ".join(f"{player} = {np.round(sums[player],1)}" for player in sums),
-            f"Differenz = {np.round(diff_sum,1) if not np.isnan(diff_sum) else 'NaN'}",
-            f"Quotient = {quot_sum*100:.1f}%" if not np.isnan(quot_sum) else 'Quotient = NaN',
-            city_text,
-            param_text,
-            day_text
-        ]))
-        # -----------------------------
-        # Dynamischer Dateiname ohne re, inkl. Tag
-        def make_safe_name(parts):
-            safe_parts = []
-            for p in parts:
-                p = p.replace(" ", "_")  # Leerzeichen ersetzen
-                p = "".join(c for c in p if c.isalnum() or c == "_")  # nur alphanumerisch + Unterstrich
-                safe_parts.append(p)
-            return "_".join(safe_parts)
-
-        name_parts = []
-        if selected_cities:
-            name_parts += selected_cities
-        if selected_params:
-            name_parts += selected_params
-        if selected_day:
-            name_parts += selected_day  # Tag hinzufügen
-
-        base_name = filename.replace(".png","")
-        if name_parts:
-            dynamic_filename = f"{base_name}_{make_safe_name(name_parts)}.png"
-        else:
-            dynamic_filename = filename
-        dynamic_txt_filename = dynamic_filename.replace(".png", ".txt")
-                
-        # -----------------------------
-        # PNG-Ausgabe
-        table_data = []
-        for d in all_dates:
-            date_obj = index_2_date(d)
-            date_str = date_obj.strftime("%b %Y") if langfrist else date_obj.strftime("%d.%m.%Y")
-            row = [date_str]
-            for player in players:
-                lst = next(lst for p, lst in data if p == player)
-                points = next((p for date, p in lst if date == d), float('nan'))
-                row.append(np.round(points,1) if not np.isnan(points) else "NaN")
-            table_data.append(row)
-
-        col_labels = ["Datum"] + players
-        fig, ax = plt.subplots(figsize=(len(col_labels)*2, (len(all_dates)+1)*0.6))
-        ax.axis('off')
-        table = ax.table(cellText=table_data,
-                         colLabels=col_labels,
-                         cellLoc='center',
-                         loc='center')
-        table.auto_set_font_size(False)
-        table.set_fontsize(10)
-        table.auto_set_column_width(col=list(range(len(col_labels))))
-        plt.figtext(0.1, 0.01, sum_text, fontsize=10, ha='left')
-        plt.title(title)
-        plt.savefig(filename, bbox_inches='tight')
-        plt.close()
-
-        # -----------------------------
-        # TXT-Ausgabe
-        txt_filename = filename.replace(".png", ".txt")
-        with open(txt_filename, "w") as f:
-            f.write(f"{'Datum':<{datum_width}}")
-            for player in players:
-                f.write(f"{player:>{points_width}} ")
-            f.write("\n")
-            f.write(" " * datum_width + "".join("-"*points_width + " " for _ in players) + "\n")
-            for d in all_dates:
-                date_obj = index_2_date(d)
-                date_str = date_obj.strftime("%b %Y") if langfrist else date_obj.strftime("%d.%m.%Y")
-                f.write(f"{date_str:<{datum_width}}")
-                for player in players:
-                    lst = next(lst for p, lst in data if p == player)
-                    points = next((p for date, p in lst if date == d), float('nan'))
-                    f.write(f"{np.round(points,1) if not np.isnan(points) else 'NaN':>{points_width}} ")
-                f.write("\n")
-            f.write("\n" + sum_text + "\n")
-
-
-    # -----------------------------
-    # Beispielaufrufe für Kurz- und Langfrist-Daten
-   # drucke_tabelle_png_mit_summe_und_diff_text(
-   #     short_term_data,
-   #     "Rechte Grafik Tabelle",
-   #     langfrist=False,
-   #     filename="kurzfrist.png",
-   #     sum_indices=[1,4],
-   #     selected_cities=cfg.auswertungsstaedte,
-   #     selected_params=cfg.auswertungselemente_neu,
-   #     selected_day=cfg.auswertungstage
-   # )
-
-    drucke_tabelle_png_mit_summe_und_diff_text(
-        long_term_data,
-        "Linke Grafik Tabelle",
-        langfrist=True,
-        filename="langfrist.png",
-        sum_indices=[1,4],
-        selected_cities=cfg.auswertungsstaedte,
-        selected_params=cfg.auswertungselemente_neu,
-        selected_day=cfg.auswertungstage
-    )
+print("Dateien sind so gespeichert gespeichert: grafik_werte.txt und grafik_werte.xlsx")
