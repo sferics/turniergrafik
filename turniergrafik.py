@@ -35,6 +35,8 @@ import graphics
 import config_loader as cfg
 
 from global_functions import index_2_year, date_2_index, index_2_date, get_friday_range, stadtname, city_to_id
+import pandas as pd
+import glob
 
 #----------------------------------------------------------------------------#
 # Setzen des Startzeitpuntes zur Messung der Laufzeit des Programms
