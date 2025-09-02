@@ -86,7 +86,7 @@ teilnehmer:
 # Sektion für die spezifische Auswertung
 auswertung:
   starttermin:                          02.09.2022
-  endtermin:                            22.08.2025
+  endtermin:                            29.08.2025
   auswertungstage:                      [Sa, So]
   auswertungsteilnehmer:                [MSwr-MOS-Mix, MSwr-EZ-MOS, MSwr-GFS-MOS, DWD-MOS-Mix, DWD-EZ-MOS, DWD-ICON-MOS, MOS-Mix]
     #auswertungsteilnehmer:                [DWD-EZ-MOS, MSwr-EZ-MOS]
