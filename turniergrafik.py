@@ -267,7 +267,7 @@ def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
         
         # Datum fuer Mittelungszeitraum ermitteln
         if len(points) - i <= mean_time_span:
-            end_date = max(dates)
+            end_date = dates[-1]
         else:
             end_date = dates[ ii * mean_time_span * cities ] 
             ii += 1
