@@ -25,6 +25,12 @@ staedte:
     3: ZUR
     4: IBK
     5: LEI
+  stationen:
+    1: [10381, 10385]
+    2: [11035, 11040]
+    3: [6660, 6670]
+    4: [11120, 11320]
+    5: [10469, 10471]
 
 # Sektion für Archiv und URL
 archiv_und_url:
@@ -54,17 +60,27 @@ termine:
 # Sektion für Teilnehmer
 teilnehmer:
   teilnehmerumbenennung:
-    MM-UKMO-MOS:        Eugenia
-    MM-MOS:             EmJay
-    MM-MOS-Mix:         Enova
-    MM-EZ-MOS:          Echinacin
-    MM-GFS-MOS:         Egeria
-    DWD-ICON-MOS:       GME-MOS
-    DWD-EZ-MOS:         EZ-MOS
-    DWD-MOS-Mix:        DWD-MOSMixEZGME
-    MSwr-GFS-MOS:       MeteoService-GFS-MOS
-    MSwr-MOS-Mix:       MSwr-MOSMixGFSHIR
-    MOS-Mix:            GRP_MOS
+    #MM-UKMO-MOS:        Eugenia
+    #MM-MOS:             EmJay
+    #MM-MOS-Mix:         Enova
+    #MM-EZ-MOS:          Echinacin
+    #MM-GFS-MOS:         Egeria
+    #DWD-ICON-MOS:       GME-MOS
+    #DWD-EZ-MOS:         EZ-MOS
+    #DWD-MOS-Mix:        DWD-MOSMixEZGME
+    #MSwr-GFS-MOS:       MeteoService-GFS-MOS
+    #MSwr-MOS-Mix:       MSwr-MOSMixGFSHIR
+    Eugenia:              MM-UKMO-MOS
+    EmJay:                MM-MOS
+    Enova:                MM-MOS-Mix
+    Echinacin:            MM-EZ-MOS
+    Egeria:               MM-GFS-MOS
+    GME-MOS:              DWD-ICON-MOS
+    EZ-MOS:               DWD-EZ-MOS
+    DWD-MOSMixEZGME:      DWD-MOS-Mix
+    MeteoService-GFS-MOS: MSwr-GFS-MOS
+    MSwr-MOSMixGFSHIR:    MSwr-MOS-Mix
+    MOS-Mix:              GRP_MOS
   mos_namen_starttermine:
     DWD-ICON-MOS:       03.03.2000
     DWD-EZ-MOS:         04.06.2004

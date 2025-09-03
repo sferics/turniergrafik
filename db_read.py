@@ -115,14 +115,14 @@ def CalcDay(InDate):
 #----------------------------------------------------------------------------#
 
 class db:
-    def __init__(self):
+    def __init__(self, dictionary=False):
         """
         Initialisierung der Klasse, die die Datenbankverbindung herstellt
         """
         # Verbindung zur Datenbank herstellen
         self.con = create_database_connection(cfg.username, cfg.password, cfg.host, cfg.database)
         # Cursor-Objekt erstellen
-        self.cur = self.con.cursor()
+        self.cur = self.con.cursor(dictionary=dictionary)
         
         # Pruefen, ob die Verbindung erfolgreich war
         if self.con is None:
@@ -147,21 +147,26 @@ class db:
         # Parameternamen und Param-IDs vertauschen 
         self.param_names_old = dict((v, k) for k, v in self.param_ids_old.items())
 
-    def get_user_ids(self, usernames):
+    def get_user_ids(self, usernames, cfg=cfg):
         """
         Gibt die User-IDs zu den Usernamen zurueck
         """
         user_ids = {}
         # Pruefen, ob die Usernamen eine Liste oder ein Tupel sind
         for username in usernames:
-            # SQL-Abfrage, um die User-ID zu erhalten
-            sql = f"SELECT id FROM `wp_users` WHERE user_login = '{username}' OR display_name = '{username}'"
+            if username in cfg.teilnehmerumbenennung:
+                username_new = cfg.teilnehmerumbenennung[username]
+                # SQL-Abfrage, um die User-ID zu erhalten
+                sql = f"SELECT id FROM `wp_users` WHERE user_login = '{username_new}' OR display_name = '{username_new}'"
+            else:
+                # SQL-Abfrage, um die User-ID zu erhalten
+                sql = f"SELECT id FROM `wp_users` WHERE user_login = '{username}' OR display_name = '{username}'"
             # Ausfuehren der SQL-Abfrage
             self.cur.execute(sql)
             try:
                 # Einlesen der User-ID aus der Datenbank
                 user_ids[username] = self.cur.fetchone()[0]
-            # Falls ein Fehler auftritt, wird der User nicht in die Liste aufgenommen
+            # Falls ein Fehler auftritt, wird der Username uebersprungen
             except:
                 continue
         # Pruefen, ob die User-IDs erfolgreich aus der Datenbank gelesen wurden

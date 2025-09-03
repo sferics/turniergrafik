@@ -1,5 +1,5 @@
 # Globale Funktionen, die in mehreren Modulen verwendet werden
-
+from copy import copy
 from datetime import datetime as dt, date, timedelta
 
 def date_2_index(input_date):
@@ -106,6 +106,30 @@ def get_friday_range(begin, end):
         # end+1, da range exklusive dem Ende zaehlt
         #return begin+1, end+1
         return begin, end
+
+    else:
+        raise ValueError("Der Start- oder End-Wert sind fehlerhaft.")
+
+def get_list_of_weekends(begin, end):
+    """
+    Erstellt eine Liste aller Wochenend-Tage (Samstag und Sonntag)
+    in einem gegebenen Bereich von Tagesindizes.
+
+    :param begin: Start-Index (der wievielte Tag, seit dem 02.01.1970)
+    :param end: End-Index (der wievielte Tag, seit dem 02.01.1970)
+
+    :return: Liste mit allen Wochenend-Tagen im Bereich
+    """
+    if begin > 0 and end > begin:
+
+        weekends = []
+
+        for day in range(begin, end + 7):
+            # Wochentags-Indizes: Monday := 0, Sunday := 6
+            if index_2_date(day).weekday() in [5, 6]:
+                weekends.append(day+1) # +1, da die Tage in der DB 1-basiert sind
+
+        return weekends
 
     else:
         raise ValueError("Der Start- oder End-Wert sind fehlerhaft.")
