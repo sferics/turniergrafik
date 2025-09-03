@@ -921,8 +921,8 @@ for f in files:
     
     # Summen, Differenz, Quotient
     df_sum = df_sel[["MSwr-EZ-MOS", "DWD-EZ-MOS"]].sum().to_frame().T       # .T heißt transponieren.
-    df_sum["Differenz"] = df_sum["MSwr-EZ-MOS"] - df_sum["DWD-EZ-MOS"]
-    df_sum["Quotient"] = df_sum["MSwr-EZ-MOS"] / df_sum["DWD-EZ-MOS"] * 100
+    df_sum["Diff"] = df_sum["MSwr-EZ-MOS"] - df_sum["DWD-EZ-MOS"]
+    df_sum["Quo in %"] = df_sum["MSwr-EZ-MOS"] / df_sum["DWD-EZ-MOS"] * 100
     
     # Zusatzinfo
     var_name = os.path.basename(f).split("_")[3]       # Trennzeichen an der Position 4 bei den später gespeicherten Dateien
