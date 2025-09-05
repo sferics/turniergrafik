@@ -163,27 +163,9 @@ for city in combined_data:
                         counts[(betdate, param, obs_text)] += 1
                     else:
                         counts[(betdate, param, obs_text)] += 0
-                        # optional, nur Klarheit # ------------------- Hauptprogramm -------------------
-import numpy as np
-import polars as pl
-from collections import defaultdict
-from itertools import product
-import yaml
+                        # optional, nur Klarheit 
 
-# ------------------- YAML Config laden -------------------
-def _load_yaml_data(filepaths=['tabelle_obs_for.yml']):
-    config_data = {}
-    for filepath in filepaths:
-        try:
-            with open(filepath, 'r', encoding='utf-8') as f:
-                data = yaml.safe_load(f)
-                if data:
-                    config_data.update(data)
-        except FileNotFoundError:
-            raise FileNotFoundError(f"Fehler: Datei '{filepath}' nicht gefunden.")
-        except yaml.YAMLError as e:
-            raise yaml.YAMLError(f"Fehler beim Parsen der YAML-Datei '{filepath}': {e}")
-    return config_data
+# ------------------- Hauptprogramm -------------------
 
 intervals_cfg = _load_yaml_data(filepaths=['tabelle_obs_for.yml'])["Intervalle"]
 
