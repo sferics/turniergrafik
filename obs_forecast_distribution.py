@@ -242,18 +242,6 @@ for betdate, obs_text, for_text in product(dates, all_obs_texts, all_for_texts):
         "Count": counts.get((betdate, obs_text, for_text), 0)
     })
 
-df = pl.DataFrame(rows)
-
-# Pivot-Tabelle
-df_pivot = df.pivot(
-    values="Count",
-    index=["Datum", "Obs_Range"],
-    columns="For_Range",
-    aggregate_function="sum"
-)
-
-
-
 
 # DataFrame aus rows
 df = pl.DataFrame(rows)
