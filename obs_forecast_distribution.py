@@ -90,7 +90,7 @@ def get_forecast_data(staedte, tage, elemente, users):
                 value /= 10
                 nested.setdefault(betdate, {}).setdefault(user, {})[param] = value
         forecast_data[cfg.id_zu_kuerzel[stadt]] = nested
-    return forecast_data   # ✅ jetzt außerhalb
+    return forecast_data   
 
                 
 # ------------------- Hauptprogramm -------------------
