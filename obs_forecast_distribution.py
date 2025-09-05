@@ -20,14 +20,15 @@ def _load_yaml_data(filepaths=['tabelle_obs_for.yml']):
         if data:
             config_data.update(data)
             return config_data
-intervals_cfg =_load_yaml_data(filepaths=['tabelle_obs_for.yml'])["Intervalle"] # ------------------- Hilfsfunktionen -------------------
+
+# ------------------- Hilfsfunktionen -------------------
 def get_interval(value, ranges):
     """Gibt (Index, Range-Text) zurück, in dem der Wert liegt, oder (None, None)."""
     for i, r in enumerate(ranges):
-        if len(r) == 1:
+        if len(r) == 1:  # Einzelwert
             if value == r[0]:
                 return i, str(r[0])
-        elif r[0] <= value <= r[1]:
+        elif r[0] <= value <= r[1]:  # Intervall
             return i, f"[{r[0]}, {r[1]}]"
     return None, None
     
@@ -170,16 +171,6 @@ for city in combined_data:
 
 intervals_cfg = _load_yaml_data(filepaths=['tabelle_obs_for.yml'])["Intervalle"]
 
-# ------------------- Hilfsfunktion -------------------
-def get_interval(value, ranges):
-    """Gibt (Index, Range-Text) zurück, in dem der Wert liegt, oder (None, None)."""
-    for i, r in enumerate(ranges):
-        if len(r) == 1:  # Einzelwert
-            if value == r[0]:
-                return i, str(r[0])
-        elif r[0] <= value <= r[1]:  # Intervall
-            return i, f"[{r[0]}, {r[1]}]"
-    return None, None
 
 # ------------------- Zählen -------------------
 counts = defaultdict(int)
