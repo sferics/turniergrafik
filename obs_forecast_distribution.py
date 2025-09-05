@@ -8,6 +8,7 @@ import db_read as dbr
 import config_loader as cfg
 import yaml
 from itertools import product
+from scipy.stats import gaussian_kde
 
 
 
@@ -287,7 +288,7 @@ df_pivot = df_pivot.select(["Datum", "Obs_Range"] + sorted_columns)
 df_pivot.write_excel("df_polars_unsorted.xlsx")
 print("Pivot-Tabelle erfolgreich als Excel gespeichert: df_polars_unsorted.xlsx")
 
-import polars as pl
+
 
 # Excel laden
 df = pl.read_excel("df_polars_unsorted.xlsx")
@@ -361,13 +362,6 @@ df_obs = df_obs.select(["Datum"] + sorted_obs_cols)
 df_obs.write_excel("df_polars_observation.xlsx")
 print("Beobachtungen erfolgreich als Excel gespeichert: df_polars_observation.xlsx")
 
-
-
-
-
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.stats import gaussian_kde
 
 # ------------------- Scatter-Daten -------------------
 obs_vals = []
