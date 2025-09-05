@@ -289,47 +289,6 @@ df_pivot.write_excel("df_polars_unsorted.xlsx")
 print("Pivot-Tabelle erfolgreich als Excel gespeichert: df_polars_unsorted.xlsx")
 
 
-
-# Excel laden
-df = pl.read_excel("df_polars_unsorted.xlsx")
-
-# Datum entfernen, Obs_Range behalten
-df_matrix = df.select([col for col in df.columns if col != "Datum"])
-
-# Obs_Range als Index behalten
-obs_ranges = df_matrix["Obs_Range"]
-df_numeric = df_matrix.drop("Obs_Range")
-
-n_rows, n_cols = df_numeric.shape
-
-# Falls Zeilen < Spalten, Zeilen wiederholt addieren
-if n_rows < n_cols:
-    rows_needed = n_cols - n_rows
-    # Zeilen zyklisch wiederholen und addieren
-    repeats = df_numeric[:rows_needed]
-    df_numeric = pl.concat([df_numeric, repeats], how="vertical")
-    # Addition auf wiederholte Zeilen
-    for i in range(rows_needed):
-        df_numeric[i + n_rows, :] = df_numeric[i + n_rows, :].to_numpy() + df_numeric[i, :].to_numpy()
-
-# Falls Zeilen > Spalten, abschneiden
-elif n_rows > n_cols:
-    df_numeric = df_numeric[:n_cols]
-
-# Obs_Range wieder vorne hinzufügen
-df_square = df_numeric.with_columns(pl.Series("Obs_Range", obs_ranges[:df_numeric.shape[0]]))
-df_square = df_square.select(["Obs_Range"] + [c for c in df_square.columns if c != "Obs_Range"])
-
-# Ergebnis prüfen
-print(df_square)
-
-# Excel speichern
-df_square.write_excel("df_polars_square_matrix.xlsx")
-print("Quadratische Matrix erfolgreich gespeichert: df_polars_square_matrix.xlsx")
-
-
-
-
 # ------------------- Nur Vorhersagen -------------------
 df_for = df.pivot(
     values="Count",
