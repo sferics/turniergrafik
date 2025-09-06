@@ -186,25 +186,7 @@ for param in elemente_namen:
                     obs_missing.append(obs_max)
                     continue
 
-            obs_range = obs_ranges_def[obs_idx]
-
-            # Vorhersagen pro Spieler prüfen
-            for user, fvals in data["f"].items():
-                fcast_val = fvals.get(param)
-                if fcast_val is None:
-                    continue
-
-                f_idx, for_text = get_interval(fcast_val, for_ranges_def)
-                if f_idx is None:
-                    continue
-
-                for_range = for_ranges_def[f_idx]
-
-                # Treffer, wenn For-Range == Obs-Range oder beide == 0
-                if (obs_range == for_range) or (obs_mean == 0 and fcast_val == 0):
-                    counts[(betdate, obs_text, for_text)] += 1
-                else:
-                    counts[(betdate, obs_text, for_text)] += 0  # optional, für Klarheit
+            
 
 # ------------------- DataFrame bauen -------------------
 rows = []
