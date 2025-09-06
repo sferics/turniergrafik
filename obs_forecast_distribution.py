@@ -217,6 +217,11 @@ for obs_r in obs_ranges_def:
                "Count": counts.get((param_to_plot, tuple(obs_r), tuple(for_r)), 0)
         })
 
+if df_dist["Obs"].dtype == pl.List:
+    df_dist = df_dist.with_columns(
+        pl.col("Obs").arr.get(0).alias("Obs")
+    )
+
 
 
 
