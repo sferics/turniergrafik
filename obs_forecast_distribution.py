@@ -28,7 +28,7 @@ def _load_yaml_data(filepaths=['tabelle_obs_for.yml']):
         with open(filepath, 'r', encoding='utf-8') as f: data = yaml.safe_load(f)
         if data:
             config_data.update(data)
-            return config_data
+        return config_data
 
 # ------------------- Hilfsfunktionen -------------------
 def to_value(raw_value):
