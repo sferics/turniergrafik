@@ -123,7 +123,11 @@ if __name__ == "__main__":
     ps = ps.parse_args()
     datum_von = ps.von
     datum_bis = ps.bis
-    
+
+    elemente_namen = [el for el in ps.params.split(",") if el in cfg.elemente_archiv_neu]
+    elemente = db.get_param_ids(elemente_namen).values()
+
+
 
 
 # ------------------- Daten kombinieren -------------------
