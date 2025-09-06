@@ -186,6 +186,12 @@ for param in elemente_namen:
                     obs_missing.append(obs_max)
                     continue
                 obs_range_key = tuple(obs_ranges_def[obs_idx])
+                for user, fvals in data["f"].items():
+                    users_set.add(user)
+                    fcast_val = fvals.get(param_to_plot)
+                    #print(np.min(fcast_val))
+                    if fcast_val is None:
+                        continue
 
             
 
