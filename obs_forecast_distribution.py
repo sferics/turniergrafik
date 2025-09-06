@@ -179,6 +179,12 @@ for param in elemente_namen:
                 obs_vals_list = data["o"].get(param_to_plot, [])
                 if not obs_vals_list:
                     continue
+                obs_max = np.max(obs_vals_list)
+                print(np.max(obs_max))
+                obs_idx, _ = get_interval(obs_max, obs_ranges_def)
+                if obs_idx is None:
+                    obs_missing.append(obs_max)
+                    continue
 
             obs_range = obs_ranges_def[obs_idx]
 
