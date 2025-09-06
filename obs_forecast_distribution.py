@@ -114,10 +114,11 @@ def get_forecast_data(staedte, tage, elemente, users):
             betdate = row['betdate']
             user = row['user_login']
             param = row['paramName']
-            value = row['value']
-            if value is not None:
-                value /= 10
-                nested.setdefault(betdate, {}).setdefault(user, {})[param] = value
+            raw_value = row['value']
+            if raw_value is not None:
+                v = to_value(raw_value)
+                # Wichtig: nach User verschachteln
+                nested.setdefault(betdate, {}).setdefault(user, {})[param] = v
         forecast_data[cfg.id_zu_kuerzel[stadt]] = nested
     return forecast_data   
 
