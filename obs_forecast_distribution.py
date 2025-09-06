@@ -227,6 +227,9 @@ df_pivot = df_dist.pivot(
             on="For",
             aggregate_function="sum"
         )
+df_pivot = df_pivot.with_columns(
+            pl.col("Obs").str.extract(r"([-+]?\d*\.?\d+)").cast(pl.Float64).alias("_obs_lb")
+        ).sort("_obs_lb").drop("_obs_lb")
 
 
 
