@@ -191,7 +191,7 @@ for param in elemente_namen:
     for_ranges_def = intervals_cfg["for"].get(param, [])
 
     if not obs_ranges_def or not for_ranges_def:
-            print(f"Skipping {param_to_plot} due to missing ranges.")
+            print(f"Skipping {param} due to missing ranges.")
             continue
 
     counts = defaultdict(int)
