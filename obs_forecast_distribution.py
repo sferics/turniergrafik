@@ -15,7 +15,7 @@ import numpy as np
 import polars as pl
 import matplotlib.pyplot as plt
 from collections import defaultdict
-from scipy.stats import gaussian_kde
+from scipy.stats import binned_statistic_2d
 from decimal import Decimal, localcontext, ROUND_HALF_EVEN
 
 
