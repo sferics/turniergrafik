@@ -222,15 +222,15 @@ for param in elemente_namen:
                         continue
                     for_range_key = tuple(for_ranges_def[f_idx])
 
-                    counts[(param_to_plot, obs_range_key, for_range_key)] += 1
-    print(f"{param_to_plot} Obs outside ranges:", obs_missing)
-    print(f"{param_to_plot} For outside ranges:", for_missing)
+                    counts[(param, obs_range_key, for_range_key)] += 1
+    print(f"{param} Obs outside ranges:", obs_missing)
+    print(f"{param} For outside ranges:", for_missing)
 
             
 
 # ------------------- DataFrame bauen -------------------
 rows = []
-si = param_to_si_map.get(param_to_plot, "")
+si = param_to_si_map.get(param, "")
 for obs_r in obs_ranges_def:
     obs_label = get_max_label(obs_r)
     for for_r in for_ranges_def:
@@ -238,7 +238,7 @@ for obs_r in obs_ranges_def:
         rows.append({
               "Obs": f"{obs_label} {si}" if si else obs_label,
                "For": f"{for_label} {si}" if si else for_label,
-               "Count": counts.get((param_to_plot, tuple(obs_r), tuple(for_r)), 0)
+               "Count": counts.get((param, tuple(obs_r), tuple(for_r)), 0)
         })
 
 if df_dist["Obs"].dtype == pl.List:
