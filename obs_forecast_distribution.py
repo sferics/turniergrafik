@@ -276,6 +276,9 @@ for city in cities_to_use:
             print(f"Not enough data for parameter {param_to_plot} to plot.")
             continue    
 
+    xy = np.vstack([obs_vals, fcast_vals])
+    z = gaussian_kde(xy)(xy)
+
 
 
 
