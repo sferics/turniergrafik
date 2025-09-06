@@ -157,6 +157,7 @@ for city in obs_data:
 config_cfg = _load_yaml_data(filepaths=['cfg.yml'])
 elemente_namen_cfg = config_cfg["elemente"]["elemente_archiv_neu"]
 elemente_einheiten_cfg = config_cfg["elemente"]["elemente_einheiten_neu"]
+param_to_si_map = {name: unit for name, unit in zip(elemente_namen_cfg, elemente_einheiten_cfg)}
             
 # ------------------- Treffer zählen -------------------
 counts = defaultdict(int)
