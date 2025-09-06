@@ -160,55 +160,6 @@ elemente_einheiten_cfg = config_cfg["elemente"]["elemente_einheiten_neu"]
 param_to_si_map = {name: unit for name, unit in zip(elemente_namen_cfg, elemente_einheiten_cfg)}
 cities_to_use = list(combined_data.keys())
             
-# ------------------- Treffer zählen -------------------
-counts = defaultdict(int)
-# einfacher Zähler
-for city in combined_data:
-    for param in elemente_namen:
-        obs_ranges_def = intervals_cfg["obs"].get(param, [])
-        for betdate, data in combined_data[city].items():
-            obs_vals = data["o"].get(param, [])
-            if not obs_vals:
-                continue
-            obs_mean = np.mean(obs_vals)
-            obs_idx, obs_text = get_interval(obs_mean, obs_ranges_def)
-            if obs_idx is None:
-                continue
-            # Für jeden Benutzer prüfen
-            for user, fvals in data["f"].items():
-                fcast_val = fvals.get(param)
-                # Falls Vorhersage fehlt, ggf. 2. Wert nehmen
-                if fcast_val is None and len(fvals) > 1:
-                    fcast_val = list(fvals.values())[1]
-                    if fcast_val is None:
-                        continue
-                        # Treffer nur, wenn Vorhersage innerhalb der Obs-Range
-                    if obs_mean <= fcast_val <= obs_mean:
-                    # obs_mean als mittlere Range
-                        counts[(betdate, param, obs_text)] += 1
-                    else:
-                        counts[(betdate, param, obs_text)] += 0
-                        # optional, nur Klarheit 
-
-# ------------------- Hauptprogramm -------------------
-
-intervals_cfg = _load_yaml_data(filepaths=['tabelle_obs_for.yml'])["Intervalle"]
-
-
-# ------------------- Zählen -------------------
-counts = defaultdict(int)
-
-dates = sorted({betdate for city_data in combined_data.values() for betdate in city_data})
-all_obs_texts = sorted({
-    str(r) if len(r) == 1 else f"[{r[0]}, {r[1]}]"
-    for param in elemente_namen
-    for r in intervals_cfg["obs"].get(param, [])
-})
-all_for_texts = sorted({
-    str(r) if len(r) == 1 else f"[{r[0]}, {r[1]}]"
-    for param in elemente_namen
-    for r in intervals_cfg["for"].get(param, [])
-})
 
 for param in elemente_namen:
     obs_ranges_def = intervals_cfg["obs"].get(param, [])
