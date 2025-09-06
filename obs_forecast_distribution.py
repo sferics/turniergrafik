@@ -82,10 +82,10 @@ def get_obs_data(staedte, tage, elemente):
         for row in results:
             betdate = row['betdate']
             param = row['paramName']
-            value = row['value']
-            if value is not None:
-                value /= 10
-                nested.setdefault(betdate, {}).setdefault(param, []).append(value)
+            raw_value = row['value']
+            if raw_value is not None:
+                v = to_value(raw_value)   
+                nested.setdefault(betdate, {}).setdefault(param, []).append(v)
         obs_data[cfg.id_zu_kuerzel[stadt]] = nested
     return obs_data   
 
