@@ -199,18 +199,13 @@ for param in elemente_namen:
                     for_range_key = tuple(for_ranges_def[f_idx])
 
                     counts[(param_to_plot, obs_range_key, for_range_key)] += 1
+    print(f"{param_to_plot} Obs outside ranges:", obs_missing)
+    print(f"{param_to_plot} For outside ranges:", for_missing)
 
             
 
 # ------------------- DataFrame bauen -------------------
-rows = []
-for betdate, obs_text, for_text in product(dates, all_obs_texts, all_for_texts):
-    rows.append({
-        "Datum": betdate,
-        "Obs_Range": obs_text,
-        "For_Range": for_text,
-        "Count": counts.get((betdate, obs_text, for_text), 0)
-    })
+
 
 
 # DataFrame aus rows
