@@ -279,6 +279,33 @@ for city in cities_to_use:
     xy = np.vstack([obs_vals, fcast_vals])
     z = gaussian_kde(xy)(xy)
 
+    fig, ax = plt.subplots(figsize=(8, 6))
+    scatter = ax.scatter(obs_vals, fcast_vals, c=z, s=20, cmap='viridis', alpha=0.7)
+
+    min_val = min(min(obs_vals), min(fcast_vals))
+    max_val = max(max(obs_vals), max(fcast_vals))
+    ax.plot([min_val, max_val], [min_val, max_val], 'k--', label="Observation = Forecast")
+
+    x_label = f"Observation ({param_to_plot})"
+    y_label = f"Forecast ({param_to_plot})"
+    si_element = param_to_si_map.get(param_to_plot, None)
+    if si_element:
+        x_label += f" [{si_element}]"
+        y_label += f" [{si_element}]"
+
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+    ax.set_title(f"Distribution for cities: {', '.join(cities_to_use)}")
+    ax.grid(True)
+    ax.legend()
+    fig.colorbar(scatter, ax=ax, location='right', label='Density')
+    plt.tight_layout(rect=[0, 0, 0.9, 1])
+
+    plot_filename = os.path.join(outdir, f"distribution_{cities_str}_{param_to_plot}_{users_str}.png")
+    plt.savefig(plot_filename, dpi=300)
+    print(f"Plot saved for parameter {param_to_plot}: {plot_filename}")
+    plt.close(fig)
+
 
 
 
