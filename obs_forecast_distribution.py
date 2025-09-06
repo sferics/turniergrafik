@@ -204,8 +204,7 @@ for param in elemente_namen:
                 obs_vals_list = data["o"].get(param, [])
                 if not obs_vals_list:
                     continue
-                obs_max = np.max(obs_vals_list)
-                print(np.max(obs_max))
+                obs_max = pl.Series(obs_vals_list).max()
                 obs_idx, _ = get_interval(obs_max, obs_ranges_def)
                 if obs_idx is None:
                     obs_missing.append(obs_max)
@@ -213,7 +212,7 @@ for param in elemente_namen:
                 obs_range_key = tuple(obs_ranges_def[obs_idx])
                 for user, fvals in data["f"].items():
                     users_set.add(user)
-                    fcast_val = fvals.get(param_to_plot)
+                    fcast_val = fvals.get(param)
                     #print(np.min(fcast_val))
                     if fcast_val is None:
                         continue
