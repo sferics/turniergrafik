@@ -174,16 +174,11 @@ for param in elemente_namen:
     for_missing = []
     users_set = set()
 
-        for betdate, data in combined_data[city].items():
-            # Beobachtungs-Mittelwert
-            obs_vals = data["o"].get(param, [])
-            if not obs_vals:
-                continue
-            obs_mean = np.mean(obs_vals)
-
-            obs_idx, obs_text = get_interval(obs_mean, obs_ranges_def)
-            if obs_idx is None:
-                continue
+    for city in combined_data:
+            for betdate, data in combined_data[city].items():
+                obs_vals_list = data["o"].get(param_to_plot, [])
+                if not obs_vals_list:
+                    continue
 
             obs_range = obs_ranges_def[obs_idx]
 
