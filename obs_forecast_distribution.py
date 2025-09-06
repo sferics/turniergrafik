@@ -8,7 +8,6 @@ import db_read as dbr
 import config_loader as cfg
 import yaml
 from itertools import product
-from scipy.stats import gaussian_kde
 import os
 import re
 import yaml
