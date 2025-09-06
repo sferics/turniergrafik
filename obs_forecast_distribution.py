@@ -185,6 +185,7 @@ for param in elemente_namen:
                 if obs_idx is None:
                     obs_missing.append(obs_max)
                     continue
+                obs_range_key = tuple(obs_ranges_def[obs_idx])
 
             
 
