@@ -36,11 +36,12 @@ def get_interval(value, ranges):
     for i, r in enumerate(ranges):
         a = r[0]
         b = r[1]
-        if len(r) == 1:  # Einzelwert
-            if value == r[0]:
-                return i, str(r[0])
-        elif r[0] <= value <= r[1]:  # Intervall
-            return i, f"[{r[0]}, {r[1]}]"
+        if i == len(ranges)-1:  # Einzelwert
+            if a <= value <= b:
+                return i, f"[{a}, {b}]"
+        else:
+            if a <= value < b
+            return i, f"[{a}, {b}]"
     return None, None
 
 intervals_cfg = _load_yaml_data(filepaths=['tabelle_obs_for.yml'])['Intervalle']
