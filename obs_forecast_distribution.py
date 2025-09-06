@@ -244,6 +244,7 @@ for obs_r in obs_ranges_def:
 if df_dist["Obs"].dtype == pl.List:
     df_dist = df_dist.with_columns(
         pl.col("Obs").arr.get(0).alias("Obs")
+    )
     
 df_pivot = df_dist.pivot(
             values="Count",
