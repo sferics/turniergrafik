@@ -21,7 +21,7 @@ from decimal import Decimal, localcontext, ROUND_HALF_EVEN
 
 db = dbr.db()
 
-# ------------------- YAML laden -------------------
+# ------------------- YAML laden -------------------#
 def _load_yaml_data(filepaths=['tabelle_obs_for.yml']):
     config_data = {}
     for filepath in filepaths:
@@ -30,7 +30,11 @@ def _load_yaml_data(filepaths=['tabelle_obs_for.yml']):
             config_data.update(data)
         return config_data
 
-# ------------------- Hilfsfunktionen -------------------
+# ------------------ gewünschte Genauigkeit -------------#
+
+DEC_QUANT = Decimal('0.001') 
+
+# ------------------- Hilfsfunktionen -------------------#
 def to_value(raw_value):
     """Konvertiert raw_value (z.B. int oder str) zu einem gerundeten float.
        Intern wird Decimal für korrektes Runden benutzt; Rückgabe ist float.
