@@ -70,7 +70,7 @@ def get_obs_data(staedte, tage, elemente):
                 value /= 10
                 nested.setdefault(betdate, {}).setdefault(param, []).append(value)
         obs_data[cfg.id_zu_kuerzel[stadt]] = nested
-    return obs_data   #  jetzt außerhalb
+    return obs_data   
 
                 
 def get_forecast_data(staedte, tage, elemente, users):
@@ -104,7 +104,10 @@ def get_forecast_data(staedte, tage, elemente, users):
         forecast_data[cfg.id_zu_kuerzel[stadt]] = nested
     return forecast_data   
 
-                
+
+def get_max_label(r):
+    return str(r[1]) if len(r) > 1 else str(r[0])
+
 # ------------------- Hauptprogramm -------------------
 if __name__ == "__main__":
     # DB-Verbindung
