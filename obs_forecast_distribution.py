@@ -298,102 +298,62 @@ for city in cities_to_use:
             fcast_vals.append(fcast_val)
 
     if len(obs_vals) < 2 or len(fcast_vals) < 2:
-            print(f"Not enough data for parameter {param} to plot.")
-            continue    
-
+        print(f"Not enough data for parameter {param} to plot.")
     else:
         obs_vals_float = np.array(obs_vals)
         fcast_vals_float = np.array(fcast_vals)
-        xy = np.vstack([obs_vals_float, fcast_vals_float])
-        z = gaussian_kde(xy)(xy)
     
-        fig, ax = plt.subplots(figsize=(16,10))
+        # ----------------- Heatmap (2D-Histogramm) -----------------
+        # Anzahl Bins anpassen je nach Datengröße
+        bins = 50
+        heatmap, xedges, yedges = np.histogram2d(
+            obs_vals_float, fcast_vals_float, bins=bins
+        )
     
+        # jedem Punkt die Häufigkeit im passenden Bin zuordnen
+        x_idx = np.searchsorted(xedges, obs_vals_float) - 1
+        y_idx = np.searchsorted(yedges, fcast_vals_float) - 1
+        # in Bounds bleiben
+        x_idx = np.clip(x_idx, 0, heatmap.shape[0]-1)
+        y_idx = np.clip(y_idx, 0, heatmap.shape[1]-1)
+        z = heatmap[x_idx, y_idx]
     
-    # Dann den Scatter Plot mit transformierten Werten erstellen
-    #scatter = ax.scatter(obs_vals_float, fcast_vals_float, c=z, s=20, cmap='jet', alpha=0.7)
+        # ----------------- Plot -----------------
+        fig, ax = plt.subplots(figsize=(16, 10))
+    scatter = ax.scatter(
+        obs_vals_float, fcast_vals_float,
+        c=z, s=20, cmap='jet', alpha=0.7
+    )
     
-    # Achsen-Ticks ggf. anpassen, wenn Skalierung linear bleiben soll
+    min_val = (obs_vals_float.min(), fcast_vals_float.min())
+    max_val = (obs_vals_float.max(), fcast_vals_float.max())
+    ax.plot([min_val[0], max_val[0]], [min_val[1], max_val[1]], 'k--', label="Observation = Forecast")
     
-        scatter = ax.scatter(obs_vals_float, fcast_vals_float, c=z, s=20, cmap='jet', alpha=0.7)
+    # Achsenbeschriftungen inkl. Einheit
+    x_label = f"Observation ({param})"
+    y_label = f"Forecast ({param})"
+    si_element = param_to_si_map.get(param, None)
+    if si_element:
+        x_label += f" [{si_element}]"
+        y_label += f" [{si_element}]"
+    ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
+    ax.set_title(f"Scatterplot with absolute frequency for cities: {', '.join(cities_to_use)}")
     
-        min_val = min(obs_vals_float.min(), fcast_vals_float.min())
-        max_val = max(obs_vals_float.max(), fcast_vals_float.max())
-        ax.plot([min_val, max_val], [min_val, max_val], 'k--', label="Observation = Forecast")
+    ax.grid(True)
+    ax.legend()
     
-        x_label = f"Observation ({param})"
-        y_label = f"Forecast ({param})"
-        si_element = param_to_si_map.get(param, None)
-        if si_element:
-            x_label += f" [{si_element}]"
-            y_label += f" [{si_element}]"
-        if param=="RR1":
-            ax.set_xlim(0, 100)
-            ax.set_ylim(0, 100)
-            ax.set_xscale('symlog', linthresh=1, linscale=10)
-            ax.set_yscale('symlog', linthresh=1, linscale=10)
+    # Colorbar zeigt absolute Häufigkeit
+    cbar = fig.colorbar(scatter, ax=ax, location='right')
+    cbar.set_label('Absolute frequency (counts per bin)')
     
-            ax.set_xlabel(f"Observation ({param})")
-            ax.set_ylabel(f"Forecast ({param})")
-            ax.set_title(f"Distribution for cities: {', '.join(cities_to_use)}")
-            ax.grid(True)
-            ax.legend()
-            fig.colorbar(scatter, ax=ax, location='right', label='Density')
-            plt.tight_layout(rect=[0, 0, 0.9, 1])
+    plt.tight_layout(rect=[0, 0, 0.9, 1])
     
-            plot_filename = os.path.join(outdir, f"distribution_{cities_str}_{param}_{users_str}.png")
-            plt.savefig(plot_filename, dpi=300)
-            print(f"Plot saved for parameter {param}: {plot_filename}")
-            plt.close(fig)
-        if param=="RR24":
-            ax.set_xlim(0, 500)
-            ax.set_ylim(0, 500)
-            ax.set_xscale('symlog', linthresh=1, linscale=5)
-            ax.set_yscale('symlog', linthresh=1, linscale=5)
-    
-            ax.set_xlabel(f"Observation ({param})")
-            ax.set_ylabel(f"Forecast ({param})")
-            ax.set_title(f"Distribution for cities: {', '.join(cities_to_use)}")
-            ax.grid(True)
-            ax.legend()
-            fig.colorbar(scatter, ax=ax, location='right', label='Density')
-            plt.tight_layout(rect=[0, 0, 0.9, 1])
-    
-            plot_filename = os.path.join(outdir, f"distribution_{cities_str}_{param}_{users_str}.png")
-            plt.savefig(plot_filename, dpi=300)
-            print(f"Plot saved for parameter {param}: {plot_filename}")
-            plt.close(fig)
-        if param=="ff12":
-            ax.set_xlim(0, 50)
-            ax.set_ylim(0, 50)
-            ax.set_xscale('symlog', linthresh=3, linscale=1)
-            ax.set_yscale('symlog', linthresh=3, linscale=1)
-    
-            ax.set_xlabel(f"Observation ({param})")
-            ax.set_ylabel(f"Forecast ({param})")
-            ax.set_title(f"Distribution for cities: {', '.join(cities_to_use)}")
-            ax.grid(True)
-            ax.legend()
-            fig.colorbar(scatter, ax=ax, location='right', label='Density')
-            plt.tight_layout(rect=[0, 0, 0.9, 1])
-    
-            plot_filename = os.path.join(outdir, f"distribution_{cities_str}_{param}_{users_str}.png")
-            plt.savefig(plot_filename, dpi=300)
-            print(f"Plot saved for parameter {param}: {plot_filename}")
-            plt.close(fig)
-        else:
-            ax.set_xlabel(x_label)
-            ax.set_ylabel(y_label)
-            ax.set_title(f"Distribution for cities: {', '.join(cities_to_use)}")
-            ax.grid(True)
-            ax.legend()
-            fig.colorbar(scatter, ax=ax, location='right', label='Density')
-            plt.tight_layout(rect=[0, 0, 0.9, 1])
-    
-            plot_filename = os.path.join(outdir, f"distribution_{cities_str}_{param}_{users_str}.png")
-            plt.savefig(plot_filename, dpi=300)
-            print(f"Plot saved for parameter {param}: {plot_filename}")
-            plt.close(fig)
+    plot_filename = os.path.join(outdir, f"scatter_absfreq_{cities_str}_{param}_{users_str}.png")
+    plt.savefig(plot_filename, dpi=300)
+    print(f"Scatterplot with absolute frequency saved for parameter {param}: {plot_filename}")
+    plt.close(fig)
+
 
 
 
