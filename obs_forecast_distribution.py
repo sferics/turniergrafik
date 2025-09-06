@@ -130,6 +130,7 @@ if __name__ == "__main__":
     user_logins = ps.users.split(",")
     users_dict = db.get_user_ids(user_logins)
     users_dict_swapped = {v: k for k, v in users_dict.items()}
+    users = users_dict.values()
 
 
 
