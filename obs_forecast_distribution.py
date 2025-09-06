@@ -132,6 +132,10 @@ if __name__ == "__main__":
     users_dict_swapped = {v: k for k, v in users_dict.items()}
     users = users_dict.values()
 
+    # Load data
+    obs_data = get_obs_data(staedte, wochenendtage, elemente)
+    forecast_data = get_forecast_data(staedte, wochenendtage, elemente, users)
+
 
 
 
