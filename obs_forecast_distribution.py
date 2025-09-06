@@ -205,7 +205,8 @@ for param in elemente_namen:
             
 
 # ------------------- DataFrame bauen -------------------
-
+rows = []
+si = param_to_si_map.get(param_to_plot, "")
 
 
 # DataFrame aus rows
