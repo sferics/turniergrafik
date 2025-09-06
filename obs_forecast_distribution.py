@@ -34,6 +34,8 @@ def _load_yaml_data(filepaths=['tabelle_obs_for.yml']):
 def get_interval(value, ranges):
     """Gibt (Index, Range-Text) zurück, in dem der Wert liegt, oder (None, None)."""
     for i, r in enumerate(ranges):
+        a = r[0]
+        b = r[1]
         if len(r) == 1:  # Einzelwert
             if value == r[0]:
                 return i, str(r[0])
