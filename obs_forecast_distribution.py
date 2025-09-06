@@ -207,6 +207,15 @@ for param in elemente_namen:
 # ------------------- DataFrame bauen -------------------
 rows = []
 si = param_to_si_map.get(param_to_plot, "")
+for obs_r in obs_ranges_def:
+    obs_label = get_max_label(obs_r)
+    for for_r in for_ranges_def:
+        for_label = get_max_label(for_r)
+        rows.append({
+              "Obs": f"{obs_label} {si}" if si else obs_label,
+               "For": f"{for_label} {si}" if si else for_label,
+               "Count": counts.get((param_to_plot, tuple(obs_r), tuple(for_r)), 0)
+        })
 
 
 
