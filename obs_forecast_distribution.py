@@ -230,6 +230,18 @@ df_pivot = df_dist.pivot(
 df_pivot = df_pivot.with_columns(
             pl.col("Obs").str.extract(r"([-+]?\d*\.?\d+)").cast(pl.Float64).alias("_obs_lb")
         ).sort("_obs_lb").drop("_obs_lb")
+for_cols = [c for c in df_pivot.columns if c != "Obs"]
+
+def extract_numeric_column(col_names):
+    """Extrahiert erste Zahl aus jedem Spaltennamen und liefert sortierte Liste"""
+    def parse_number(s):
+        m = re.search(r"[-+]?\d*\.?\d+", s)
+        return float(m.group()) if m else float("inf")
+    return sorted(col_names, key=parse_number)
+
+sorted_cols = extract_numeric_column(for_cols)
+
+df_pivot = df_pivot.select(["Obs"] + sorted_cols)
 
 
 
