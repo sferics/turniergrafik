@@ -58,7 +58,7 @@ def get_interval(value, ranges):
             if a <= value <= b:
                 return i, f"[{a}, {b}]"
         else:
-            if a <= value < b
+            if a <= value < b:
             return i, f"[{a}, {b}]"
     return None, None
 
