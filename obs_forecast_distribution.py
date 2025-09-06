@@ -253,6 +253,25 @@ users_str = "_".join(sorted(users_set)) if users_set else "all_users"
 outfile = os.path.join(outdir, f"distribution_{cities_str}_{param_to_plot}_{users_str}.xlsx")
 df_pivot.write_excel(outfile)
 print(f"Distribution matrix saved: {outfile}")
+
+
+# plotting
+obs_vals = []
+fcast_vals = []
+
+for city in cities_to_use:
+    for betdate, data in combined_data[city].items():
+        obs_list = data["o"].get(param_to_plot, [])
+        if not obs_list:
+            continue
+        obs_mean = np.mean(obs_list)
+        for user, fvals in data["f"].items():
+            fcast_val = fvals.get(param_to_plot)
+            if fcast_val is None:
+                continue
+            obs_vals.append(obs_mean)
+            fcast_vals.append(fcast_val)
+
         
 
 
