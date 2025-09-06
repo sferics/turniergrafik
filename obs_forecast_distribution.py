@@ -12,7 +12,6 @@ import os
 import re
 import yaml
 import numpy as np
-import polars as pl
 import matplotlib.pyplot as plt
 from collections import defaultdict
 from scipy.stats import binned_statistic_2d
