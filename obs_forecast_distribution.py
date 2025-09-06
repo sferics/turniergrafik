@@ -59,7 +59,7 @@ def get_interval(value, ranges):
                 return i, f"[{a}, {b}]"
         else:
             if a <= value < b:
-            return i, f"[{a}, {b}]"
+                return i, f"[{a}, {b}]"
     return None, None
 
 intervals_cfg = _load_yaml_data(filepaths=['tabelle_obs_for.yml'])['Intervalle']
