@@ -169,6 +169,8 @@ for param in elemente_namen:
             print(f"Skipping {param_to_plot} due to missing ranges.")
             continue
 
+    counts = defaultdict(int)
+
         for betdate, data in combined_data[city].items():
             # Beobachtungs-Mittelwert
             obs_vals = data["o"].get(param, [])
