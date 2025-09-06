@@ -244,6 +244,18 @@ sorted_cols = extract_numeric_column(for_cols)
 df_pivot = df_pivot.select(["Obs"] + sorted_cols)
 
 
+outdir = "distribution_outputs"
+os.makedirs(outdir, exist_ok=True)
+
+cities_str = "_".join(re.sub(r'[\\/:"*?<>|\s]+', '_', c) for c in cities_to_use)
+users_str = "_".join(sorted(users_set)) if users_set else "all_users"
+
+outfile = os.path.join(outdir, f"distribution_{cities_str}_{param_to_plot}_{users_str}.xlsx")
+df_pivot.write_excel(outfile)
+print(f"Distribution matrix saved: {outfile}")
+        
+
+
 
 
 
