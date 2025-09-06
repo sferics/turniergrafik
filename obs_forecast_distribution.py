@@ -30,6 +30,20 @@ def _load_yaml_data(filepaths=['tabelle_obs_for.yml']):
             return config_data
 
 # ------------------- Hilfsfunktionen -------------------
+def to_value(raw_value):
+    """Konvertiert raw_value (z.B. int oder str) zu einem gerundeten float.
+       Intern wird Decimal für korrektes Runden benutzt; Rückgabe ist float.
+    """
+    if raw_value is None:
+        return None
+    # raw_value vermutlich ganzzahlig in Zehnteln -> durch 10 teilen
+    with localcontext() as ctx:
+        ctx.prec = 12
+        ctx.rounding = ROUND_HALF_EVEN
+        d = Decimal(str(raw_value)) / Decimal('10')
+        d = d.quantize(DEC_QUANT, rounding=ROUND_HALF_EVEN)
+    return float(d)
+
 def get_interval(value, ranges):
     """Gibt (Index, Range-Text) zurück, in dem der Wert liegt, oder (None, None)."""
     for i, r in enumerate(ranges):
