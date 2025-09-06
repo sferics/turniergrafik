@@ -192,6 +192,10 @@ for param in elemente_namen:
                     #print(np.min(fcast_val))
                     if fcast_val is None:
                         continue
+                    f_idx, _ = get_interval(fcast_val, for_ranges_def)
+                    if f_idx is None:
+                        for_missing.append(fcast_val)
+                        continue
 
             
 
