@@ -40,6 +40,8 @@ def get_interval(value, ranges):
         elif r[0] <= value <= r[1]:  # Intervall
             return i, f"[{r[0]}, {r[1]}]"
     return None, None
+
+intervals_cfg = _load_yaml_data(filepaths=['tabelle_obs_for.yml'])['Intervalle']
     
 def get_obs_data(staedte, tage, elemente):
     obs_data = {}
