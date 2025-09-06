@@ -124,17 +124,7 @@ if __name__ == "__main__":
     datum_von = ps.von
     datum_bis = ps.bis
     elemente_namen = [el for el in ps.params.split(",") if el in cfg.elemente_archiv_neu]
-elemente = db.get_param_ids(elemente_namen).values()
-staedte = [city_to_id(city, cfg) for city in ps.cities.split(",")]
-tdate_von = date_2_index(datum_von)
-tdate_bis = date_2_index(datum_bis)
-wochenendtage = get_list_of_weekends(tdate_von, tdate_bis)
-obs_data = get_obs_data(staedte, wochenendtage, elemente)
-user_logins = ps.users.split(",")
-users_dict = db.get_user_ids(user_logins)
-users_dict_swapped = {v: k for k, v in users_dict.items()}
-users = users_dict.values()
-forecast_data = get_forecast_data(staedte, wochenendtage, elemente, users)
+
 
 # ------------------- Daten kombinieren -------------------
 combined_data = {}
