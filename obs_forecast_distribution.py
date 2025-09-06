@@ -9,8 +9,17 @@ import config_loader as cfg
 import yaml
 from itertools import product
 from scipy.stats import gaussian_kde
+import os
+import re
+import yaml
+import numpy as np
+import polars as pl
+import matplotlib.pyplot as plt
+from collections import defaultdict
+from scipy.stats import gaussian_kde
 
 
+db = dbr.db()
 
 # ------------------- YAML laden -------------------
 def _load_yaml_data(filepaths=['tabelle_obs_for.yml']):
