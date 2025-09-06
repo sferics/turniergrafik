@@ -153,6 +153,10 @@ for city in obs_data:
             try:
                 combined_data[city][betdate]['f'][user_login] = forecast_data[city][betdate].get( user_login_actual, {el: None for el in elemente_namen} )
             except KeyError: combined_data[city][betdate]['f'][user_login] = {el: None for el in elemente_namen}
+
+config_cfg = _load_yaml_data(filepaths=['cfg.yml'])
+elemente_namen_cfg = config_cfg["elemente"]["elemente_archiv_neu"]
+elemente_einheiten_cfg = config_cfg["elemente"]["elemente_einheiten_neu"]
             
 # ------------------- Treffer zählen -------------------
 counts = defaultdict(int)
