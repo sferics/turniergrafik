@@ -272,7 +272,9 @@ for city in cities_to_use:
             obs_vals.append(obs_mean)
             fcast_vals.append(fcast_val)
 
-        
+    if len(obs_vals) < 2 or len(fcast_vals) < 2:
+            print(f"Not enough data for parameter {param_to_plot} to plot.")
+            continue    
 
 
 
