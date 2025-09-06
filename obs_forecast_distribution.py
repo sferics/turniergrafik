@@ -210,10 +210,13 @@ all_for_texts = sorted({
     for r in intervals_cfg["for"].get(param, [])
 })
 
-for city in combined_data:
-    for param in elemente_namen:
-        obs_ranges_def = intervals_cfg["obs"].get(param, [])
-        for_ranges_def = intervals_cfg["for"].get(param, [])
+for param in elemente_namen:
+    obs_ranges_def = intervals_cfg["obs"].get(param, [])
+    for_ranges_def = intervals_cfg["for"].get(param, [])
+
+    if not obs_ranges_def or not for_ranges_def:
+            print(f"Skipping {param_to_plot} due to missing ranges.")
+            continue
 
         for betdate, data in combined_data[city].items():
             # Beobachtungs-Mittelwert
