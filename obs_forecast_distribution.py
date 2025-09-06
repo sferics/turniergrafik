@@ -288,9 +288,9 @@ for city in cities_to_use:
         obs_list = data["o"].get(param, [])
         if not obs_list:
             continue
-        obs_mean = np.mean(obs_list)
+        obs_mean = pl.Series(obs_list).mean()
         for user, fvals in data["f"].items():
-            fcast_val = fvals.get(param_to_plot)
+            fcast_val = fvals.get(param)
             if fcast_val is None:
                 continue
             obs_vals.append(obs_mean)
@@ -300,35 +300,100 @@ for city in cities_to_use:
             print(f"Not enough data for parameter {param} to plot.")
             continue    
 
-    xy = np.vstack([obs_vals, fcast_vals])
+    else:
+    obs_vals_float = np.array(obs_vals)
+    fcast_vals_float = np.array(fcast_vals)
+    xy = np.vstack([obs_vals_float, fcast_vals_float])
     z = gaussian_kde(xy)(xy)
 
-    fig, ax = plt.subplots(figsize=(8, 6))
-    scatter = ax.scatter(obs_vals, fcast_vals, c=z, s=20, cmap='viridis', alpha=0.7)
+    fig, ax = plt.subplots(figsize=(16,10))
 
-    min_val = min(min(obs_vals), min(fcast_vals))
-    max_val = max(max(obs_vals), max(fcast_vals))
+
+# Dann den Scatter Plot mit transformierten Werten erstellen
+#scatter = ax.scatter(obs_vals_float, fcast_vals_float, c=z, s=20, cmap='jet', alpha=0.7)
+
+# Achsen-Ticks ggf. anpassen, wenn Skalierung linear bleiben soll
+
+    scatter = ax.scatter(obs_vals_float, fcast_vals_float, c=z, s=20, cmap='jet', alpha=0.7)
+
+    min_val = min(obs_vals_float.min(), fcast_vals_float.min())
+    max_val = max(obs_vals_float.max(), fcast_vals_float.max())
     ax.plot([min_val, max_val], [min_val, max_val], 'k--', label="Observation = Forecast")
 
-    x_label = f"Observation ({param_to_plot})"
-    y_label = f"Forecast ({param_to_plot})"
-    si_element = param_to_si_map.get(param_to_plot, None)
+    x_label = f"Observation ({param})"
+    y_label = f"Forecast ({param})"
+    si_element = param_to_si_map.get(param, None)
     if si_element:
         x_label += f" [{si_element}]"
         y_label += f" [{si_element}]"
+    if param=="RR1":
+        ax.set_xlim(0, 100)
+        ax.set_ylim(0, 100)
+        ax.set_xscale('symlog', linthresh=1, linscale=10)
+        ax.set_yscale('symlog', linthresh=1, linscale=10)
 
-    ax.set_xlabel(x_label)
-    ax.set_ylabel(y_label)
-    ax.set_title(f"Distribution for cities: {', '.join(cities_to_use)}")
-    ax.grid(True)
-    ax.legend()
-    fig.colorbar(scatter, ax=ax, location='right', label='Density')
-    plt.tight_layout(rect=[0, 0, 0.9, 1])
+        ax.set_xlabel(f"Observation ({param})")
+        ax.set_ylabel(f"Forecast ({param})")
+        ax.set_title(f"Distribution for cities: {', '.join(cities_to_use)}")
+        ax.grid(True)
+        ax.legend()
+        fig.colorbar(scatter, ax=ax, location='right', label='Density')
+        plt.tight_layout(rect=[0, 0, 0.9, 1])
 
-    plot_filename = os.path.join(outdir, f"distribution_{cities_str}_{param}_{users_str}.png")
-    plt.savefig(plot_filename, dpi=300)
-    print(f"Plot saved for parameter {param}: {plot_filename}")
-    plt.close(fig)
+        plot_filename = os.path.join(outdir, f"distribution_{cities_str}_{param}_{users_str}.png")
+        plt.savefig(plot_filename, dpi=300)
+        print(f"Plot saved for parameter {param}: {plot_filename}")
+        plt.close(fig)
+    if param=="RR24":
+        ax.set_xlim(0, 500)
+        ax.set_ylim(0, 500)
+        ax.set_xscale('symlog', linthresh=1, linscale=5)
+        ax.set_yscale('symlog', linthresh=1, linscale=5)
+
+        ax.set_xlabel(f"Observation ({param})")
+        ax.set_ylabel(f"Forecast ({param})")
+        ax.set_title(f"Distribution for cities: {', '.join(cities_to_use)}")
+        ax.grid(True)
+        ax.legend()
+        fig.colorbar(scatter, ax=ax, location='right', label='Density')
+        plt.tight_layout(rect=[0, 0, 0.9, 1])
+
+        plot_filename = os.path.join(outdir, f"distribution_{cities_str}_{param}_{users_str}.png")
+        plt.savefig(plot_filename, dpi=300)
+        print(f"Plot saved for parameter {param}: {plot_filename}")
+        plt.close(fig)
+    if param=="ff12":
+        ax.set_xlim(0, 50)
+        ax.set_ylim(0, 50)
+        ax.set_xscale('symlog', linthresh=3, linscale=1)
+        ax.set_yscale('symlog', linthresh=3, linscale=1)
+
+        ax.set_xlabel(f"Observation ({param})")
+        ax.set_ylabel(f"Forecast ({param})")
+        ax.set_title(f"Distribution for cities: {', '.join(cities_to_use)}")
+        ax.grid(True)
+        ax.legend()
+        fig.colorbar(scatter, ax=ax, location='right', label='Density')
+        plt.tight_layout(rect=[0, 0, 0.9, 1])
+
+        plot_filename = os.path.join(outdir, f"distribution_{cities_str}_{param}_{users_str}.png")
+        plt.savefig(plot_filename, dpi=300)
+        print(f"Plot saved for parameter {param}: {plot_filename}")
+        plt.close(fig)
+    else:
+        ax.set_xlabel(x_label)
+        ax.set_ylabel(y_label)
+        ax.set_title(f"Distribution for cities: {', '.join(cities_to_use)}")
+        ax.grid(True)
+        ax.legend()
+        fig.colorbar(scatter, ax=ax, location='right', label='Density')
+        plt.tight_layout(rect=[0, 0, 0.9, 1])
+
+        plot_filename = os.path.join(outdir, f"distribution_{cities_str}_{param}_{users_str}.png")
+        plt.savefig(plot_filename, dpi=300)
+        print(f"Plot saved for parameter {param}: {plot_filename}")
+        plt.close(fig)
+
 
 
 
