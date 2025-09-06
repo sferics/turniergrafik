@@ -176,7 +176,7 @@ for param in elemente_namen:
 
     for city in combined_data:
             for betdate, data in combined_data[city].items():
-                obs_vals_list = data["o"].get(param_to_plot, [])
+                obs_vals_list = data["o"].get(param, [])
                 if not obs_vals_list:
                     continue
                 obs_max = np.max(obs_vals_list)
@@ -250,7 +250,7 @@ os.makedirs(outdir, exist_ok=True)
 cities_str = "_".join(re.sub(r'[\\/:"*?<>|\s]+', '_', c) for c in cities_to_use)
 users_str = "_".join(sorted(users_set)) if users_set else "all_users"
 
-outfile = os.path.join(outdir, f"distribution_{cities_str}_{param_to_plot}_{users_str}.xlsx")
+outfile = os.path.join(outdir, f"distribution_{cities_str}_{param}_{users_str}.xlsx")
 df_pivot.write_excel(outfile)
 print(f"Distribution matrix saved: {outfile}")
 
@@ -261,7 +261,7 @@ fcast_vals = []
 
 for city in cities_to_use:
     for betdate, data in combined_data[city].items():
-        obs_list = data["o"].get(param_to_plot, [])
+        obs_list = data["o"].get(param, [])
         if not obs_list:
             continue
         obs_mean = np.mean(obs_list)
@@ -273,7 +273,7 @@ for city in cities_to_use:
             fcast_vals.append(fcast_val)
 
     if len(obs_vals) < 2 or len(fcast_vals) < 2:
-            print(f"Not enough data for parameter {param_to_plot} to plot.")
+            print(f"Not enough data for parameter {param} to plot.")
             continue    
 
     xy = np.vstack([obs_vals, fcast_vals])
@@ -301,9 +301,9 @@ for city in cities_to_use:
     fig.colorbar(scatter, ax=ax, location='right', label='Density')
     plt.tight_layout(rect=[0, 0, 0.9, 1])
 
-    plot_filename = os.path.join(outdir, f"distribution_{cities_str}_{param_to_plot}_{users_str}.png")
+    plot_filename = os.path.join(outdir, f"distribution_{cities_str}_{param}_{users_str}.png")
     plt.savefig(plot_filename, dpi=300)
-    print(f"Plot saved for parameter {param_to_plot}: {plot_filename}")
+    print(f"Plot saved for parameter {param}: {plot_filename}")
     plt.close(fig)
 
 
