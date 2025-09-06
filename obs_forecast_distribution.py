@@ -170,6 +170,8 @@ for param in elemente_namen:
             continue
 
     counts = defaultdict(int)
+    obs_missing = []
+    for_missing = []
 
         for betdate, data in combined_data[city].items():
             # Beobachtungs-Mittelwert
