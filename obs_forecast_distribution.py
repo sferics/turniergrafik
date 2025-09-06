@@ -196,6 +196,9 @@ for param in elemente_namen:
                     if f_idx is None:
                         for_missing.append(fcast_val)
                         continue
+                    for_range_key = tuple(for_ranges_def[f_idx])
+
+                    counts[(param_to_plot, obs_range_key, for_range_key)] += 1
 
             
 
