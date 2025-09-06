@@ -126,6 +126,7 @@ if __name__ == "__main__":
 
     elemente_namen = [el for el in ps.params.split(",") if el in cfg.elemente_archiv_neu]
     elemente = db.get_param_ids(elemente_namen).values()
+    staedte = [city_to_id(city, cfg) for city in ps.cities.split(",")]
 
 
 
