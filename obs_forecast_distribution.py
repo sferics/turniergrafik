@@ -194,12 +194,10 @@ for param in elemente_namen:
     for citym city_data in combined_data.items():
         users_set = set(city_data[next(iter(city_data))]['f'].keys())
         for user in users_set:
-                
-
-        counts = defaultdict(int)
-        obs_missing = []
-        for_missing = []
-        users_set = set()
+            counts = defaultdict(int)
+            obs_missing = []
+            for_missing = []
+            users_set = set()
     
             for betdate, data in combined_data[city].items():
                 obs_vals_list = data["o"].get(param, [])
@@ -211,18 +209,17 @@ for param in elemente_namen:
                     obs_missing.append(obs_max)
                     continue
                 obs_range_key = tuple(obs_ranges_def[obs_idx])
-                    for user, fvals in data["f"].items():
-                        users_set.add(user)
-                        fcast_val = fvals.get(param)
-                        if fcast_val is None:
-                            continue
-                        f_idx, _ = get_interval(fcast_val, for_ranges_def)
-                        if f_idx is None:
-                            for_missing.append(fcast_val)
-                            continue
-                        for_range_key = tuple(for_ranges_def[f_idx])
+                fcast_val = data['f'].get(user, {}).get(param)
+                if fcast_val is None:
+                    for_missing.append(None)
+                    continue
+                f_idx, _ = get_interval(fcast_val, for_ranges_def)
+                if f_idx is None:
+                    for_missing.append(fcast_val)
+                    continue
+                for_range_key = tuple(for_ranges_def[f_idx])
     
-                        counts[(param, obs_range_key, for_range_key)] += 1
+                counts[(param, obs_range_key, for_range_key)] += 1
                         
     print(f"{param} Obs outside ranges:", obs_missing)
     print(f"{param} For outside ranges:", for_missing)
