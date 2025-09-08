@@ -198,13 +198,12 @@ for param in elemente_namen:
         for_missing = []
         users_set = set()
     
-        for city in combined_data:
-                for betdate, data in combined_data[city].items():
-                    obs_vals_list = data["o"].get(param, [])
-                    if not obs_vals_list:
-                        continue
-                    obs_max = pl.Series(obs_vals_list).max()
-                    obs_idx, _ = get_interval(obs_max, obs_ranges_def)
+            for betdate, data in combined_data[city].items():
+                obs_vals_list = data["o"].get(param, [])
+                if not obs_vals_list:
+                    continue
+                obs_max = max(v for v in obs_vals_list if v is not None)
+                obs_idx, _ = get_interval(obs_max, obs_ranges_def)
                     if obs_idx is None:
                         obs_missing.append(obs_max)
                         continue
