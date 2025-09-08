@@ -192,6 +192,9 @@ for param in elemente_namen:
             print(f"Skipping {param} due to missing ranges.")
             continue
     for citym city_data in combined_data.items():
+        users_set = set(city_data[next(iter(city_data))]['f'].keys())
+        for user in users_set:
+                
 
         counts = defaultdict(int)
         obs_missing = []
@@ -204,10 +207,10 @@ for param in elemente_namen:
                     continue
                 obs_max = max(v for v in obs_vals_list if v is not None)
                 obs_idx, _ = get_interval(obs_max, obs_ranges_def)
-                    if obs_idx is None:
-                        obs_missing.append(obs_max)
-                        continue
-                    obs_range_key = tuple(obs_ranges_def[obs_idx])
+                if obs_idx is None:
+                    obs_missing.append(obs_max)
+                    continue
+                obs_range_key = tuple(obs_ranges_def[obs_idx])
                     for user, fvals in data["f"].items():
                         users_set.add(user)
                         fcast_val = fvals.get(param)
