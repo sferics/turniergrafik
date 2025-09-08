@@ -239,12 +239,12 @@ for obs_r in obs_ranges_def:
                "For": f"{for_label} {si}" if si else for_label,
                "Count": counts.get((param, tuple(obs_r), tuple(for_r)), 0)
         })
-df_dist = pl.DataFrame(rows)
+
 if df_dist["Obs"].dtype == pl.List:
     df_dist = df_dist.with_columns(
         pl.col("Obs").arr.get(0).alias("Obs")
     )
-    
+df_dist = pl.DataFrame(rows)  
 df_pivot = df_dist.pivot(
             values="Count",
             index="Obs",
@@ -260,27 +260,7 @@ for_cols = [c for c in df_pivot.columns if c != "Obs"]
 sorted_cols = sorted(for_cols, key=for_label_to_num)
 df_pivot = df_pivot.select(["Obs"] + sorted_cols)
 
-def extract_numeric_column(col_names):
-    """Extrahiert erste Zahl aus jedem Spaltennamen und liefert sortierte Liste"""
-    def parse_number(s):
-        m = re.search(r"[-+]?\d*\.?\d+", s)
-        return float(m.group()) if m else float("inf")
-    return sorted(col_names, key=parse_number)
 
-sorted_cols = extract_numeric_column(for_cols)
-
-df_pivot = df_pivot.select(["Obs"] + sorted_cols)
-
-
-outdir = "distribution_outputs"
-os.makedirs(outdir, exist_ok=True)
-
-cities_str = "_".join(re.sub(r'[\\/:"*?<>|\s]+', '_', c) for c in cities_to_use)
-users_str = "_".join(sorted(users_set)) if users_set else "all_users"
-
-outfile = os.path.join(outdir, f"distribution_{cities_str}_{param}_{users_str}.xlsx")
-df_pivot.write_excel(outfile)
-print(f"Distribution matrix saved: {outfile}")
 
 # ------------------- ASCII-Tabelle erstellen -------------------
 lines = []
