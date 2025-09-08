@@ -40,7 +40,6 @@ def to_value(raw_value):
     """
     if raw_value is None:
         return None
-    # raw_value vermutlich ganzzahlig in Zehnteln -> durch 10 teilen
     with localcontext() as ctx:
         ctx.prec = 12
         ctx.rounding = ROUND_HALF_EVEN
