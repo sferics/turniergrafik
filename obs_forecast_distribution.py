@@ -211,7 +211,6 @@ for param in elemente_namen:
                 for user, fvals in data["f"].items():
                     users_set.add(user)
                     fcast_val = fvals.get(param)
-                    #print(np.min(fcast_val))
                     if fcast_val is None:
                         continue
                     f_idx, _ = get_interval(fcast_val, for_ranges_def)
@@ -221,6 +220,7 @@ for param in elemente_namen:
                     for_range_key = tuple(for_ranges_def[f_idx])
 
                     counts[(param, obs_range_key, for_range_key)] += 1
+                    
     print(f"{param} Obs outside ranges:", obs_missing)
     print(f"{param} For outside ranges:", for_missing)
 
