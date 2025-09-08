@@ -260,6 +260,23 @@ for_cols = [c for c in df_pivot.columns if c != "Obs"]
 sorted_cols = sorted(for_cols, key=for_label_to_num)
 df_pivot = df_pivot.select(["Obs"] + sorted_cols)
 
+# --- Export ---
+outdir = "distribution_outputs"
+os.makedirs(outdir, exist_ok=True)
+city_str = re.sub(r'[\\/:"*?<>|\s]+', '_', city)
+user_str = re.sub(r'[\\/:"*?<>|\s]+', '_', user)
+
+outfile_xlsx = os.path.join(outdir, f"distribution_{city_str}_{param}_{user_str}.xlsx")
+df_pivot.write_excel(outfile_xlsx, worksheet="Distribution")
+print(f"Saved Excel for {city}, user {user}: {outfile_xlsx}")
+
+txt_outfile = os.path.join(outdir, f"distribution_{city_str}_{param}_{user_str}.txt")
+with open(txt_outfile, "w", encoding="utf-8") as f:
+    df_txt = df_pivot.to_pandas()
+    for col in df_txt.columns[1:]:
+        df_txt[col] = df_txt[col].apply(lambda x: f"{x:.1f}")
+    f.write(df_txt.to_string(index=False))
+print(f"Saved TXT for {city}, user {user}: {txt_outfile}")
 
 
 # ------------------- ASCII-Tabelle erstellen -------------------
