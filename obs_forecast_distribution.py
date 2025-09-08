@@ -191,36 +191,37 @@ for param in elemente_namen:
     if not obs_ranges_def or not for_ranges_def:
             print(f"Skipping {param} due to missing ranges.")
             continue
+    for citym city_data in combined_data.items():
 
-    counts = defaultdict(int)
-    obs_missing = []
-    for_missing = []
-    users_set = set()
-
-    for city in combined_data:
-            for betdate, data in combined_data[city].items():
-                obs_vals_list = data["o"].get(param, [])
-                if not obs_vals_list:
-                    continue
-                obs_max = pl.Series(obs_vals_list).max()
-                obs_idx, _ = get_interval(obs_max, obs_ranges_def)
-                if obs_idx is None:
-                    obs_missing.append(obs_max)
-                    continue
-                obs_range_key = tuple(obs_ranges_def[obs_idx])
-                for user, fvals in data["f"].items():
-                    users_set.add(user)
-                    fcast_val = fvals.get(param)
-                    if fcast_val is None:
+        counts = defaultdict(int)
+        obs_missing = []
+        for_missing = []
+        users_set = set()
+    
+        for city in combined_data:
+                for betdate, data in combined_data[city].items():
+                    obs_vals_list = data["o"].get(param, [])
+                    if not obs_vals_list:
                         continue
-                    f_idx, _ = get_interval(fcast_val, for_ranges_def)
-                    if f_idx is None:
-                        for_missing.append(fcast_val)
+                    obs_max = pl.Series(obs_vals_list).max()
+                    obs_idx, _ = get_interval(obs_max, obs_ranges_def)
+                    if obs_idx is None:
+                        obs_missing.append(obs_max)
                         continue
-                    for_range_key = tuple(for_ranges_def[f_idx])
-
-                    counts[(param, obs_range_key, for_range_key)] += 1
-                    
+                    obs_range_key = tuple(obs_ranges_def[obs_idx])
+                    for user, fvals in data["f"].items():
+                        users_set.add(user)
+                        fcast_val = fvals.get(param)
+                        if fcast_val is None:
+                            continue
+                        f_idx, _ = get_interval(fcast_val, for_ranges_def)
+                        if f_idx is None:
+                            for_missing.append(fcast_val)
+                            continue
+                        for_range_key = tuple(for_ranges_def[f_idx])
+    
+                        counts[(param, obs_range_key, for_range_key)] += 1
+                        
     print(f"{param} Obs outside ranges:", obs_missing)
     print(f"{param} For outside ranges:", for_missing)
 
