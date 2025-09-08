@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 from collections import defaultdict
 from scipy.stats import binned_statistic_2d
 from decimal import Decimal, localcontext, ROUND_HALF_EVEN
+import re
 
 
 db = dbr.db()
@@ -250,10 +251,14 @@ df_pivot = df_dist.pivot(
             on="For",
             aggregate_function="sum"
         )
-df_pivot = df_pivot.with_columns(
-            pl.col("Obs").str.extract(r"([-+]?\d*\.?\d+)").cast(pl.Float64).alias("_obs_lb")
-        ).sort("_obs_lb").drop("_obs_lb")
+ # Spalten numerisch sortieren
+def for_label_to_num(label):
+    nums = re.findall(r"[-+]?\d*\.?\d+", label)
+    return float(nums[0]) if nums else float("inf")
+
 for_cols = [c for c in df_pivot.columns if c != "Obs"]
+sorted_cols = sorted(for_cols, key=for_label_to_num)
+df_pivot = df_pivot.select(["Obs"] + sorted_cols)
 
 def extract_numeric_column(col_names):
     """Extrahiert erste Zahl aus jedem Spaltennamen und liefert sortierte Liste"""
