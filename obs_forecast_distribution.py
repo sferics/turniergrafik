@@ -277,6 +277,61 @@ outfile = os.path.join(outdir, f"distribution_{cities_str}_{param}_{users_str}.x
 df_pivot.write_excel(outfile)
 print(f"Distribution matrix saved: {outfile}")
 
+# ------------------- ASCII-Tabelle erstellen -------------------
+lines = []
+# Header: feste Breiten
+lines.append(f"{'Kl':>5} {'MFc':>6} {'MOb':>6} {'#':>4}")
+lines.append(f"{'-'*5} {'-'*6} {'-'*6} {'-'*4}")
+
+for obs_r in obs_ranges_def:
+    lower, upper = obs_r[0], obs_r[1]
+    kl = float(upper)
+    bin_obs_vals = []
+    bin_fcast_vals = []
+
+    for city in combined_data:
+        for betdate, data in combined_data[city].items():
+            obs_list = data["o"].get(param, [])
+            if not obs_list:
+                continue
+
+            obs_mean = np.mean(obs_list)
+            obs_max = max(obs_list)
+
+            if lower == upper:
+                in_bin = obs_max == upper
+            else:
+                in_bin = lower < obs_max <= upper
+            if not in_bin:
+                continue
+
+            for user, fvals in data["f"].items():
+                fcast_val = fvals.get(param)
+                if fcast_val is None:
+                    continue
+                bin_obs_vals.append(obs_mean)
+                bin_fcast_vals.append(fcast_val)
+
+    count = len(bin_fcast_vals)
+    mfc = np.mean(bin_fcast_vals) if count > 0 else 0.00
+    mob = np.mean(bin_obs_vals) if count > 0 else 0.00
+
+    # Rechtsbündig formatieren
+    kl_str = f"{kl:5.1f}" if param not in ["RR1", "RR24"] else f"{kl:5.2f}"
+    mfc_str = f"{mfc:6.2f}"
+    mob_str = f"{mob:6.2f}"
+    # '#' auf dem 4. Zeichen der Spalte (immer rechtsbündig, Spaltenbreite=4)
+    count_str = f"{count:>4}"
+
+    lines.append(f"{kl_str} {mfc_str} {mob_str} {count_str}")
+
+# ASCII-Datei speichern
+asc_outfile = os.path.join(outdir, f"distribution_{cities_str}_{param}_{users_str}.asc")
+with open(asc_outfile, "w", encoding="utf-8") as f:
+    f.write("\n".join(lines))
+
+print(f"ASCII table saved: {asc_outfile}")
+
 
 # plotting
 obs_vals = []
