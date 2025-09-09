@@ -199,7 +199,8 @@ for param in elemente_namen:
             counts = defaultdict(int)
             values_by_bin = defaultdict(list)
             obs_missing = []
-            for_missing = []
+            for_missing = 
+            for_outside = []
     
             for betdate, data in combined_data[city].items():
                 obs_vals_list = data["o"].get(param, [])
@@ -208,14 +209,19 @@ for param in elemente_namen:
                     continue
                 if not valid_obs:
                     continue
-                obs_max = max(v for v in obs_vals_list if v is not None)
+                obs_max = max(valid_obs)
                 obs_idx, _ = get_interval(obs_max, obs_ranges_def)
                 if obs_idx is None:
+                    obs_missing.append((city, betdate, obs_max))
                     continue
                 obs_range_key = tuple(obs_ranges_def[obs_idx])
                 user_fvals = data['f'].get(user, {}).get(param)
                 if user_fvals is None:
-                    for_missing.append(None)
+                    for_missing.append((city, betdate, user, "no_forecast"))
+                    continue
+                fcast_val = user_fvals.get(param)
+                if fcast_val is None:
+                    for_missing.append((city, betdate, user, "param_missing"))
                     continue
                 f_idx, _ = get_interval(fcast_val, for_ranges_def)
                 if f_idx is None:
@@ -224,56 +230,57 @@ for param in elemente_namen:
                 for_range_key = tuple(for_ranges_def[f_idx])
     
                 counts[(param, obs_range_key, for_range_key)] += 1
+                values_by_bin[(obs_range_key, for_range_key)].append((obs_max, fcast_val))
                         
     print(f"{param} Obs outside ranges:", obs_missing)
     print(f"{param} For outside ranges:", for_missing)
 
             
 
-# ------------------- DataFrame bauen -------------------
-rows = [
-                {"Obs": f"{obs_r[1]} {si}" if si else str(obs_r[1]),
-                 "For": f"{for_r[1]} {si}" if si else str(for_r[1]),
-                 "Count": counts.get((tuple(obs_r), tuple(for_r)), 0)}
-                for obs_r, for_r in product(obs_ranges_def, for_ranges_def)
-            ]
-df_dist = pl.DataFrame(rows)
-
-if df_dist["Obs"].dtype == pl.List:
-    df_dist = df_dist.with_columns(
-        pl.col("Obs").arr.get(0).alias("Obs")
-    ) 
-df_pivot = df_dist.pivot(
-            values="Count",
-            index="Obs",
-            on="For",
-            aggregate_function="sum"
-        )
- # Spalten numerisch sortieren
-def for_label_to_num(label):
-    nums = re.findall(r"[-+]?\d*\.?\d+", label)
-    return float(nums[0]) if nums else float("inf")
-
-for_cols = [c for c in df_pivot.columns if c != "Obs"]
-df_pivot = df_pivot.select(["Obs"] + sorted(for_cols, key=for_label_to_num))
-
-# --- Export ---
-outdir = "distribution_outputs"
-os.makedirs(outdir, exist_ok=True)
-city_str = re.sub(r'[\\/:"*?<>|\s]+', '_', city)
-user_str = re.sub(r'[\\/:"*?<>|\s]+', '_', user)
-
-outfile_xlsx = os.path.join(outdir, f"distribution_{city_str}_{param}_{user_str}.xlsx")
-df_pivot.write_excel(outfile_xlsx, worksheet="Distribution")
-print(f"Saved Excel for {city}, user {user}: {outfile_xlsx}")
-
-txt_outfile = os.path.join(outdir, f"distribution_{city_str}_{param}_{user_str}.txt")
-with open(txt_outfile, "w", encoding="utf-8") as f:
-    df_txt = df_pivot.to_pandas()
-    for col in df_txt.columns[1:]:
-        df_txt[col] = df_txt[col].apply(lambda x: f"{x:.1f}")
-    f.write(df_txt.to_string(index=False))
-print(f"Saved TXT for {city}, user {user}: {txt_outfile}")
+            # ------------------- DataFrame bauen -------------------
+            rows = [
+                            {"Obs": f"{obs_r[1]} {si}" if si else str(obs_r[1]),
+                             "For": f"{for_r[1]} {si}" if si else str(for_r[1]),
+                             "Count": counts.get((tuple(obs_r), tuple(for_r)), 0)}
+                            for obs_r, for_r in product(obs_ranges_def, for_ranges_def)
+                        ]
+            df_dist = pl.DataFrame(rows)
+            
+            if df_dist["Obs"].dtype == pl.List:
+                df_dist = df_dist.with_columns(
+                    pl.col("Obs").arr.get(0).alias("Obs")
+                ) 
+            df_pivot = df_dist.pivot(
+                        values="Count",
+                        index="Obs",
+                        on="For",
+                        aggregate_function="sum"
+                    )
+             # Spalten numerisch sortieren
+            def for_label_to_num(label):
+                nums = re.findall(r"[-+]?\d*\.?\d+", label)
+                return float(nums[0]) if nums else float("inf")
+            
+            for_cols = [c for c in df_pivot.columns if c != "Obs"]
+            df_pivot = df_pivot.select(["Obs"] + sorted(for_cols, key=for_label_to_num))
+            
+            # --- Export ---
+            outdir = "distribution_outputs"
+            os.makedirs(outdir, exist_ok=True)
+            city_str = re.sub(r'[\\/:"*?<>|\s]+', '_', city)
+            user_str = re.sub(r'[\\/:"*?<>|\s]+', '_', user)
+            
+            outfile_xlsx = os.path.join(outdir, f"distribution_{city_str}_{param}_{user_str}.xlsx")
+            df_pivot.write_excel(outfile_xlsx, worksheet="Distribution")
+            print(f"Saved Excel for {city}, user {user}: {outfile_xlsx}")
+            
+            txt_outfile = os.path.join(outdir, f"distribution_{city_str}_{param}_{user_str}.txt")
+            with open(txt_outfile, "w", encoding="utf-8") as f:
+                df_txt = df_pivot.to_pandas()
+                for col in df_txt.columns[1:]:
+                    df_txt[col] = df_txt[col].apply(lambda x: f"{x:.1f}")
+                f.write(df_txt.to_string(index=False))
+            print(f"Saved TXT for {city}, user {user}: {txt_outfile}")
 
 
 # ------------------- ASCII-Tabelle erstellen -------------------
