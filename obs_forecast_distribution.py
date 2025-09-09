@@ -237,18 +237,13 @@ for param in elemente_namen:
 
             
 
-            # ------------------- DataFrame bauen -------------------
-            rows = []
-            si = param_to_si_map.get(param, "")
-            for obs_r in obs_ranges_def:
-                obs_label = str(obs_r[1])
-                for for_r in for_ranges_def:
-                    for_label = str(for_r[1])
-                    rows.append({
-                        "Obs": f"{obs_label} {si}" if si else obs_label,
-                        "For": f"{for_label} {si}" if si else for_label,
-                        "Count": counts.get((param, tuple(obs_r), tuple(for_r)), 0)
-                    })
+        # ------------------- DataFrame bauen -------------------
+            rows = [
+                {"Obs": f"{obs_r[1]} {si}" if si else str(obs_r[1]),
+                 "For": f"{for_r[1]} {si}" if si else str(for_r[1]),
+                 "Count": counts.get((tuple(obs_r), tuple(for_r)), 0)}
+                for obs_r, for_r in product(obs_ranges_def, for_ranges_def)
+            ]
 
             df_dist = pl.DataFrame(rows)
             if df_dist["Obs"].dtype == pl.List:
@@ -268,8 +263,7 @@ for param in elemente_namen:
                 return float(nums[0]) if nums else float("inf")
             
             for_cols = [c for c in df_pivot.columns if c != "Obs"]
-            sorted_cols = sorted(for_cols, key=for_label_to_num)
-            df_pivot = df_pivot.select(["Obs"] + sorted_cols)
+            df_pivot = df_pivot.select(["Obs"] + sorted(for_cols, key=for_label_to_num))
             
             # --- Export ---
             outdir = "distribution_outputs"
