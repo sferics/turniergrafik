@@ -10,13 +10,10 @@ import yaml
 from itertools import product
 import os
 import re
-import yaml
-import numpy as np
 import matplotlib.pyplot as plt
 from collections import defaultdict
 from scipy.stats import binned_statistic_2d
 from decimal import Decimal, localcontext, ROUND_HALF_EVEN
-import re
 
 
 db = dbr.db()
@@ -28,7 +25,7 @@ def _load_yaml_data(filepaths=['tabelle_obs_for.yml']):
         with open(filepath, 'r', encoding='utf-8') as f: data = yaml.safe_load(f)
         if data:
             config_data.update(data)
-        return config_data
+    return config_data
 
 # ------------------ gewünschte Genauigkeit -------------#
 
@@ -199,7 +196,7 @@ for param in elemente_namen:
             counts = defaultdict(int)
             values_by_bin = defaultdict(list)
             obs_missing = []
-            for_missing = 
+            for_missing = []
             for_outside = []
     
             for betdate, data in combined_data[city].items():
@@ -215,7 +212,7 @@ for param in elemente_namen:
                     obs_missing.append((city, betdate, obs_max))
                     continue
                 obs_range_key = tuple(obs_ranges_def[obs_idx])
-                user_fvals = data['f'].get(user, {}).get(param)
+                user_fvals = data['f'].get(user)
                 if user_fvals is None:
                     for_missing.append((city, betdate, user, "no_forecast"))
                     continue
@@ -284,60 +281,33 @@ for param in elemente_namen:
             print(f"Saved TXT for {city}, user {user}: {txt_outfile}")
 
 
-# ------------------- ASCII-Tabelle erstellen -------------------
-lines = []
-# Header: feste Breiten
-lines.append(f"{'Kl':>5} {'MFc':>6} {'MOb':>6} {'#':>4}")
-lines.append(f"{'-'*5} {'-'*6} {'-'*6} {'-'*4}")
+# ------------------- ASCII-Tabelle bauen -------------------
+            asc_lines = []
+            # Header mit Unterzeile
+            asc_lines.append(f"{'Kl':>5}  {'MFc':>6}  {'MOb':>6}  {'#':>4}")
+            asc_lines.append(f"{'-'*5}  {'-'*6}  {'-'*6}  {'-'*4}")
 
-for obs_r in obs_ranges_def:
-    lower, upper = obs_r[0], obs_r[1]
-    kl = float(upper)
-    bin_obs_vals = []
-    bin_fcast_vals = []
+            # Werte pro Klasse
+            for obs_r in obs_ranges_def:
+                lower, upper = obs_r
+                combined_vals = []
+                for for_r in for_ranges_def:
+                    combined_vals.extend(values_by_bin.get((tuple(obs_r), tuple(for_r)), []))
 
-    for city in combined_data:
-        for betdate, data in combined_data[city].items():
-            obs_list = data["o"].get(param, [])
-            if not obs_list:
-                continue
+                count = len(combined_vals)
+                mean_fc = sum(v for (_, v) in combined_vals) / count if count else 0.0
+                mean_obs = sum(o for (o, _) in combined_vals) / count if count else 0.0
+                print(f"count ist {count}.")
 
-            obs_mean = np.mean(obs_list)
-            obs_max = max(obs_list)
+                # Format: 6.1f für Kl, 6.2f für Mittelwerte, 4d für Count
+                asc_lines.append(f"{upper:6.1f}  {mean_fc:6.2f}  {mean_obs:6.2f}  {count:4d}")
 
-            if lower == upper:
-                in_bin = obs_max == upper
-            else:
-                in_bin = lower <= obs_max <= upper
-            if not in_bin:
-                continue
+            # ASCII-Datei speichern
+            asc_outfile = os.path.join(outdir, f"distribution_{city_str}_{param}_{user_str}.asc")
+            with open(asc_outfile, "w", encoding="utf-8") as f:
+                f.write("\n".join(asc_lines))
 
-            for user, fvals in data["f"].items():
-                fcast_val = fvals.get(param)
-                if fcast_val is None:
-                    continue
-                bin_obs_vals.append(obs_mean)
-                bin_fcast_vals.append(fcast_val)
-
-    count = len(bin_fcast_vals)
-    mfc = np.mean(bin_fcast_vals) if count > 0 else 0.00
-    mob = np.mean(bin_obs_vals) if count > 0 else 0.00
-
-    # Rechtsbündig formatieren
-    kl_str = f"{kl:5.1f}" if param not in ["RR1", "RR24"] else f"{kl:5.2f}"
-    mfc_str = f"{mfc:6.2f}"
-    mob_str = f"{mob:6.2f}"
-    # '#' auf dem 4. Zeichen der Spalte (immer rechtsbündig, Spaltenbreite=4)
-    count_str = f"{count:>4}"
-
-    lines.append(f"{kl_str} {mfc_str} {mob_str} {count_str}")
-
-# ASCII-Datei speichern
-asc_outfile = os.path.join(outdir, f"distribution_{cities_str}_{param}_{users_str}.asc")
-with open(asc_outfile, "w", encoding="utf-8") as f:
-    f.write("\n".join(lines))
-
-print(f"ASCII table saved: {asc_outfile}")
+            print(f"ASCII table saved: {asc_outfile}")
 
 
 # plotting
@@ -409,7 +379,7 @@ for city in cities_to_use:
     
     plt.tight_layout(rect=[0, 0, 0.9, 1])
     
-    plot_filename = os.path.join(outdir, f"scatter_absfreq_{cities_str}_{param}_{users_str}.png")
+    plot_filename = os.path.join(outdir, f"scatter_absfreq_{city_str}_{param}_{user_str}.png")
     plt.savefig(plot_filename, dpi=300)
     print(f"Scatterplot with absolute frequency saved for parameter {param}: {plot_filename}")
     plt.close(fig)
