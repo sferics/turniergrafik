@@ -14,6 +14,8 @@ import matplotlib.pyplot as plt
 from collections import defaultdict
 from scipy.stats import binned_statistic_2d
 from decimal import Decimal, localcontext, ROUND_HALF_EVEN
+import openpyxl
+from openpyxl.styles import PatternFill
 
 
 db = dbr.db()
@@ -269,16 +271,28 @@ for param in elemente_namen:
             user_str = re.sub(r'[\\/:"*?<>|\s]+', '_', user)
             
             outfile_xlsx = os.path.join(outdir, f"distribution_{city_str}_{param}_{user_str}.xlsx")
-            df_pivot.write_excel(outfile_xlsx, worksheet="Distribution")
+            # Erste Spalte umbenennen zu "Obs \ For"
+            df_excel = df_pivot.rename({"Obs": "Obs \\ For"})
+            df_excel.write_excel(outfile_xlsx, worksheet="Distribution")
             print(f"Saved Excel for {city}, user {user}: {outfile_xlsx}")
-            
-            txt_outfile = os.path.join(outdir, f"distribution_{city_str}_{param}_{user_str}.txt")
-            with open(txt_outfile, "w", encoding="utf-8") as f:
-                df_txt = df_pivot.to_pandas()
-                for col in df_txt.columns[1:]:
-                    df_txt[col] = df_txt[col].apply(lambda x: f"{x:.1f}")
-                f.write(df_txt.to_string(index=False))
-            print(f"Saved TXT for {city}, user {user}: {txt_outfile}")
+
+            # --- Farben mit openpyxl setzen ---
+            wb = openpyxl.load_workbook(outfile_xlsx)
+            ws = wb.active
+
+            blue_fill = PatternFill(start_color="ADD8E6", end_color="ADD8E6", fill_type="solid")  # Hauptdiagonale
+            orchid_fill = PatternFill(start_color="DA70D6", end_color="DA70D6", fill_type="solid")  # Kreuzsumme
+
+            # Hauptdiagonale markieren
+            n_rows = len(df_pivot) - 1  # letzte Zeile = Summe
+            for i in range(n_rows):
+                col_idx = i + 2  # +2, weil Excel Spalte 1 = Obs \ For
+                ws.cell(row=i+2, column=col_idx).fill = blue_fill  # +2: Header-Zeile
+
+            # Kreuzsumme markieren (letzte Zeile, letzte Spalte)
+            ws.cell(row=n_rows+2, column=len(df_pivot.columns)).fill = orchid_fill
+
+            wb.save(outfile_xlsx)
 
 
 # ------------------- ASCII-Tabelle bauen -------------------
