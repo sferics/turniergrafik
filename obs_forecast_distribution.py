@@ -303,7 +303,7 @@ for obs_r in obs_ranges_def:
             if lower == upper:
                 in_bin = obs_max == upper
             else:
-                in_bin = lower < obs_max <= upper
+                in_bin = lower <= obs_max <= upper
             if not in_bin:
                 continue
 
