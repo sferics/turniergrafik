@@ -192,6 +192,7 @@ for param in elemente_namen:
     if not obs_ranges_def or not for_ranges_def:
             print(f"Skipping {param} due to missing ranges.")
             continue
+    si = param_to_si_map.get(param, "")
     for city, city_data in combined_data.items():
         users_set = {u for betdate, data in city_data.items() for u in data.get('f', {}).keys()}
         for user in users_set:
@@ -199,21 +200,21 @@ for param in elemente_namen:
             values_by_bin = defaultdict(list)
             obs_missing = []
             for_missing = []
-            users_set = set()
     
             for betdate, data in combined_data[city].items():
                 obs_vals_list = data["o"].get(param, [])
                 valid_obs = [v for v in obs_val_list if v is not None]
                 if not obs_vals_list:
                     continue
+                if not valid_obs:
+                    continue
                 obs_max = max(v for v in obs_vals_list if v is not None)
                 obs_idx, _ = get_interval(obs_max, obs_ranges_def)
                 if obs_idx is None:
-                    obs_missing.append(obs_max)
                     continue
                 obs_range_key = tuple(obs_ranges_def[obs_idx])
-                fcast_val = data['f'].get(user, {}).get(param)
-                if fcast_val is None:
+                user_fvals = data['f'].get(user, {}).get(param)
+                if user_fvals is None:
                     for_missing.append(None)
                     continue
                 f_idx, _ = get_interval(fcast_val, for_ranges_def)
@@ -231,7 +232,6 @@ for param in elemente_namen:
 
 # ------------------- DataFrame bauen -------------------
 rows = []
-si = param_to_si_map.get(param, "")
 for obs_r in obs_ranges_def:
     obs_label = get_max_label(obs_r)
     for for_r in for_ranges_def:
