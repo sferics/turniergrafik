@@ -11,7 +11,6 @@ from itertools import product
 import os
 import re
 import matplotlib.pyplot as plt
-from collections import defaultdict
 from scipy.stats import binned_statistic_2d
 from decimal import Decimal, localcontext, ROUND_HALF_EVEN
 import openpyxl
@@ -266,12 +265,12 @@ for param in elemente_namen:
             
             # --- Export ---
             outdir = "distribution_outputs"
-            txt_outfile   = os.path.join(outdir, f"distribution_{city_str}_{param}_{user_str}.txt")
             os.makedirs(outdir, exist_ok=True)
             city_str = re.sub(r'[\\/:"*?<>|\s]+', '_', city)
             user_str = re.sub(r'[\\/:"*?<>|\s]+', '_', user)
             
             outfile_xlsx = os.path.join(outdir, f"distribution_{city_str}_{param}_{user_str}.xlsx")
+            txt_outfile = os.path.join(outdir, f"distribution_{city_str}_{param}_{user_str}.txt")
             # Erste Spalte umbenennen zu "Obs \ For"
             df_excel = df_pivot.rename({"Obs": "Obs \\ For"})
             df_excel.write_excel(outfile_xlsx, worksheet="Distribution")
@@ -293,7 +292,22 @@ for param in elemente_namen:
             # Kreuzsumme markieren (letzte Zeile, letzte Spalte)
             ws.cell(row=n_rows+2, column=len(df_pivot.columns)).fill = orchid_fill
 
-            wb.save(outfile_xlsx
+            wb.save(outfile_xlsx)
+
+             # --- TXT-Export (Fortran-lesbar) ---
+            with open(txt_outfile, "w", encoding="utf-8") as f:
+                header = ["Obs \\ For"] + [c for c in df_pivot.columns if c != "Obs"]
+                f.write(" ".join(f"{h:>6}" for h in header) + "\n")
+                f.write("-" * (len(header) * 7) + "\n")  # Trennzeile
+
+                for row in df_pivot.iter_rows(named=True):
+                    line = [f"{row['Obs']:>6}"]
+                    for c in for_cols + ["Row_Sum"]:
+                        val = int(row[c])
+                        line.append(f"{val:6d}")
+                    f.write(" ".join(line) + "\n")
+
+            print(f"Saved for {city}, user {user}: {outfile_xlsx}, {txt_outfile}")
 
 
 # ------------------- ASCII-Tabelle bauen -------------------
@@ -324,95 +338,82 @@ for param in elemente_namen:
 
             print(f"ASCII table saved: {asc_outfile}")
 
-            # --- TXT-Export (Fortran-lesbar) ---
-            with open(txt_outfile, "w", encoding="utf-8") as f:
-                header = ["Obs \\ For"] + [c for c in df_pivot.columns if c != "Obs"]
-                f.write(" ".join(f"{h:>6}" for h in header) + "\n")
-                f.write("-" * (len(header) * 7) + "\n")  # Trennzeile
-
-                for row in df_pivot.iter_rows(named=True):
-                    line = [f"{row['Obs']:>6}"]
-                    for c in for_cols + ["Row_Sum"]:
-                        val = int(row[c])
-                        line.append(f"{val:6d}")
-                    f.write(" ".join(line) + "\n")
-
-            print(f"Saved for {city}, user {user}: {outfile_xlsx}, {txt_outfile}")
+           
 
 
-# plotting
-obs_vals = []
-fcast_vals = []
+for param in elemente_namen:
+    obs_vals = []
+    fcast_vals = []
 
-for city in cities_to_use:
-    for betdate, data in combined_data[city].items():
-        obs_list = data["o"].get(param, [])
-        if not obs_list:
-            continue
-        obs_mean = pl.Series(obs_list).mean()
-        for user, fvals in data["f"].items():
-            fcast_val = fvals.get(param)
-            if fcast_val is None:
+    for city in cities_to_use:
+        for betdate, data in combined_data[city].items():
+            obs_list = data["o"].get(param, [])
+            if not obs_list:
                 continue
-            obs_vals.append(obs_mean)
-            fcast_vals.append(fcast_val)
-
-    if len(obs_vals) < 2 or len(fcast_vals) < 2:
-        print(f"Not enough data for parameter {param} to plot.")
-    else:
-        obs_vals_float = np.array(obs_vals)
-        fcast_vals_float = np.array(fcast_vals)
+            obs_mean = pl.Series(obs_list).mean()
+            for user, fvals in data["f"].items():
+                fcast_val = fvals.get(param)
+                if fcast_val is None:
+                    continue
+                obs_vals.append(obs_mean)
+                fcast_vals.append(fcast_val)
     
-        # ----------------- Heatmap (2D-Histogramm) -----------------
-        # Anzahl Bins anpassen je nach Datengröße
-        bins = 50
-        heatmap, xedges, yedges = np.histogram2d(
-            obs_vals_float, fcast_vals_float, bins=bins
+        if len(obs_vals) < 2 or len(fcast_vals) < 2:
+            print(f"Not enough data for parameter {param} to plot.")
+        else:
+            obs_vals_float = np.array(obs_vals)
+            fcast_vals_float = np.array(fcast_vals)
+        
+            # ----------------- Heatmap (2D-Histogramm) -----------------
+            # Anzahl Bins anpassen je nach Datengröße
+            bins = 50
+            heatmap, xedges, yedges = np.histogram2d(
+                obs_vals_float, fcast_vals_float, bins=bins
+            )
+        
+            # jedem Punkt die Häufigkeit im passenden Bin zuordnen
+            x_idx = np.searchsorted(xedges, obs_vals_float) - 1
+            y_idx = np.searchsorted(yedges, fcast_vals_float) - 1
+            # in Bounds bleiben
+            x_idx = np.clip(x_idx, 0, heatmap.shape[0]-1)
+            y_idx = np.clip(y_idx, 0, heatmap.shape[1]-1)
+            z = heatmap[x_idx, y_idx]
+        
+            # ----------------- Plot -----------------
+            fig, ax = plt.subplots(figsize=(16, 10))
+        scatter = ax.scatter(
+            obs_vals_float, fcast_vals_float,
+            c=z, s=20, cmap='jet', alpha=0.7
         )
-    
-        # jedem Punkt die Häufigkeit im passenden Bin zuordnen
-        x_idx = np.searchsorted(xedges, obs_vals_float) - 1
-        y_idx = np.searchsorted(yedges, fcast_vals_float) - 1
-        # in Bounds bleiben
-        x_idx = np.clip(x_idx, 0, heatmap.shape[0]-1)
-        y_idx = np.clip(y_idx, 0, heatmap.shape[1]-1)
-        z = heatmap[x_idx, y_idx]
-    
-        # ----------------- Plot -----------------
-        fig, ax = plt.subplots(figsize=(16, 10))
-    scatter = ax.scatter(
-        obs_vals_float, fcast_vals_float,
-        c=z, s=20, cmap='jet', alpha=0.7
-    )
-    
-    min_val = (obs_vals_float.min(), fcast_vals_float.min())
-    max_val = (obs_vals_float.max(), fcast_vals_float.max())
-    ax.plot([min_val[0], max_val[0]], [min_val[1], max_val[1]], 'k--', label="Observation = Forecast")
-    
-    # Achsenbeschriftungen inkl. Einheit
-    x_label = f"Observation ({param})"
-    y_label = f"Forecast ({param})"
-    si_element = param_to_si_map.get(param, None)
-    if si_element:
-        x_label += f" [{si_element}]"
-        y_label += f" [{si_element}]"
-    ax.set_xlabel(x_label)
-    ax.set_ylabel(y_label)
-    ax.set_title(f"Scatterplot with absolute frequency for cities: {', '.join(cities_to_use)}")
-    
-    ax.grid(True)
-    ax.legend()
-    
-    # Colorbar zeigt absolute Häufigkeit
-    cbar = fig.colorbar(scatter, ax=ax, location='right')
-    cbar.set_label('Absolute frequency (counts per bin)')
-    
-    plt.tight_layout(rect=[0, 0, 0.9, 1])
-    
-    plot_filename = os.path.join(outdir, f"scatter_absfreq_{city_str}_{param}_{user_str}.png")
-    plt.savefig(plot_filename, dpi=300)
-    print(f"Scatterplot with absolute frequency saved for parameter {param}: {plot_filename}")
-    plt.close(fig)
+        
+        min_val = (obs_vals_float.min(), fcast_vals_float.min())
+        max_val = (obs_vals_float.max(), fcast_vals_float.max())
+        ax.plot([min_val[0], max_val[0]], [min_val[1], max_val[1]], 'k--', label="Observation = Forecast")
+        
+        # Achsenbeschriftungen inkl. Einheit
+        x_label = f"Observation ({param})"
+        y_label = f"Forecast ({param})"
+        si_element = param_to_si_map.get(param, None)
+        if si_element:
+            x_label += f" [{si_element}]"
+            y_label += f" [{si_element}]"
+        ax.set_xlabel(x_label)
+        ax.set_ylabel(y_label)
+        ax.set_title(f"Scatterplot with absolute frequency for cities: {', '.join(cities_to_use)}")
+        
+        ax.grid(True)
+        ax.legend()
+        
+        # Colorbar zeigt absolute Häufigkeit
+        cbar = fig.colorbar(scatter, ax=ax, location='right')
+        cbar.set_label('Absolute frequency (counts per bin)')
+        
+        plt.tight_layout(rect=[0, 0, 0.9, 1])
+        
+        plot_filename = os.path.join(outdir, f"scatter_absfreq_{city_str}_{param}_{user_str}.png")
+        plt.savefig(plot_filename, dpi=300)
+        print(f"Scatterplot with absolute frequency saved for parameter {param}: {plot_filename}")
+        plt.close(fig)
 
 
 
