@@ -266,6 +266,7 @@ for param in elemente_namen:
             
             # --- Export ---
             outdir = "distribution_outputs"
+            txt_outfile   = os.path.join(outdir, f"distribution_{city_str}_{param}_{user_str}.txt")
             os.makedirs(outdir, exist_ok=True)
             city_str = re.sub(r'[\\/:"*?<>|\s]+', '_', city)
             user_str = re.sub(r'[\\/:"*?<>|\s]+', '_', user)
@@ -292,7 +293,7 @@ for param in elemente_namen:
             # Kreuzsumme markieren (letzte Zeile, letzte Spalte)
             ws.cell(row=n_rows+2, column=len(df_pivot.columns)).fill = orchid_fill
 
-            wb.save(outfile_xlsx)
+            wb.save(outfile_xlsx
 
 
 # ------------------- ASCII-Tabelle bauen -------------------
@@ -322,6 +323,21 @@ for param in elemente_namen:
                 f.write("\n".join(asc_lines))
 
             print(f"ASCII table saved: {asc_outfile}")
+
+            # --- TXT-Export (Fortran-lesbar) ---
+            with open(txt_outfile, "w", encoding="utf-8") as f:
+                header = ["Obs \\ For"] + [c for c in df_pivot.columns if c != "Obs"]
+                f.write(" ".join(f"{h:>6}" for h in header) + "\n")
+                f.write("-" * (len(header) * 7) + "\n")  # Trennzeile
+
+                for row in df_pivot.iter_rows(named=True):
+                    line = [f"{row['Obs']:>6}"]
+                    for c in for_cols + ["Row_Sum"]:
+                        val = int(row[c])
+                        line.append(f"{val:6d}")
+                    f.write(" ".join(line) + "\n")
+
+            print(f"Saved for {city}, user {user}: {outfile_xlsx}, {txt_outfile}")
 
 
 # plotting
