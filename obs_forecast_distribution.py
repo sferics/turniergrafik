@@ -202,7 +202,7 @@ for param in elemente_namen:
     
             for betdate, data in combined_data[city].items():
                 obs_vals_list = data["o"].get(param, [])
-                valid_obs = [v for v in obs_val_list if v is not None]
+                valid_obs = [v for v in obs_vals_list if v is not None]
                 if not obs_vals_list:
                     continue
                 if not valid_obs:
