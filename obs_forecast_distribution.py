@@ -34,9 +34,6 @@ DEC_QUANT = Decimal('0.001')
 
 # ------------------- Hilfsfunktionen -------------------#
 def to_value(raw_value):
-    """Konvertiert raw_value (z.B. int oder str) zu einem gerundeten float.
-       Intern wird Decimal für korrektes Runden benutzt; Rückgabe ist float.
-    """
     if raw_value is None:
         return None
     with localcontext() as ctx:
@@ -47,16 +44,10 @@ def to_value(raw_value):
     return float(d)
 
 def get_interval(value, ranges):
-    """Gibt (Index, Range-Text) zurück, in dem der Wert liegt, oder (None, None)."""
     for i, r in enumerate(ranges):
-        a = r[0]
-        b = r[1]
-        if i == len(ranges)-1:  # Einzelwert
-            if a <= value <= b:
-                return i, f"[{a}, {b}]"
-        else:
-            if a <= value <= b:
-                return i, f"[{a}, {b}]"
+        a, b = r
+        if a <= value <= b:
+            return i, f"[{a}, {b}]"
     return None, None
 
 intervals_cfg = _load_yaml_data(filepaths=['tabelle_obs_for.yml'])['Intervalle']
@@ -81,12 +72,9 @@ def get_obs_data(staedte, tage, elemente):
         results = cursor.fetchall()
         nested = {}
         for row in results:
-            betdate = row['betdate']
-            param = row['paramName']
-            raw_value = row['value']
+            betdate, param, raw_value = row['betdate'], row['paramName'], row['value']
             if raw_value is not None:
-                v = to_value(raw_value)   
-                nested.setdefault(betdate, {}).setdefault(param, []).append(v)
+                nested.setdefault(betdate, {}).setdefault(param, []).append(to_value(raw_value))
         obs_data[cfg.id_zu_kuerzel[stadt]] = nested
     return obs_data   
 
@@ -112,14 +100,9 @@ def get_forecast_data(staedte, tage, elemente, users):
         results = cursor.fetchall()
         nested = {}
         for row in results:
-            betdate = row['betdate']
-            user = row['user_login']
-            param = row['paramName']
-            raw_value = row['value']
+            betdate, user, param, raw_value = row['betdate'], row['user_login'], row['paramName'], row['value']
             if raw_value is not None:
-                v = to_value(raw_value)
-                # Wichtig: nach User verschachteln
-                nested.setdefault(betdate, {}).setdefault(user, {})[param] = v
+                nested.setdefault(betdate, {}).setdefault(user, {})[param] = to_value(raw_value)
         forecast_data[cfg.id_zu_kuerzel[stadt]] = nested
     return forecast_data   
 
@@ -158,6 +141,12 @@ if __name__ == "__main__":
     obs_data = get_obs_data(staedte, wochenendtage, elemente)
     forecast_data = get_forecast_data(staedte, wochenendtage, elemente, users)
 
+    config_cfg = _load_yaml_data(filepaths=['cfg.yml'])
+    param_to_si_map = {name: unit for name, unit in zip(
+        config_cfg["elemente"]["elemente_archiv_neu"],
+        config_cfg["elemente"]["elemente_einheiten_neu"]
+    )}
+
 
 
 
@@ -166,9 +155,10 @@ combined_data = {}
 for city in obs_data:
     combined_data[city] = {}
     for betdate in obs_data[city]:
-        combined_data[city].setdefault(betdate, {})
-        combined_data[city][betdate]['o'] = obs_data[city][betdate]
-        combined_data[city][betdate]['f'] = {}
+            combined_data[city][betdate] = {
+                'o': obs_data[city][betdate],
+                'f': {}
+            }
         for user in users:
             user_login = users_dict_swapped[user]
             user_login_actual = cfg.teilnehmerumbenennung.get(user_login, user_login)
@@ -176,10 +166,9 @@ for city in obs_data:
                 combined_data[city][betdate]['f'][user_login] = forecast_data[city][betdate].get( user_login_actual, {el: None for el in elemente_namen} )
             except KeyError: combined_data[city][betdate]['f'][user_login] = {el: None for el in elemente_namen}
 
-config_cfg = _load_yaml_data(filepaths=['cfg.yml'])
-elemente_namen_cfg = config_cfg["elemente"]["elemente_archiv_neu"]
-elemente_einheiten_cfg = config_cfg["elemente"]["elemente_einheiten_neu"]
-param_to_si_map = {name: unit for name, unit in zip(elemente_namen_cfg, elemente_einheiten_cfg)}
+# ---------------------------- Verarbeitung und Export -----------------------------------#
+outdir = "distribution_outputs"
+os.makedirs(outdir, exist_ok=True)
 cities_to_use = list(combined_data.keys())
             
 
@@ -198,7 +187,6 @@ for param in elemente_namen:
             values_by_bin = defaultdict(list)
             obs_missing = []
             for_missing = []
-            for_outside = []
     
             for betdate, data in combined_data[city].items():
                 obs_vals_list = data["o"].get(param, [])
@@ -217,10 +205,7 @@ for param in elemente_namen:
                 if user_fvals is None:
                     for_missing.append((city, betdate, user, "no_forecast"))
                     continue
-                fcast_val = user_fvals.get(param)
-                if fcast_val is None:
-                    for_missing.append((city, betdate, user, "param_missing"))
-                    continue
+                fcast_val = user_fvals[param]
                 f_idx, _ = get_interval(fcast_val, for_ranges_def)
                 if f_idx is None:
                     for_missing.append(fcast_val)
@@ -236,107 +221,133 @@ for param in elemente_namen:
             
 
         # ------------------- DataFrame bauen -------------------
-            rows = [
-                {"Obs": f"{obs_r[1]} {si}" if si else str(obs_r[1]),
-                 "For": f"{for_r[1]} {si}" if si else str(for_r[1]),
-                 "Count": counts.get((tuple(obs_r), tuple(for_r)), 0)}
-                for obs_r, for_r in product(obs_ranges_def, for_ranges_def)
+        rows = [
+            {"Obs": str(obs_r[1]),
+             "For": str(for_r[1]),
+             "Count": counts.get((tuple(obs_r), tuple(for_r)), 0)}
+             for obs_r, for_r in product(obs_ranges_def, for_ranges_def)
             ]
 
-            df_dist = pl.DataFrame(rows)
-            if df_dist["Obs"].dtype == pl.List:
-                df_dist = df_dist.with_columns(
-                    pl.col("Obs").arr.get(0).alias("Obs")
-                )
+        df_dist = pl.DataFrame(rows)
 
-            df_pivot = df_dist.pivot(
-                values="Count",
-                index="Obs",
-                on="For",
-                aggregate_function="sum"
-            )
-             # Spalten numerisch sortieren
-            def for_label_to_num(label):
-                nums = re.findall(r"[-+]?\d*\.?\d+", label)
-                return float(nums[0]) if nums else float("inf")
+        df_pivot = df_dist.pivot(
+            values="Count",
+            index="Obs",
+            on="For",
+            aggregate_function="sum"
+        )
+        # --- Numerisch korrekt sortieren nach Obs ---
+        df_pivot = df_pivot.with_columns(
+            pl.col("Obs").str.extract(r"([-+]?\d*\.?\d+)").cast(pl.Float64).alias("_obs_sort")
+        ).sort("_obs_sort").drop("_obs_sort")
+
+        # Spalten numerisch sortieren (ohne Obs)
+        for_cols = [c for c in df_pivot.columns if c != "Obs"]
+        for_cols_sorted = sorted(for_cols, key=lambda x: float(re.findall(r"[-+]?\d*\.?\d+", x)[0]))
+        df_pivot = df_pivot.select(["Obs"] + for_cols_sorted)
             
-            for_cols = [c for c in df_pivot.columns if c != "Obs"]
-            df_pivot = df_pivot.select(["Obs"] + sorted(for_cols, key=for_label_to_num))
+        # ------------------- Row_Sum berechnen -------------------
+        df_pivot = df_pivot.with_columns(
+            pl.sum_horizontal(for_cols_sorted).alias("Row_Sum")
+        )
+
+        # ------------------- Column_Sum (vertikal) -------------------
+        col_sums = {c: df_pivot[c].sum() for c in for_cols_sorted}  # vertikale Summen
+        col_sums["Obs"] = "Col_Sum"
+        col_sums["Row_Sum"] = df_pivot["Row_Sum"].sum()  # Kreuzsumme unten rechts
+
+        col_sums_df = pl.DataFrame([col_sums], schema=df_pivot.columns)
+        df_pivot = df_pivot.vstack(col_sums_df)
             
             # --- Export ---
-            outdir = "distribution_outputs"
-            os.makedirs(outdir, exist_ok=True)
-            city_str = re.sub(r'[\\/:"*?<>|\s]+', '_', city)
-            user_str = re.sub(r'[\\/:"*?<>|\s]+', '_', user)
+        outdir = os.path.join("distribution_outputs", "BER_neu")
+        os.makedirs(outdir, exist_ok=True)
+        city_str = re.sub(r'[\\/:"*?<>|\s]+', '_', city)
+        user_str = re.sub(r'[\\/:"*?<>|\s]+', '_', user)
             
-            outfile_xlsx = os.path.join(outdir, f"distribution_{city_str}_{param}_{user_str}.xlsx")
-            txt_outfile = os.path.join(outdir, f"distribution_{city_str}_{param}_{user_str}.txt")
-            # Erste Spalte umbenennen zu "Obs \ For"
-            df_excel = df_pivot.rename({"Obs": "Obs \\ For"})
-            df_excel.write_excel(outfile_xlsx, worksheet="Distribution")
-            print(f"Saved Excel for {city}, user {user}: {outfile_xlsx}")
+        outfile_xlsx = os.path.join(outdir, f"distribution_{city_str}_{param}_{user_str}.xlsx")
+        # Erste Spalte umbenennen zu "Obs \ For"
+        df_excel = df_pivot.rename({"Obs": "Obs \\ For"})
+        df_excel.write_excel(outfile_xlsx, worksheet="Distribution")
+        print(f"Saved Excel for {city}, user {user}: {outfile_xlsx}")
 
-            # --- Farben mit openpyxl setzen ---
-            wb = openpyxl.load_workbook(outfile_xlsx)
-            ws = wb.active
+        # --- Farben mit openpyxl setzen ---
+        wb = openpyxl.load_workbook(outfile_xlsx)
+        ws = wb.active
 
-            blue_fill = PatternFill(start_color="ADD8E6", end_color="ADD8E6", fill_type="solid")  # Hauptdiagonale
-            orchid_fill = PatternFill(start_color="DA70D6", end_color="DA70D6", fill_type="solid")  # Kreuzsumme
+        blue_fill = PatternFill(start_color="ADD8E6", end_color="ADD8E6", fill_type="solid")  # Hauptdiagonale
+        orchid_fill = PatternFill(start_color="DA70D6", end_color="DA70D6", fill_type="solid")  # Kreuzsumme
+        n_rows = len(df_pivot) - 1  # letzte Zeile = Col_Sum
+        n_cols = len(for_cols_sorted)
+        for i in range(n_rows):
+            ws.cell(row=i+2, column=i+2).fill = blue_fill  # +2: Header-Zeile
 
-            # Hauptdiagonale markieren
-            n_rows = len(df_pivot) - 1  # letzte Zeile = Summe
-            for i in range(n_rows):
-                col_idx = i + 2  # +2, weil Excel Spalte 1 = Obs \ For
-                ws.cell(row=i+2, column=col_idx).fill = blue_fill  # +2: Header-Zeile
+        # Kreuzsumme markieren (letzte Zeile, letzte Spalte)
+        ws.cell(row=n_rows+2, column=len(df_pivot.columns)).fill = orchid_fill
 
-            # Kreuzsumme markieren (letzte Zeile, letzte Spalte)
-            ws.cell(row=n_rows+2, column=len(df_pivot.columns)).fill = orchid_fill
-
-            wb.save(outfile_xlsx)
+        wb.save(outfile_xlsx)
 
              # --- TXT-Export (Fortran-lesbar) ---
-            with open(txt_outfile, "w", encoding="utf-8") as f:
-                header = ["Obs \\ For"] + [c for c in df_pivot.columns if c != "Obs"]
-                f.write(" ".join(f"{h:>6}" for h in header) + "\n")
-                f.write("-" * (len(header) * 7) + "\n")  # Trennzeile
+        txt_outfile = os.path.join(outdir, f"distribution_{city_str}_{param}_{user_str}.txt")
+        # Spaltenbreiten bestimmen
+        col_widths = {}
+        for c in df_excel.columns:
+            max_len = max([len(str(val)) for val in df_excel[c].to_list()] + [len(c)])
+            col_widths[c] = max_len
 
-                for row in df_pivot.iter_rows(named=True):
-                    line = [f"{row['Obs']:>6}"]
-                    for c in for_cols + ["Row_Sum"]:
-                        val = int(row[c])
-                        line.append(f"{val:6d}")
-                    f.write(" ".join(line) + "\n")
+        with open(txt_outfile, "w", encoding="utf-8") as f:
+                # Header
+            header = " ".join(f"{c:>{col_widths[c]}}" for c in df_excel.columns)
+            f.write(header + "\n")
+                
+            # Zeilen
+            for row in df_excel.rows():
+                line = " ".join(f"{str(val):>{col_widths[df_excel.columns[i]]}}" for i, val in enumerate(row))
+                f.write(line + "\n")
 
-            print(f"Saved for {city}, user {user}: {outfile_xlsx}, {txt_outfile}")
+        print(f"Saved TXT for {city}, user {user}: {txt_outfile}")
 
 
 # ------------------- ASCII-Tabelle bauen -------------------
-            asc_lines = []
-            # Header mit Unterzeile
-            asc_lines.append(f"{'Kl':>5}  {'MFc':>6}  {'MOb':>6}  {'#':>4}")
-            asc_lines.append(f"{'-'*5}  {'-'*6}  {'-'*6}  {'-'*4}")
+        asc_outfile = os.path.join(outdir, f"distribution_{city}_{param}_{user}.asc")
+        # Header mit Unterzeile
+        headers = ["Kl", "MFc", "MOb", "#"]
 
-            # Werte pro Klasse
-            for obs_r in obs_ranges_def:
-                lower, upper = obs_r
-                combined_vals = []
-                for for_r in for_ranges_def:
-                    combined_vals.extend(values_by_bin.get((tuple(obs_r), tuple(for_r)), []))
+        # Werte vorbereiten (erst sammeln, dann Spaltenbreiten bestimmen)
+        rows = []
 
-                count = len(combined_vals)
-                mean_fc = sum(v for (_, v) in combined_vals) / count if count else 0.0
-                mean_obs = sum(o for (o, _) in combined_vals) / count if count else 0.0
-                print(f"count ist {count}.")
+        # Werte pro Klasse
+        for obs_r in obs_ranges_def:
+            lower, upper = obs_r
+            combined_vals = []
+            for for_r in for_ranges_def:
+                combined_vals.extend(values_by_bin.get((tuple(obs_r), tuple(for_r)), []))
 
-                # Format: 6.1f für Kl, 6.2f für Mittelwerte, 4d für Count
-                asc_lines.append(f"{upper:6.1f}  {mean_fc:6.2f}  {mean_obs:6.2f}  {count:4d}")
+            count = len(combined_vals)
+            mean_fc = sum(v for (_, v) in combined_vals) / count if count else 0.0
+            mean_obs = sum(o for (o, _) in combined_vals) / count if count else 0.0
+            print(f"count ist {count}.")
 
-            # ASCII-Datei speichern
-            asc_outfile = os.path.join(outdir, f"distribution_{city_str}_{param}_{user_str}.asc")
-            with open(asc_outfile, "w", encoding="utf-8") as f:
-                f.write("\n".join(asc_lines))
+            kl_val = f"{upper:.1f}"
+            rows.append([kl_val, f"{mean_fc:.2f}", f"{mean_obs:.2f}", str(count)])
 
-            print(f"ASCII table saved: {asc_outfile}")
+        col_widths = []
+        for i, h enumerate(headers):
+            max_val_len = max(len(r[i]) for h, w in zip(headers, col_widths)))
+            col_widths.append(max(len(h), max_val_len))
+
+        asc_lines = []
+        # Header-Zeile rechtsbündig
+        asc_lines.append(" ".join(f"{val:>{w}}" for h, w in zip(headers, col_widths)))
+        # Trennstriche (genauso wie die Spaltenbreite)
+        asc.append(" ".join("-" * w for w in col_widths))
+        # Daten rechtsbündig
+        for r in rows:
+            asc_lines.append(" ".join(f"{val:>{w}}" for val, w in zip(r, col_widths)))
+        # Datei schreiben
+        with open(asc_outfile, "w", encodeing="utf-8") as f:
+            f.write("\n".join(asc_lines))
+        print(f"ASCII table saved: {asc_outfile}")
 
            
 
