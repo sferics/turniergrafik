@@ -184,8 +184,8 @@ cities_to_use = list(combined_data.keys())
             
 
 for param in elemente_namen:
-    obs_ranges_def = intervals_cfg["obs"].get(param, [])
-    for_ranges_def = intervals_cfg["for"].get(param, [])
+    obs_ranges_def = intervals_cfg.get(param, [])
+    for_ranges_def = intervals_cfg.get(param, [])
 
     if not obs_ranges_def or not for_ranges_def:
             print(f"Skipping {param} due to missing ranges.")
