@@ -102,7 +102,7 @@ teilnehmer:
 # Sektion für die spezifische Auswertung
 auswertung:
   starttermin:                          02.09.2022
-  endtermin:                            29.08.2025
+  endtermin:                            22.08.2025
   auswertungstage:                      [Sa, So]
   auswertungsteilnehmer:                [MSwr-MOS-Mix, MSwr-EZ-MOS, MSwr-GFS-MOS, DWD-MOS-Mix, DWD-EZ-MOS, DWD-ICON-MOS, MOS-Mix]
     #auswertungsteilnehmer:                [DWD-EZ-MOS, MSwr-EZ-MOS]
@@ -135,7 +135,11 @@ auswertung:
     DWD-ICON-MOS:                       [DWD-EZ-MOS]
     DWD-MOS-Mix-test:                   [DWD-MOS-Mix]
   punkteersetzung_mindestprozentzahl:   50
-
+  # Quotienten Einstellungen
+  quotienten_berechnen:                 False
+  quotienten_teilnehmer:                [MSwr-EZ-MOS, DWD-EZ-MOS]
+  quotienten_alle_dateien:              False
+  
 # ############################################################################
 # ######### Grafikeinstellungen ##############################################
 # ############################################################################

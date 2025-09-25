@@ -9,9 +9,12 @@ from datetime import timedelta
 from datetime import datetime as dt
 # fuer die Umwandlung von Strings in Datumsobjekte
 from copy import copy
+from glob import glob
 
 # einfachere Berechnungen und Umgang mit Fehlwerten
 import numpy as np
+# 
+import pandas as pd
 
 # zur grafischen Darstellung
 import matplotlib
@@ -499,9 +502,14 @@ if __name__ == "__main__":
     ps = ap()
     ps.add_argument("-v", "--verbose", help="increase output verbosity",
                         action="store_true")
+    ps.add_argument("-q", "--quotient", help="calculate quotients etc \
+            (enter 2 players for quotient calculation)")
+    
     options = ("params", "cities", "days", "tournaments", "users")
+    
     for option in options:
         ps.add_argument("-"+option[0], "--"+option, type=str, help="Set "+option)
+    
     args = ps.parse_args()
      
     # Wenn verbose als Argument angegeben wurde, dann setze verbose auf True
@@ -517,7 +525,7 @@ if __name__ == "__main__":
     days   = args.days.split(',') if args.days else None
     tournaments = args.tournaments.split(',') if args.tournaments else None
     users  = args.users.split(',') if args.users else None
-    
+
     # Wenn Start- und Endttermine angegeben wurden, dann konvertiere sie in Tagesindizes
     if tournaments:
         # Beispiel: "02.01.2023,09.01.2025"
@@ -875,6 +883,67 @@ if __name__ == "__main__":
     
     #print("Turniere mit fehlenden Spielern")
     #print( missing_list )
+    
+    if verbose:
+        print("Turniertage mit fehlenden Spielern / Tipps:")
+        print( sorted(faulty_dates) )
 
-    print("Turniertage mit fehlenden Spielern / Tipps:")
-    print( sorted(faulty_dates) )
+
+if args.quotient or cfg.quotienten_berechnen:
+    if args.quotient:
+        teilnehmer = args.quotient.split(",")
+    else:
+        teilnehmer = cfg.quotienten_teilnehmer
+
+    # Alle txt-Dateien mit ({datum})*years.txt einlesen. Mit glob wird jede txt-Datei dieser Form gefunden.
+    glob_str = "*years.txt"
+    if cfg.quotienten_alle_dateien:
+        files = glob(glob_str)
+    else:    
+        datum = dt.now().strftime("%Y-%m-%d")
+        files = glob( datum + glob_str )
+    
+    results = []
+
+    for f in files:
+        df = pd.read_csv(f, sep=r"\s+", engine="python", index_col=0)
+        df = df.T.reset_index().rename(columns={"index":"Datum"})              # Datum soll raus.
+
+        # Nur die gewünschten MOSe / Teilnehmer
+        df_sel = df[["Datum"] + teilnehmer].copy()
+
+        # Summen, Differenz, Quotient
+        df_sum = df_sel[teilnehmer].sum().to_frame().T       # .T heißt transponieren.
+        df_sum["Diff"] = df_sum[teilnehmer[0]] - df_sum[teilnehmer[1]]
+        df_sum["Quot in %"] = df_sum[teilnehmer[0]] / df_sum[teilnehmer[1]] * 100
+
+        # Zusatzinfo
+        var_name = os.path.basename(f).split("_")[3]       # Trennzeichen an der Position 4 bei den später gespeicherten Dateien
+        city = os.path.basename(f).split("_")[2]           # Trennzeichen an der Position 3 bei den später gespeicherten Dateien
+        df_sum["Variable"] = var_name
+        df_sum["Stadt"] = city
+
+        # Spalten neu anordnen: Stadt, Tage, Variable zuerst
+        # Tage aus cfg
+        tage_str = ", ".join(cfg.auswertungstage) if isinstance(cfg.auswertungstage, list) else cfg.auswertungstage
+        df_sum["Tage"] = tage_str
+
+        # Spalten neu anordnen
+        cols_order = ["Stadt", "Tage", "Variable"] + teilnehmer + ["Diff", "Quot in %"]
+        df_sum = df_sum[cols_order]
+        results.append(df_sum)
+        
+    # Alles zusammenfassen
+    df_final = pd.concat(results, ignore_index=True)
+    
+    # Nach der ersten Spalte "Stadt" alphabetisch sortieren
+    df_final = df_final.sort_values(by="Stadt").reset_index(drop=True)
+    
+    # TXT speichern
+    df_final.to_csv("grafik_werte.txt", index=False, sep=" ")
+    
+    # Excel speichern
+    df_final.to_excel("grafik_werte.xlsx", index=False)
+    
+    if verbose:
+        print("Dateien wurden gespeichert: grafik_werte.txt und grafik_werte.xlsx")
