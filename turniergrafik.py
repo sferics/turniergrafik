@@ -1,4 +1,3 @@
-
 ### Bibliotheken
 
 # Zeit/Kalender
@@ -9,11 +8,12 @@ from datetime import timedelta
 from datetime import datetime as dt
 # fuer die Umwandlung von Strings in Datumsobjekte
 from copy import copy
+# um Dateien zu finden
 from glob import glob
 
 # einfachere Berechnungen und Umgang mit Fehlwerten
 import numpy as np
-# 
+# fuer die Datenanalysen (Quotienten etc.)
 import pandas as pd
 
 # zur grafischen Darstellung
@@ -29,10 +29,10 @@ import os
 # Systemfunktionen
 import sys
 
+# um aus einer Liste bestimmte Indizes auszuwählen
 from operator import itemgetter
 
-# replace ajax_print by db_read
-#import ajax_print
+# eigene Module
 import db_read
 import graphics
 import config_loader as cfg
@@ -94,7 +94,6 @@ def short_term_mean(points, dates, mean_weaks, max_nan_ratio, cities=5):
         # "schneidet" immer bestimmt grosse Stuecke heraus
         # (dafuer gedacht immer kleinere Stuecke zu bekommen)
         points_span = points[-i:]
-        #print(points_span)
 
         # gib Nan als Summe aus, wenn ein bestimmter Prozentsatz
         # (cfg.anteil_datenverfuegbarkeit) an NaNs ueberschritten wurde
@@ -103,8 +102,7 @@ def short_term_mean(points, dates, mean_weaks, max_nan_ratio, cities=5):
             # bilde mittelwert (arithmetisch) ohne NaNs
             mean = np.nanmean(points_span)
         # wenn der Prozentsatz an NaNs ueberschritten wurde, gib Nan aus
-        else:
-            mean = np.nan
+        else: mean = np.nan
 
         # von max(dates) ziehen wir (i-1)*7 Tage ab,
         # da in Wochen gezaehlt wurde und Tage gesucht sind
@@ -116,7 +114,6 @@ def short_term_mean(points, dates, mean_weaks, max_nan_ratio, cities=5):
         # des Mittelungszeitraums an die Liste an
         mean_date_list.append((date, mean))
 
-    #print(len(mean_date_list))
     return mean_date_list
 
 
@@ -181,7 +178,6 @@ def long_term_mean(points, dates, mean_time_span, max_nan_ratio, cities=5):
             first_tournament_of_year[year] = min(dates_in_year[year])
             # Letztes Tournier des Jahres finden
             last_tournament_of_year[year] = max(dates_in_year[year])
-
             # Finde den Index des ersten Turniers des Jahres in dates
             idx         = dates.index(first_tournament_of_year[year])
             points_span = points[idx:idx+weeks_in_year[year]+1]
@@ -359,7 +355,6 @@ def get_player_mean(pointlist,
         # prufe, ob der Spieler einen Ersatzspieler hat,
         # und wenn ja, dann die Punkteliste des Ersatzspielers verwenden,
         # bis in die letzte Ebene des Dictionaries
-        
         # wenn die Punkteliste None-Werte enthaelt, dann
         # ersetze diese durch die Werte des Ersatzspielers
         if cfg.punkteersetzung_elemente:
@@ -395,16 +390,15 @@ def get_player_mean(pointlist,
     # TODO Wenn immer noch None-Werte in der Punkteliste sind, nehme den
     # den Mittelwert der Punkteliste aller Spieler, die an diesem Tag
     # teilgenommen haben, und ersetze die None-Werte damit
-    
     # wenn die Punkteliste (immer noch) None-Werte enthaelt
     # dann ersetze diese durch Null (0)
     pointlist = [0 if v is None else v for v in pointlist]
     pointlist = np.array(pointlist)
-    #print("None-Werte durch Null ersetzt")
-    #print("Punkteliste:", pointlist)
-
-    #print("Maximale Punkte:", elemente_max_punkte)
-    #print("Punkteliste:", pointlist)
+    if verbose:
+        print("None-Werte durch Null ersetzt")
+        print("Punkteliste:", pointlist)
+        print("Maximale Punkte:", elemente_max_punkte)
+        print("Punkteliste:", pointlist)
     
     n_elements = len(elemente_archiv)
 
@@ -466,12 +460,14 @@ def get_player_mean(pointlist,
         PointsLost = [(elemente_max_punkte[i] - v)
                       for i, v in enumerate(Points)]
 
-
     # Durchschnittlich verlorene Punkte berechnen (ohne NaNs)
-    
-    #print( "MEAN:", np.round( np.nanmean(PointsLost),1 ) )
+    mean_points_lost = np.nanmean(PointsLost)
 
-    return np.nanmean(PointsLost)
+    if verbose:
+        print("Punkte verloren:", PointsLost)
+        print("Mittelwert Punkte verloren:", mean_points_lost)
+
+    return mean_points_lost
 
 
 def find_replacement_players(UserValueLists, Player):
@@ -505,8 +501,9 @@ if __name__ == "__main__":
     ps.add_argument("-q", "--quotient", help="calculate quotients etc \
             (enter 2 players for quotient calculation)")
     
+    # Argumente fuer die Konfiguration der Auswertungselemente, Staedte,
+    # Tage, Turniere und Teilnehmer hinzufuegen
     options = ("params", "cities", "days", "tournaments", "users")
-    
     for option in options:
         ps.add_argument("-"+option[0], "--"+option, type=str, help="Set "+option)
     
@@ -565,7 +562,6 @@ if __name__ == "__main__":
         UserValueLists[p] = []
 
     #TODO Archiv-Ordner checken und erstellen hierher verschieben
-    
     # Datenbankverbindung herstellen
     db = db_read.db()
 
@@ -637,12 +633,11 @@ if __name__ == "__main__":
                 # Erstellen und einlesen
                 #ajax_print.ArchiveParse(city_id, i)
                 db_read.ArchiveParse(db, city_id, i)
-                    #TODO Dateipfad als Eingabe
-                    #TODO Datei hier schreiben
+                #TODO Dateipfad als Eingabe
+                #TODO Datei hier schreiben
 
             # Datei einlesen
             npzfile = np.load(FileName, allow_pickle=True)
-            
             missing = 0
             
             for Player in cfg.auswertungsteilnehmer:
@@ -656,10 +651,8 @@ if __name__ == "__main__":
                 # zu ignorierende Termine abfangen
                 # TODO pruefen
                 if i >= start_date and i not in zu_ignorierende_tage:
-
                     # Try-Except ist performancemaessig besser als eine
                     # Abfrage, ob der Name in der Datei enthalten ist (-> IO)
-
                     # versuche den Spieler fuer den Tag auszulesen
                     try:
                         # Punkte des Spielers aus Datei einlesen
@@ -707,7 +700,6 @@ if __name__ == "__main__":
                         print(f"Fehler beim Einlesen von '{Player}' am Tag {i}: {e}")
                         missing += 1
                         player_point_list = [np.nan] * 24
-                        #sys.exit("%s nicht gefunden - kein Ersatz!" % Player)
                         # add NaN to list
                         UserValueLists[Player].append( np.nan )
                         UserValueLists[Player].append( i-1 )
@@ -762,46 +754,6 @@ if __name__ == "__main__":
                                 UserValueLists[Player].append( np.nan )
                     
                     UserValueLists[Player].append( i-1 )
-                    #FIXME entfernen oder verschieben weiter nach oben
-                    """
-                    players_in_file = npzfile.keys()
-                    name = "" #FIXME ACHTUNG: So darf es keinen Spieler mit
-                              #      leerem Namen geben!
-
-                    if Player in players_in_file:
-                        name = Player
-
-                    # sonst pruefen, ob einer der alternativen Namen des
-                    # Spielers in der Datei auftaucht
-                    elif Player in cfg.teilnehmerumbenennung.keys():
-                        alt_name = cfg.teilnehmerumbenennung[Player] \
-                            .intersection( set(players_in_file) )
-
-                        # wenn einer der alternativen Namen auftaucht
-                        if alt_name != set():
-
-                            # set zu string konvertieren
-                            name = list(alt_name)[0]
-
-                    # versuche den Spieler fuer den Tag auszulesen
-                    try:
-
-                        # Punkte des Spielers aus Datei einlesen
-                        player_point_list = npzfile[name]
-
-                        # Tagesmittel des Spielers an die jeweilige Liste anfuegen
-                        UserValueLists[Player].append(
-                            get_player_mean(player_point_list,
-                                            cfg.auswertungstage,
-                                            cfg.auswertungselemente,
-                                            cfg.elemente_archiv,
-                                            max_points_elements,
-                                            eval_el_indexes) )
-
-                    # der Spieler wurde fuer den Tag nicht gefunden
-                    except KeyError:
-                        UserValueLists[Player].append(np.nan)
-                    """
                 # zu ignorierende Termine abfangen und mit NaN beschreiben
                 else:
                     UserValueLists[Player].append( (np.nan, i-1) )
@@ -810,9 +762,6 @@ if __name__ == "__main__":
                 
                 if i not in missing_list:
                     missing_list.append(i)
-                    #print(city)
-                    #print(i)
-                    #print( index_2_date(i) )
 
     #------------------------------------------------------------------------#
     print ("Benoetigte Laufzeit fuer Einlesen und Tagesmitteln: {0} Sekunden"
@@ -830,26 +779,14 @@ if __name__ == "__main__":
         # Wir schneiden beides nun aus um sie von einander zu trennen.
         userpoints = np.array(UserValueLists[player][::2])
         userdates  = UserValueLists[player][1::2]
-
         # Die Listen bestehen nun aus mehreren Staedten hintereinander
-        # ([BER|VIE|ZUR|IBK|LEI]) und es muss noch ueber die Staedte gemittelt
-        # werden.
- 
-        # die lange Datenliste in eine numpy-'Matrix' konvertieren, die so
+        # ([BER|VIE|ZUR|IBK|LEI]) und es muss ueber die Staedte gemittelt werden.
+        # Die lange Datenliste in eine numpy-'Matrix' konvertieren, die so
         # viele Zeilen hat, wie Staedte verarbeitet wurden und anschließendes
         # mitteln ueber die Spalten (BER[1]+VIE[1]+../Staedteanzahl)
         # [BER|VIE|ZUR|IBK|LEI] -> [[BER],[VIE],[ZUR],[IBK],[LEI]]
-        #print( player )
-        #print( np.round(userpoints,1) )
-        #print( len(userpoints) )
-
-        #print( "MATRIX" )
-        #print( np.round( userpoints.reshape(-1, len(cfg.auswertungsstaedte)), 1) )
-
         userpoints = np.nanmean( \
             userpoints.reshape(-1, len(cfg.auswertungsstaedte)), axis=1)
-
-        #print( np.round(userpoints,1) )
 
         # Langfrist und Kurzfristberechnungen
         cities = len(cfg.auswertungsstaedte)
@@ -863,9 +800,6 @@ if __name__ == "__main__":
                                             cfg.mittelungszeitspannen,
                                             cfg.datenluecken_kurzfrist,
                                             cities)))
-
-        #print( "short term" )
-        #print( short_term_data[0] )
     
     #------------------------------------------------------------------------#
     print ("Benoetigte Laufzeit der Rechnungen ohne Grafik: {0} Sekunden"
@@ -880,9 +814,6 @@ if __name__ == "__main__":
     print ("Benoetigte Laufzeit des Scriptes: {0} Sekunden"
            .format(time.time() - startTime))
     #------------------------------------------------------------------------#
-    
-    #print("Turniere mit fehlenden Spielern")
-    #print( missing_list )
     
     if verbose:
         print("Turniertage mit fehlenden Spielern / Tipps:")
