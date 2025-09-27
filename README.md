@@ -8,15 +8,22 @@ https://app.nuclino.com/mswr/Task-board/Turniergrafik-Programm-Dokumentation-7ec
 # Installation
 
 ## Installation mit venv
-Es wird empfohlen, dieses Programm in einer virtuellen Umgebung zu installieren.
+Es wird empfohlen, dieses Programm in einer virtuellen Umgebung auszuführen. Dies setzt mindestens Python 3.10 voraus, funktioniert aber auch mit neueren Versionen. Je nachdem, welche Version in den Paketquellen verfügbar ist, wird eine andere installiert, was aber für die Funktion des Programms unerheblich ist. Die benötigten Python-Pakete werden isoliert vom System-Python in einer virtuellen Umgebung (venv) installiert.
+
+### Abhängigkeiten installieren (wichtig!)
+```bash
+sudo apt install python3-pip python3-venv python3-dev mariadb-server libmariadb-dev
+```
+
+### Virtuelle Python-Umgebung erstellen.
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements_pip.txt
 ```
 
-Stattdessen kann auch nur das Kommando `pip install requirements_pip.txt`
-verwendet werden, um die Abhängigkeiten zu installieren.
+Stattdessen kann auch nur das Kommando `pip install -r requirements_pip.txt`
+verwendet werden, um die benötigten Python-Pakete zu installieren.
 Dann wird das Programm in der aktuellen Umgebung installiert, was aber
 zu Konflikten mit anderen Python-Projekten und dem System-Python
 führen kann. Daher wird die Verwendung einer virtuellen Umgebung
@@ -30,32 +37,25 @@ Nach der Installation von Miniconda (empfohlen) oder Anaconda wird eine Conda-Um
 ```bash
 # Installieren von Miniconda in Linux (falls noch nicht installiert)
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh | bash
-# Erstelle einer Conda-Umgebung
-conda create -n turniergrafik python=3.11
+# Erstelle einer Conda-Umgebung namens 'turniergrafik'
+conda env create -f environment.yml
 # Aktiviere die Conda-Umgebung
 conda activate turniergrafik
-# Installiere die Abhängigkeiten aus der requirements_conda.txt
-conda install --file requirements_conda.txt
 ```
 
 # Benötigte Python-Version
-Das Programm wurde mit Python 3.11 entwickelt und getestet. Es wird empfohlen,
+Das Programm wurde mit Python 3.11 entwickelt und getestet. Mit Conda wird empfohlen,
 eine Python-Version ab 3.11 zu verwenden, um Kompatibilitätsprobleme zu vermeiden.
+
 Die Installation dieser Version kann je nach Betriebssystem unterschiedlich
 aussehen. Für die meisten Linux-Distributionen kann Python über den
 Paketmanager installiert werden. Für Windows und macOS kann es
 von der offiziellen Python-Website heruntergeladen und installiert werden.
-Für die Installation von Python 3.11 auf Ubuntu kann der folgende Befehl
-verwendet werden:
 
-```bash
-sudo apt install python3.11
-# Optional: Installation von pip (Python-Paketverwaltung) und venv (virtuelle Umgebung)
-sudo apt install python3-pip python3.11-venv
-```
+Minimal sollte Python 3.10 installiert sein, was mit venv getestet ist.
 Falls diese Version nicht verfügbar ist, kann auch eine neuere Version
 installiert werden, da das Programm auch mit neueren Python-Versionen
-kompatibel ist. Es wird jedoch empfohlen, mindestens Python 3.11 zu verwenden,
+kompatibel ist. Es muss jedoch mindestens Python 3.10 verwenden werden,
 um sicherzustellen, dass das Programm ordnungsgemäß funktioniert.
 
 # Abhängigkeiten
