@@ -2,7 +2,7 @@
 
 # This script runs the Python script ap.py with different parameters and cities.
 #declare -a params=( "N" "Sd" "dd" "ff" "fx" "Wv" "Wn" "PPP" "TTm" "TTn" "TTd" "RR" )
-declare -a params=( "Sd1" "Sd24" )
+declare -a params=( "Sd1" "Sd24" "dd12" "dd24" "ff12" "fx24" "PPP12" "Tmin" "T12" "Tmax" "Td12" "RR1" "RR24")
 # Uncomment the line below to run with all parameters
 declare -a cities=( "BER" "VIE" "LEI" "IBK" "ZUR" )
 
