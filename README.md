@@ -37,7 +37,7 @@ Nach der Installation von Miniconda (empfohlen) oder Anaconda wird eine Conda-Um
 ```bash
 # Installieren von Miniconda in Linux (falls noch nicht installiert)
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh | bash
-# Erstelle einer Conda-Umgebung namens 'turniergrafik'
+# Erstelle eine Conda-Umgebung namens 'turniergrafik' mit den notwendigen Paketen
 conda env create -f environment.yml
 # Aktiviere die Conda-Umgebung
 conda activate turniergrafik
@@ -135,22 +135,30 @@ um sicherzustellen, dass das Programm die gewünschten Ergebnisse liefert.
 ### Die verfügbaren Argumente sind:
 ```bash
 python turniergrafik.py -h
-usage: turniergrafik.py [-h] [-v] [-p PARAMS] [-c CITIES] [-d DAYS] [-t TOURNAMENTS] [-u USERS]
+usage: turniergrafik.py [-h] [-v] [-q QUOTIENT] [-p PARAMS] [-c CITIES] [-d DAYS] [-t TOURNAMENTS]
+                        [-u USERS]
 
 options:
--h, --help - show this help message and exit
--v, --verbose - increase output verbosity
--p, --params PARAMS - Set params
--c, --cities CITIES - Set cities
--d, --days DAYS - Set days
--t, --tournaments TOURNAMENTS - Set tournaments
--u, --users USERS - Set users
+  -h, --help            show this help message and exit
+  -v, --verbose         increase output verbosity
+  -q QUOTIENT, --quotient QUOTIENT
+                        calculate quotients etc (enter 2 players for quotient calculation)
+  -p PARAMS, --params PARAMS
+                        Set params
+  -c CITIES, --cities CITIES
+                        Set cities
+  -d DAYS, --days DAYS  Set days
+  -t TOURNAMENTS, --tournaments TOURNAMENTS
+                        Set tournaments
+  -u USERS, --users USERS
+                        Set users
 ```
 
 ### Erklärung der einzelnen Optionen
 
 ```-h/--help``` Zeigt die Hilfe an und beendet das Programm.<br/>
 ```-v/--verbose``` Zeigt mehr (Debug)-Output bei der Ausführung an. Im Code erkennbar durch if ```verbose: print(x)```<br/>
+```-q/--quotient``` Namen von zwei Spielern, fuer die Quoten, Differenzen und Summen in separaten Dateien ausgegeben werden sollen [Bsp: ```-q MSwr-MOS-Mix,MSwr-EZ-MOS```]<br/>
 ```-p/--params``` Parameter, die ausgewertet werden sollen, getrennt durch Kommas [Bsp: ```-p Sd1,Sd24,RR24```]<br/>
 ```-c/--cities``` Städtenamen als ID, Kürzel oder ganzer Name [Bsp: -c ```BER,4,Zürich```]<br/>
 ```-d/--days``` Tage, die ausgewertet werden sollen (Sa = Samstag, So = Sonntag) [Bsp: ```-d Sa,So```]<br/>

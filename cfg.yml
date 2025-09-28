@@ -136,10 +136,11 @@ auswertung:
     DWD-MOS-Mix-test:                   [DWD-MOS-Mix]
   punkteersetzung_mindestprozentzahl:   50
   # Quotienten Einstellungen
-  quotienten_berechnen:                 True
+  quotienten_berechnen:                 true
   quotienten_teilnehmer:                [MSwr-EZ-MOS, DWD-EZ-MOS]
-  quotienten_alle_dateien:              False
-  
+  quotienten_alle_dateien:              false
+  quotienten_dateiformate:              [txt, xlsx]
+
 # ############################################################################
 # ######### Grafikeinstellungen ##############################################
 # ############################################################################

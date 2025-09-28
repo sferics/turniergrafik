@@ -870,11 +870,13 @@ if args.quotient or cfg.quotienten_berechnen:
     # Nach der ersten Spalte "Stadt" alphabetisch sortieren
     df_final = df_final.sort_values(by="Stadt").reset_index(drop=True)
     
-    # TXT speichern
-    df_final.to_csv("grafik_werte.txt", index=False, sep=" ")
+    if "txt" in cfg.quotienten_dateiformate:
+        # TXT speichern
+        df_final.to_csv("grafik_werte.txt", index=False, sep=" ")
     
-    # Excel speichern
-    df_final.to_excel("grafik_werte.xlsx", index=False)
+    if "xlsx" in cfg.quotienten_dateiformate:
+        # Excel speichern
+        df_final.to_excel("grafik_werte.xlsx", index=False)
     
     if verbose:
         print("Dateien wurden gespeichert: grafik_werte.txt und grafik_werte.xlsx")
