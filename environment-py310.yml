@@ -1,0 +1,35 @@
+name: turniergrafik-py310
+channels:
+  - conda-forge
+  - defaults
+  - r
+dependencies:
+  - python=3.10
+  - pip
+  - ca-certificates
+  - sqlite
+  - tk
+  - zlib
+  - xz
+  - libgcc-ng
+  - libstdcxx-ng
+  - openssl=1.1.*       # Older openssl version for better compatibility with Python 3.10 packages
+  - libffi
+  - libedit
+  - ncurses
+  - libuuid             # Ensure basic compatibility
+  - xorg-libx11
+  - freetype
+  - libpng
+  - libtiff
+  - lerc
+  - lz4-c
+  - libwebp
+  - bzip2
+  - pthread-stubs
+  - curl
+  - libcurl
+  - tbb
+  - libevent
+  - pip:
+      - -r requirements_pip.txt
