@@ -148,6 +148,7 @@ def speicherGeplotteteWerte(ascii_datei_terminliste,
             
             # Füge die Zeile in die Datei ein
             f.write(zeile+"\n")
+            
 
 # Funktion, die die Potenzfunktion für die Y-Achse verwendet
 power = lambda x, y=10e10 : x**y
@@ -640,3 +641,9 @@ def erstelleGrafik(langfrist_player_date_points, kurzfrist_player_date_points, c
         # Lösche die Achsen und schließe die Grafik
         plt.cla()
         plt.close()
+    
+    # Gib den Dateinamen ohne Dateiendung zurück, damit er
+    # für die ASCII-Datei verwendet werden kann
+    # (Dateiendung wird später hinzugefügt)
+    dateiname = dateiname_plot.split('.')[0]
+    return dateiname

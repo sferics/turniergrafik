@@ -806,8 +806,9 @@ if __name__ == "__main__":
            .format(time.time() - startTime))
     #------------------------------------------------------------------------#
 
-    # Grafik erstellen
-    graphics.erstelleGrafik(long_term_data, short_term_data, cfg)
+    # Grafik erstellen und Namen der erstellten TXT-Datei zurueckgeben
+    # (wird fuer die Quotientenberechnung benoetigt)
+    filename = graphics.erstelleGrafik(long_term_data, short_term_data, cfg)
 
     #------------------------------------------------------------------------#
     # Ausgabe der Laufzeit des Programms
@@ -820,37 +821,50 @@ if __name__ == "__main__":
         print( sorted(faulty_dates) )
 
 
+# Quotienten berechnen, wenn als Argument angegeben oder in der Konfiguration gesetzt
 if args.quotient or cfg.quotienten_berechnen:
+    # Teilnehmer fuer die Quotientenberechnung
     if args.quotient:
         teilnehmer = args.quotient.split(",")
     else:
         teilnehmer = cfg.quotienten_teilnehmer
 
-    # Alle txt-Dateien mit ({datum})*years.txt einlesen. Mit glob wird jede txt-Datei dieser Form gefunden.
-    glob_str = "*years.txt"
+    # Wenn alle Dateien eingelesen werden sollen
     if cfg.quotienten_alle_dateien:
+        # Alle txt-Dateien mit ({datum})*years.txt einlesen. Mit glob wird jede txt-Datei dieser Form gefunden.
+        glob_str = "*years.txt"
         files = glob(glob_str)
-    else:    
-        datum = dt.now().strftime("%Y-%m-%d")
-        files = glob( datum + glob_str )
-    
+    else: 
+        # Nur die Datei des aktuellen Plots einlesen
+        filename += "_years.txt"
+        if verbose:
+            print("Nur die Datei des aktuellen Plots einlesen:", filename)
+        files = [filename]
+         
+    # Liste fuer die Ergebnisse initialisieren
     results = []
-
+    
+    # Iteriere durch alle gefundenen / gewuenschten Dateien
     for f in files:
+        # Datei einlesen
         df = pd.read_csv(f, sep=r"\s+", engine="python", index_col=0)
+        # Datum in Spalte umwandeln
         df = df.T.reset_index().rename(columns={"index":"Datum"})              # Datum soll raus.
-
+        
         # Nur die gewünschten MOSe / Teilnehmer
         df_sel = df[["Datum"] + teilnehmer].copy()
-
-        # Summen, Differenz, Quotient
+        
+        # Berechnung der Summe ueber alle Tage
         df_sum = df_sel[teilnehmer].sum().to_frame().T       # .T heißt transponieren.
+        # Differenz und Quotient berechnen
         df_sum["Diff"] = df_sum[teilnehmer[0]] - df_sum[teilnehmer[1]]
         df_sum["Quot in %"] = df_sum[teilnehmer[0]] / df_sum[teilnehmer[1]] * 100
-
-        # Zusatzinfo
-        var_name = os.path.basename(f).split("_")[3]       # Trennzeichen an der Position 4 bei den später gespeicherten Dateien
-        city = os.path.basename(f).split("_")[2]           # Trennzeichen an der Position 3 bei den später gespeicherten Dateien
+        
+        # Zusatzinfon aus Dateinamen extrahieren
+        var_name = os.path.basename(f).split("_")[3]
+        # Trennzeichen an der Position 4 bei den später gespeicherten Dateien
+        city = os.path.basename(f).split("_")[2]
+        # Trennzeichen an der Position 3 bei den später gespeicherten Dateien
         df_sum["Variable"] = var_name
         df_sum["Stadt"] = city
 
@@ -858,10 +872,12 @@ if args.quotient or cfg.quotienten_berechnen:
         # Tage aus cfg
         tage_str = ", ".join(cfg.auswertungstage) if isinstance(cfg.auswertungstage, list) else cfg.auswertungstage
         df_sum["Tage"] = tage_str
-
+         
         # Spalten neu anordnen
         cols_order = ["Stadt", "Tage", "Variable"] + teilnehmer + ["Diff", "Quot in %"]
+        # Summen-DataFrame in der gewuenschten Reihenfolge anordnen
         df_sum = df_sum[cols_order]
+        # Ergebnis an die Liste der Ergebnisse anhaengen
         results.append(df_sum)
         
     # Alles zusammenfassen
@@ -870,13 +886,18 @@ if args.quotient or cfg.quotienten_berechnen:
     # Nach der ersten Spalte "Stadt" alphabetisch sortieren
     df_final = df_final.sort_values(by="Stadt").reset_index(drop=True)
     
+    # Wenn Dateiformat txt gewünscht, dann Text-Datei speichern
     if "txt" in cfg.quotienten_dateiformate:
         # TXT speichern
-        df_final.to_csv("grafik_werte.txt", index=False, sep=" ")
-    
+        file_txt = f.replace("years.txt", "quotients.txt")
+        df_final.to_csv(file_txt, index=False, sep=" ")
+        if verbose:
+            print("TXT-Datei wurde gespeichert:", file_txt)
+
+    # Wenn Dateiformat xlsx gewünscht, dann Excel-Datei speichern
     if "xlsx" in cfg.quotienten_dateiformate:
         # Excel speichern
-        df_final.to_excel("grafik_werte.xlsx", index=False)
-    
-    if verbose:
-        print("Dateien wurden gespeichert: grafik_werte.txt und grafik_werte.xlsx")
+        file_xlsx = f.replace("years.txt", "quotients.xlsx")
+        df_final.to_excel(file_xlsx, index=False)
+        if verbose:
+            print("XLSX-Datei wurde gespeichert:", file_xlsx)
