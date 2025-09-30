@@ -668,7 +668,7 @@ if __name__ == "__main__":
                             #      % (Player, alternative_name) )
                             # Punkte des Spielers aus Datei einlesen
                             player_point_list = npzfile[alternative_name]
-
+                            
                         # eine leere Liste vom naechsten try mit 'NameError'
                         # abgefangen
                         except (KeyError, ValueError):
@@ -693,6 +693,7 @@ if __name__ == "__main__":
                                 for p in Path(cfg.archive_dir_name).glob(f"?_{i}.nz"):
                                     p.unlink()
                                 continue
+                                
                     except Exception as e:
                         faulty_dates.add(i)
                         import traceback
@@ -880,24 +881,24 @@ if args.quotient or cfg.quotienten_berechnen:
         # Ergebnis an die Liste der Ergebnisse anhaengen
         results.append(df_sum)
         
-    # Alles zusammenfassen
-    df_final = pd.concat(results, ignore_index=True)
-    
-    # Nach der ersten Spalte "Stadt" alphabetisch sortieren
-    df_final = df_final.sort_values(by="Stadt").reset_index(drop=True)
-    
-    # Wenn Dateiformat txt gewünscht, dann Text-Datei speichern
-    if "txt" in cfg.quotienten_dateiformate:
-        # TXT speichern
-        file_txt = f.replace("years.txt", "quotients.txt")
-        df_final.to_csv(file_txt, index=False, sep=" ")
-        if verbose:
-            print("TXT-Datei wurde gespeichert:", file_txt)
+        # Alles zusammenfassen
+        df_final = pd.concat(results, ignore_index=True)
+        
+        # Nach der ersten Spalte "Stadt" alphabetisch sortieren
+        df_final = df_final.sort_values(by="Stadt").reset_index(drop=True)
+        
+        # Wenn Dateiformat txt gewünscht, dann Text-Datei speichern
+        if "txt" in cfg.quotienten_dateiformate:
+            # TXT speichern
+            file_txt = f.replace("years.txt", "quotients.txt")
+            df_final.to_csv(file_txt, index=False, sep=" ")
+            if verbose:
+                print("TXT-Datei wurde gespeichert:", file_txt)
 
-    # Wenn Dateiformat xlsx gewünscht, dann Excel-Datei speichern
-    if "xlsx" in cfg.quotienten_dateiformate:
-        # Excel speichern
-        file_xlsx = f.replace("years.txt", "quotients.xlsx")
-        df_final.to_excel(file_xlsx, index=False)
-        if verbose:
-            print("XLSX-Datei wurde gespeichert:", file_xlsx)
+        # Wenn Dateiformat xlsx gewünscht, dann Excel-Datei speichern
+        if "xlsx" in cfg.quotienten_dateiformate:
+            # Excel speichern
+            file_xlsx = f.replace("years.txt", "quotients.xlsx")
+            df_final.to_excel(file_xlsx, index=False)
+            if verbose:
+                print("XLSX-Datei wurde gespeichert:", file_xlsx)
