@@ -847,14 +847,23 @@ if args.quotient or cfg.quotienten_berechnen:
     
     # Iteriere durch alle gefundenen / gewuenschten Dateien
     for f in files:
+        if verbose:
+            print("Datei wird eingelesen:", f)
         # Datei einlesen
         df = pd.read_csv(f, sep=r"\s+", engine="python", index_col=0)
         # Datum in Spalte umwandeln
         df = df.T.reset_index().rename(columns={"index":"Datum"})              # Datum soll raus.
         
         # Nur die gewünschten MOSe / Teilnehmer
-        df_sel = df[["Datum"] + teilnehmer].copy()
-        
+        try:
+            df_sel = df[["Datum"] + teilnehmer].copy()
+        except KeyError as e:
+            if verbose:
+                print(f"Fehler beim Auswählen der Teilnehmer: {e}")
+                print("Teilnehmer:", teilnehmer)
+                print("Vorhandene Spalten:", df.columns.tolist())
+            continue
+
         # Berechnung der Summe ueber alle Tage
         df_sum = df_sel[teilnehmer].sum().to_frame().T       # .T heißt transponieren.
         # Differenz und Quotient berechnen
