@@ -33,9 +33,11 @@ import os
 
 # Variablen aus config.py mit cfg.variable aufrufbar
 import config_loader as cfg
-
+# Hilfsfunktionen aus global_functions.py
 from global_functions import stadtname, index_2_date
 
+# Dateiendung der Grafik aus der Konfiguration
+ext = cfg.dateiformat
 
 #TODO cfg.xxx lieber als Argumente von erstelleGrafik() (sonst 'verschleiert')
 def gibDateinamen(laufindex = 0, cfg=cfg):
@@ -97,7 +99,7 @@ def gibDateinamen(laufindex = 0, cfg=cfg):
     # Entferne den letzten Unterstrich aus dem Teilnehmer-String
     teilnehmer = teilnehmer[:-1]
     # Speichere den Dateinamen der Grafik im Format:
-    file_name = f"{zeitinfo}_{taginfo}_{stadtinfo}_{elementinfo}_{teilnehmer}.png"
+    file_name = f"{zeitinfo}_{taginfo}_{stadtinfo}_{elementinfo}_{teilnehmer}.{ext}"
     print( "Dateiname der Grafik: ", file_name )
     # Gib den Dateinamen zurück, der für die Grafik verwendet wird
     return file_name

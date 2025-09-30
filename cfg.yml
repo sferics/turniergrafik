@@ -148,7 +148,7 @@ auswertung:
 
 # Sektion für Grafikeinstellungen
 grafik:
-  dateiformat:      png # Mögliche Formate: png, pdf, svg, jpg
+  dateiformat:      svg # Mögliche Formate: png, pdf, svg, jpg
   sprache:          de
   beschriftungen:
     en:
