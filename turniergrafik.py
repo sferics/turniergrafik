@@ -500,7 +500,13 @@ if __name__ == "__main__":
                         action="store_true")
     ps.add_argument("-q", "--quotient", help="calculate quotients etc \
             (enter 2 players for quotient calculation)")
-    
+    ps.add_argument("-l", "--longterm", type=int, default=cfg.auswertungsmittelungszeitraum,
+                        help="calculate long term means (in weeks)")
+    ps.add_argument("-m", "--minweeks", type=int, default=cfg.mindestanzahl_wochen,
+                        help="minimum number of weeks for long term means")
+    ps.add_argument("-w", "--weeks", type=str, \
+            help="comma separated list of short term means [e.g. 50,20,10,5,2,1]")
+
     # Argumente fuer die Konfiguration der Auswertungselemente, Staedte,
     # Tage, Turniere und Teilnehmer hinzufuegen
     options = ("params", "cities", "days", "tournaments", "users")
@@ -508,7 +514,22 @@ if __name__ == "__main__":
         ps.add_argument("-"+option[0], "--"+option, type=str, help="Set "+option)
     
     args = ps.parse_args()
-     
+    
+    if args.longterm:
+        cfg.auswertungsmittelungszeitraum = args.longterm
+    else:
+        cfg.auswertungsmittelungszeitraum = 0
+        cfg.mindestanzahl_wochen_definiert = False
+        cfg.mindestanzahl_wochen = 0
+    
+    if args.minweeks:
+        cfg.mindestanzahl_wochen_definiert = True
+        cfg.mindestanzahl_wochen = args.minweeks
+
+    # Konvertiere weeks string in Liste von Integern
+    if args.weeks:
+        cfg.kurzfristmittelungszeitraeume = [int(w) for w in str(args.weeks).split(',')]
+
     # Wenn verbose als Argument angegeben wurde, dann setze verbose auf True
     # um mehr Informationen auszugeben
     if args.verbose:
