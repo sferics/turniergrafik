@@ -152,6 +152,13 @@ options:
                         Set tournaments
   -u USERS, --users USERS
                         Set users
+  -l LONGTERM, --longterm LONGTERM
+                        Week count for longterm graphics (left side)
+  -m MINWEEKS, --minweeks minweeks
+                        Minimum weeks for longterm graphics (right side)
+  -w WEEKS, --weeks weeks
+                        Week counts for shortterm graphics (right side),
+                        comma separated list of integers
 ```
 
 ### Erklärung der einzelnen Optionen
